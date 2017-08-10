@@ -38,6 +38,8 @@ RRULE:FREQ=DAILY;INTERVAL=2
 ...
 ```
 
+---
+
 ### Every 2 days / Every 3 days
 
 ```ical
@@ -57,6 +59,8 @@ RRULE:FREQ=DAILY;INTERVAL=3
 ...
 ```
 
+---
+
 ### Daily 3 times
 
 > Note: probably don't need to support this one right away
@@ -71,6 +75,8 @@ RRULE:FREQ=DAILY;COUNT=3
 2017-08-11 16:00:00 -0700
 2017-08-12 16:00:00 -0700
 ```
+
+---
 
 ### Daily until August 13, 2017
 
@@ -87,6 +93,8 @@ RRULE:FREQ=DAILY;UNTIL=20170813T230000Z
 2017-08-12 16:00:00 -0700
 2017-08-13 16:00:00 -0700
 ```
+
+---
 
 ### Daily (with a random one-off time thrown in)
 

@@ -11,6 +11,10 @@ Elixir date recurrence library based on iCal specification.
 * generate list of schedule occurrences within a date range very quickly
 * programmtic way of creating schedules
 
+## Help
+
+* Right now I'm just working on understanding iCal better.  See examples here: [examples.md](examples.md)
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
