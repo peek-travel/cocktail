@@ -1,5 +1,7 @@
 # Cocktail
 
+> NOTE: this is a temporary place for it while we work on it.  Once ready for prime-time, we will open-source this and move it to the peek-travel public repo.
+
 Elixir date recurrence library based on iCal specification.
 
 # Goals
