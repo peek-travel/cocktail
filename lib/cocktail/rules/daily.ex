@@ -1,19 +1,23 @@
 defmodule Cocktail.Rules.Daily do
+  import Integer, only: [mod: 2]
+  import Timex, only: [shift: 2]
+
   defstruct [ interval: 1 ]
 
   def new do
     %__MODULE__{}
   end
 
-  # TODO: interval
-  def next_time(%__MODULE__{} = _rule, %DateTime{ second: s, minute: m, hour: h }, %DateTime{ second: s, minute: m, hour: h } = time), do: time
-  def next_time(%__MODULE__{} = _rule, %DateTime{ second: ss, minute: sm, hour: sh }, %DateTime{ second: s } = time) do
-    time = Timex.shift(time, seconds: mod(ss - s, 60))
-    m = time.minute
-    time = Timex.shift(time, minutes: mod(sm - m, 60))
-    h = time.hour
-    Timex.shift(time, hours: mod(sh - h, 24))
+  def next_time(%__MODULE__{} = _rule, start_time, time) do
+    time
+    |> lock_seconds(start_time)
+    |> lock_minutes(start_time)
+    |> lock_hours(start_time)
+    |> evaluate_interval(start_time)
   end
 
-  defp mod(x, y), do: rem(rem(x, y) + y, y)
+  defp lock_seconds(time, start_time), do: time |> shift(seconds: mod(start_time.second - time.second, 60))
+  defp lock_minutes(time, start_time), do: time |> shift(minutes: mod(start_time.minute - time.minute, 60))
+  defp lock_hours(time, start_time), do: time |> shift(hours: mod(start_time.hour - time.hour, 24))
+  defp evaluate_interval(time, start_time), do: time # TODO
 end
