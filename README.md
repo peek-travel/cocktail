@@ -1,5 +1,7 @@
 # Cocktail
 
+![cocktail](https://user-images.githubusercontent.com/221693/29235380-00d58c3c-7eb3-11e7-8366-007c6d010efc.jpg)
+
 > NOTE: this is a temporary place for it while we work on it.  Once ready for prime-time, we will open-source this and move it to the peek-travel public repo.
 
 Elixir date recurrence library based on iCal specification.
