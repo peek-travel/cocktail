@@ -4,4 +4,6 @@ defmodule Cocktail.Rules do
   def daily do
     Daily.new
   end
+
+  def next_time(%Daily{} = rule, start_time, time), do: Daily.next_time(rule, start_time, time)
 end
