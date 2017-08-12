@@ -7,8 +7,14 @@ defmodule Cocktail.Schedule do
     %__MODULE__{ start_time: start_time }
   end
 
-  def add_recurrence_rule(%__MODULE__{} = schedule, :daily, options \\ []) do
+  def add_recurrence_rule(schedule, type, options \\ [])
+
+  def add_recurrence_rule(%__MODULE__{} = schedule, :daily, options) do
     %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.daily(options)] }
+  end
+
+  def add_recurrence_rule(%__MODULE__{} = schedule, :hourly, options) do
+    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.hourly(options)] }
   end
 
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
