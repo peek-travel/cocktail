@@ -155,4 +155,156 @@ defmodule CocktailTest do
       Timex.parse!("2017-08-12T01:00:00-07:00", "{ISO:Extended}")
     ]
   end
+
+  test "create a schedule with a minutely recurrence rule" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely)
+
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Minutely{ interval: 1 }]}
+  end
+
+  test "evaluates minutely recurrence rule with interval 1" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:01:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:02:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "evaluates minutely recurrence rule with interval 2" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely, interval: 2)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:02:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:04:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "evaluates a schedule with both a minutely(2) and a minutely(3) rule" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely, interval: 2)
+      |> Schedule.add_recurrence_rule(:minutely, interval: 3)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(7)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:02:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:03:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:04:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:06:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:08:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:09:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "create a schedule with a secondly recurrence rule" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly)
+
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Secondly{ interval: 1 }]}
+  end
+
+  test "evaluates secondly recurrence rule with interval 1" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:01-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:02-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "evaluates secondly recurrence rule with interval 2" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly, interval: 2)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:02-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:04-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "evaluates a schedule with both a secondly(2) and a secondly(3) rule" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly, interval: 2)
+      |> Schedule.add_recurrence_rule(:secondly, interval: 3)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(7)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:02-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:03-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:04-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:06-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:08-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-11T16:00:09-07:00", "{ISO:Extended}")
+    ]
+  end
 end
