@@ -2,7 +2,7 @@ defmodule Cocktail.Schedule do
   defstruct [ recurrence_rules: [], start_time: nil ]
 
   alias Cocktail.Rules
-  alias Cocktail.Parsers.{ICalendar, JSON}
+  alias Cocktail.Parsers.ICalendar
 
   def new(start_time) do
     %__MODULE__{ start_time: start_time }
