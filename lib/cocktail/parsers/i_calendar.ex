@@ -1,6 +1,17 @@
 defmodule Cocktail.Parsers.ICalendar do
   @time_pattern ~r/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})/
 
+  @doc ~S"""
+  Parses the given `text` in iCalendar format into a Cocktail.Schedule.
+
+  ## Examples
+
+      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY;INTERVAL=2")
+      %Cocktail.Schedule{
+        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
+        recurrence_rules: [%Cocktail.Rules.Daily{interval: 2}]
+      }
+  """
   def parse(text) do
     text
     |> String.split("\n")
@@ -41,11 +52,13 @@ defmodule Cocktail.Parsers.ICalendar do
   end
 
   defp parse_rrule_option("FREQ=" <> freq) do
+    # e.g. "FREQ=DAILY" => {:frequency, :daily}
     freq = freq |> String.downcase |> String.to_atom
     {:frequency, freq}
   end
 
   defp parse_rrule_option("INTERVAL=" <> interval) do
+    # e.g. "INTERVAL=2" => {:interval, 2}
     interval = interval |> String.to_integer
     {:interval, interval}
   end
