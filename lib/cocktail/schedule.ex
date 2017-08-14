@@ -2,9 +2,19 @@ defmodule Cocktail.Schedule do
   defstruct [ recurrence_rules: [], start_time: nil ]
 
   alias Cocktail.Rules
+  alias Cocktail.Parsers.{ICalendar, JSON}
 
   def new(start_time) do
     %__MODULE__{ start_time: start_time }
+  end
+
+  def from_i_calendar(text) do
+    ICalendar.parse(text)
+  end
+
+  def add_recurrence_rule(schedule, options) when is_list(options) do
+    type = Keyword.get(options, :frequency)
+    add_recurrence_rule(schedule, type, options)
   end
 
   def add_recurrence_rule(schedule, type, options \\ [])
