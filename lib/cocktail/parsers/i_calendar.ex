@@ -23,6 +23,13 @@ defmodule Cocktail.Parsers.ICalendar do
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
         recurrence_rules: [%Cocktail.Rules.Minutely{interval: 30, until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}})}]
       }
+
+      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY\nDTEND;TZID=America/Los_Angeles:20170810T170000")
+      %Cocktail.Schedule{
+        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
+        recurrence_rules: [%Cocktail.Rules.Daily{interval: 1}],
+        duration: 3600
+      }
   """
   def parse(text) do
     text
@@ -52,6 +59,21 @@ defmodule Cocktail.Parsers.ICalendar do
       |> Keyword.new
 
     Cocktail.Schedule.add_recurrence_rule(schedule, options)
+  end
+
+  # parses dtend line and adds the calculated duration to the schedule
+  # e.g. "DTEND;TZID=America/Los_Angeles:20170810T170000" => %Cocktail.Schedule{..., duration: 3600}
+  defp parse_line("DTEND;TZID=" <> line, schedule) do
+    [timezone_id, end_time_string] = String.split(line, ":")
+
+    end_time =
+      end_time_string
+      |> parse_time()
+      |> Timex.to_datetime(timezone_id)
+
+    duration = Timex.diff(end_time, schedule.start_time, :seconds)
+
+    %{ schedule | duration: duration }
   end
 
   # parses a simple time string into a pair of date/time triplets
