@@ -5,35 +5,15 @@ defmodule Cocktail.Schedule do
   alias Cocktail.Parser.ICalendar
 
   def new(start_time, options \\ []) do
-    duration = Keyword.get(options, :duration)
-    %__MODULE__{ recurrence_rules: [], start_time: start_time, duration: duration }
+    %__MODULE__{ recurrence_rules: [], start_time: start_time, duration: options[:duration] }
   end
 
   def from_i_calendar(text) do
     ICalendar.parse(text)
   end
 
-  def add_recurrence_rule(schedule, options) when is_list(options) do
-    type = Keyword.get(options, :frequency)
-    add_recurrence_rule(schedule, type, options)
-  end
-
-  def add_recurrence_rule(schedule, type, options \\ [])
-
-  def add_recurrence_rule(%__MODULE__{} = schedule, :daily, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.daily(options)] }
-  end
-
-  def add_recurrence_rule(%__MODULE__{} = schedule, :hourly, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.hourly(options)] }
-  end
-
-  def add_recurrence_rule(%__MODULE__{} = schedule, :minutely, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.minutely(options)] }
-  end
-
-  def add_recurrence_rule(%__MODULE__{} = schedule, :secondly, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.secondly(options)] }
+  def add_recurrence_rule(schedule, frequency, options \\ []) do
+    %{ schedule | recurrence_rules: [Rule.new(frequency, options) | schedule.recurrence_rules] }
   end
 
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
@@ -41,10 +21,10 @@ defmodule Cocktail.Schedule do
     Stream.unfold({ schedule, start_time }, &next_time/1)
   end
 
-  def next_time({ %__MODULE__{} = schedule, time }) do
+  defp next_time({ %__MODULE__{} = schedule, time }) do
     time =
       schedule.recurrence_rules
-      |> Enum.map(&Rule.next_time(&1, schedule.start_time, time))
+      |> Enum.map(&Rule.next_time(&1, time, schedule.start_time))
       |> Enum.min
 
     output = span_or_time(time, schedule.duration)
@@ -53,8 +33,6 @@ defmodule Cocktail.Schedule do
   end
 
   defp span_or_time(time, nil), do: time
-  defp span_or_time(time, duration) do # TODO: don't assume seconds
-    Span.new(time, Timex.shift(time, seconds: duration))
-  end
+  defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
 end
 
