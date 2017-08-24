@@ -12,7 +12,7 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:daily)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Daily{ interval: 1 }]}
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Daily{ interval: 1 }]}
   end
 
   test "evaluates daily recurrence rule with interval 1" do
@@ -88,7 +88,7 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:hourly)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Hourly{ interval: 1 }]}
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Hourly{ interval: 1 }]}
   end
 
   test "evaluates hourly recurrence rule with interval 1" do
@@ -164,7 +164,7 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:minutely)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Minutely{ interval: 1 }]}
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Minutely{ interval: 1 }]}
   end
 
   test "evaluates minutely recurrence rule with interval 1" do
@@ -240,7 +240,7 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:secondly)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rules.Secondly{ interval: 1 }]}
+    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Secondly{ interval: 1 }]}
   end
 
   test "evaluates secondly recurrence rule with interval 1" do

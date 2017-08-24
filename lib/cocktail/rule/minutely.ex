@@ -1,6 +1,6 @@
-defmodule Cocktail.Rules.Daily do
-  import Cocktail.Rules.Lock
-  import Cocktail.Rules.Interval
+defmodule Cocktail.Rule.Minutely do
+  import Cocktail.Validation.Lock
+  import Cocktail.Validation.Interval
 
   defstruct [ interval: 1, count: nil, until: nil ]
 
@@ -14,8 +14,6 @@ defmodule Cocktail.Rules.Daily do
   def next_time(%__MODULE__{ interval: interval }, start_time, time) do
     time
     |> lock_seconds(start_time)
-    |> lock_minutes(start_time)
-    |> lock_hours(start_time)
-    |> apply_interval(start_time, interval, :days)
+    |> apply_interval(start_time, interval, :minutes)
   end
 end

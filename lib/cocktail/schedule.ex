@@ -1,8 +1,8 @@
 defmodule Cocktail.Schedule do
   defstruct [ :recurrence_rules, :start_time, :duration ]
 
-  alias Cocktail.{Rules, Span}
-  alias Cocktail.Parsers.ICalendar
+  alias Cocktail.{Rule, Span}
+  alias Cocktail.Parser.ICalendar
 
   def new(start_time, options \\ []) do
     duration = Keyword.get(options, :duration)
@@ -21,19 +21,19 @@ defmodule Cocktail.Schedule do
   def add_recurrence_rule(schedule, type, options \\ [])
 
   def add_recurrence_rule(%__MODULE__{} = schedule, :daily, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.daily(options)] }
+    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.daily(options)] }
   end
 
   def add_recurrence_rule(%__MODULE__{} = schedule, :hourly, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.hourly(options)] }
+    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.hourly(options)] }
   end
 
   def add_recurrence_rule(%__MODULE__{} = schedule, :minutely, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.minutely(options)] }
+    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.minutely(options)] }
   end
 
   def add_recurrence_rule(%__MODULE__{} = schedule, :secondly, options) do
-    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rules.secondly(options)] }
+    %{ schedule | recurrence_rules: schedule.recurrence_rules ++ [Rule.secondly(options)] }
   end
 
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
@@ -44,7 +44,7 @@ defmodule Cocktail.Schedule do
   def next_time({ %__MODULE__{} = schedule, time }) do
     time =
       schedule.recurrence_rules
-      |> Enum.map(&Rules.next_time(&1, schedule.start_time, time))
+      |> Enum.map(&Rule.next_time(&1, schedule.start_time, time))
       |> Enum.min
 
     output = span_or_time(time, schedule.duration)

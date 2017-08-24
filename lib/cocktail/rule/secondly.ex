@@ -1,6 +1,5 @@
-defmodule Cocktail.Rules.Minutely do
-  import Cocktail.Rules.Lock
-  import Cocktail.Rules.Interval
+defmodule Cocktail.Rule.Secondly do
+  import Cocktail.Validation.Interval
 
   defstruct [ interval: 1, count: nil, until: nil ]
 
@@ -12,8 +11,6 @@ defmodule Cocktail.Rules.Minutely do
   end
 
   def next_time(%__MODULE__{ interval: interval }, start_time, time) do
-    time
-    |> lock_seconds(start_time)
-    |> apply_interval(start_time, interval, :minutes)
+    apply_interval(time, start_time, interval, :seconds)
   end
 end

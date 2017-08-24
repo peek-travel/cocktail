@@ -1,4 +1,4 @@
-defmodule Cocktail.Parsers.ICalendar do
+defmodule Cocktail.Parser.ICalendar do
   @time_pattern ~r/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})/
 
   @doc ~S"""
@@ -6,28 +6,28 @@ defmodule Cocktail.Parsers.ICalendar do
 
   ## Examples
 
-      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY;INTERVAL=2")
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY;INTERVAL=2")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rules.Daily{interval: 2}]
+        recurrence_rules: [%Cocktail.Rule.Daily{interval: 2}]
       }
 
-      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=HOURLY;COUNT=10")
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=HOURLY;COUNT=10")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rules.Hourly{interval: 1, count: 10}]
+        recurrence_rules: [%Cocktail.Rule.Hourly{interval: 1, count: 10}]
       }
 
-      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=MINUTELY;INTERVAL=30;UNTIL=20170811T230000Z")
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=MINUTELY;INTERVAL=30;UNTIL=20170811T230000Z")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rules.Minutely{interval: 30, until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}})}]
+        recurrence_rules: [%Cocktail.Rule.Minutely{interval: 30, until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}})}]
       }
 
-      iex> Cocktail.Parsers.ICalendar.parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY\nDTEND;TZID=America/Los_Angeles:20170810T170000")
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY\nDTEND;TZID=America/Los_Angeles:20170810T170000")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rules.Daily{interval: 1}],
+        recurrence_rules: [%Cocktail.Rule.Daily{interval: 1}],
         duration: 3600
       }
   """

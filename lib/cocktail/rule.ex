@@ -1,5 +1,5 @@
-defmodule Cocktail.Rules do
-  alias Cocktail.Rules.{Daily, Hourly, Minutely, Secondly}
+defmodule Cocktail.Rule do
+  alias Cocktail.Rule.{Daily, Hourly, Minutely, Secondly}
 
   def daily(options), do: Daily.new(options)
   def hourly(options), do: Hourly.new(options)

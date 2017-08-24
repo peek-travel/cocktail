@@ -1,4 +1,4 @@
-defmodule Cocktail.Rules.Lock do
+defmodule Cocktail.Validation.Lock do
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 

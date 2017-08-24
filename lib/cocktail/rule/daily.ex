@@ -1,6 +1,6 @@
-defmodule Cocktail.Rules.Hourly do
-  import Cocktail.Rules.Lock
-  import Cocktail.Rules.Interval
+defmodule Cocktail.Rule.Daily do
+  import Cocktail.Validation.Lock
+  import Cocktail.Validation.Interval
 
   defstruct [ interval: 1, count: nil, until: nil ]
 
@@ -15,6 +15,7 @@ defmodule Cocktail.Rules.Hourly do
     time
     |> lock_seconds(start_time)
     |> lock_minutes(start_time)
-    |> apply_interval(start_time, interval, :hours)
+    |> lock_hours(start_time)
+    |> apply_interval(start_time, interval, :days)
   end
 end
