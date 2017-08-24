@@ -12,7 +12,21 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:daily)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Daily{ interval: 1 }]}
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+            base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+            base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :daily}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
   end
 
   test "evaluates daily recurrence rule with interval 1" do
@@ -88,7 +102,20 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:hourly)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Hourly{ interval: 1 }]}
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+            base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :hourly}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
   end
 
   test "evaluates hourly recurrence rule with interval 1" do
@@ -164,7 +191,19 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:minutely)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Minutely{ interval: 1 }]}
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :minutely}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
   end
 
   test "evaluates minutely recurrence rule with interval 1" do
@@ -240,7 +279,18 @@ defmodule CocktailTest do
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:secondly)
 
-    assert schedule == %Cocktail.Schedule{start_time: start_time, recurrence_rules: [%Cocktail.Rule.Secondly{ interval: 1 }]}
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :secondly}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
   end
 
   test "evaluates secondly recurrence rule with interval 1" do

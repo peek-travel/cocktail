@@ -1,6 +1,8 @@
 defmodule Cocktail.Parser.ICalendar do
   @time_pattern ~r/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})/
 
+  alias Cocktail.Schedule
+
   @doc ~S"""
   Parses the given `text` in iCalendar format into a Cocktail.Schedule.
 
@@ -9,26 +11,61 @@ defmodule Cocktail.Parser.ICalendar do
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY;INTERVAL=2")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rule.Daily{interval: 2}]
+        recurrence_rules: [
+          %Cocktail.Rule{
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+              interval: [%Cocktail.Validation.Interval{interval: 2, type: :daily}]
+            ]
+          }
+        ]
       }
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=HOURLY;COUNT=10")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rule.Hourly{interval: 1, count: 10}]
+        recurrence_rules: [
+          %Cocktail.Rule{
+            count: 10,
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              interval: [%Cocktail.Validation.Interval{interval: 1, type: :hourly}]
+            ]
+          }
+        ]
       }
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=MINUTELY;INTERVAL=30;UNTIL=20170811T230000Z")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rule.Minutely{interval: 30, until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}})}]
+        recurrence_rules: [
+          %Cocktail.Rule{
+            until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}}),
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              interval: [%Cocktail.Validation.Interval{interval: 30, type: :minutely}]
+            ]
+          }
+        ]
       }
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY\nDTEND;TZID=America/Los_Angeles:20170810T170000")
       %Cocktail.Schedule{
         start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [%Cocktail.Rule.Daily{interval: 1}],
-        duration: 3600
+        duration: 3600,
+        recurrence_rules: [
+          %Cocktail.Rule{
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+              interval: [%Cocktail.Validation.Interval{interval: 1, type: :daily}]
+            ]
+          }
+        ]
       }
   """
   def parse(text) do
@@ -40,37 +77,28 @@ defmodule Cocktail.Parser.ICalendar do
   # parses the first line, because `schedule` is nil at first
   # e.g. "DTSTART;TZID=America/Los_Angeles:20170810T160000"
   #   => %Cocktail.Schedule{start_time: ...}
-  defp parse_line(line, nil) do
-    ["DTSTART", "TZID", timezone_id, start_time_string] = String.split(line, [":", ";", "="])
-
-    start_time_string
-    |> parse_time()
-    |> Timex.to_datetime(timezone_id)
+  defp parse_line("DTSTART;TZID=" <> line, nil) do
+    line
+    |> parse_time_with_zone()
     |> Cocktail.schedule
   end
 
   # parses an rrule line and adds it to the schedule
   # e.g. "RRULE:FREQ=DAILY;INTERVAL=2" => %Cocktail.Schedule{..., recurrence_rules: [...]}
   defp parse_line("RRULE:" <> line, schedule) do
-    options =
+    {frequency, options} =
       line
       |> String.split(";")
       |> Enum.map(&parse_rrule_option/1)
-      |> Keyword.new
+      |> Keyword.pop(:frequency)
 
-    Cocktail.Schedule.add_recurrence_rule(schedule, options)
+    Schedule.add_recurrence_rule(schedule, frequency, options)
   end
 
   # parses dtend line and adds the calculated duration to the schedule
   # e.g. "DTEND;TZID=America/Los_Angeles:20170810T170000" => %Cocktail.Schedule{..., duration: 3600}
   defp parse_line("DTEND;TZID=" <> line, schedule) do
-    [timezone_id, end_time_string] = String.split(line, ":")
-
-    end_time =
-      end_time_string
-      |> parse_time()
-      |> Timex.to_datetime(timezone_id)
-
+    end_time = parse_time_with_zone(line)
     duration = Timex.diff(end_time, schedule.start_time, :seconds)
 
     %{ schedule | duration: duration }
@@ -86,6 +114,16 @@ defmodule Cocktail.Parser.ICalendar do
     |> Enum.chunk_every(3)
     |> Enum.map(&List.to_tuple/1)
     |> List.to_tuple
+  end
+
+  # parses a simple time string with timezone id into a DateTime struct
+  # e.g. "America/Los_Angeles:20170810T160000" => #DateTime<2017-08-10 16:00:00-07:00 PDT America/Los_Angeles>
+  defp parse_time_with_zone(time_with_zone_string) do
+    [timezone_id, time_string] = String.split(time_with_zone_string, ":")
+
+    time_string
+    |> parse_time()
+    |> Timex.to_datetime(timezone_id) # TODO: can return AmbiguousDateTime
   end
 
   # parses an rrule FREQ options
