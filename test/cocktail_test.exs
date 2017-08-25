@@ -4,6 +4,72 @@ defmodule CocktailTest do
 
   alias Cocktail.Schedule
 
+  test "create a schedule with a weekly recurrence rule" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly)
+
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+            base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+            base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+            base_wday: [%Cocktail.Validation.ScheduleLock{type: :wday}],
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
+  end
+
+  test "evaluates weekly recurrence rule with interval 1" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-18T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-25T16:00:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
+  test "evaluates weekly recurrence rule with interval 2" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly, interval: 2)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(3)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-25T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-09-08T16:00:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
   test "create a schedule with a daily recurrence rule" do
     start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
 
