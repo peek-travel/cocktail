@@ -35,4 +35,3 @@ defmodule Cocktail.Schedule do
   defp span_or_time(time, nil), do: time
   defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
 end
-

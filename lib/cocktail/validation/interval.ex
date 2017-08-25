@@ -6,6 +6,7 @@ defmodule Cocktail.Validation.Interval do
 
   def new(type, interval), do: %__MODULE__{ type: type, interval: interval }
 
+  def next_time(%__MODULE__{ type: :weekly, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :weeks)
   def next_time(%__MODULE__{ type: :daily, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :days)
   def next_time(%__MODULE__{ type: :hourly, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :hours)
   def next_time(%__MODULE__{ type: :minutely, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :minutes)

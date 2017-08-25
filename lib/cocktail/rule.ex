@@ -1,6 +1,6 @@
 defmodule Cocktail.Rule do
   alias Cocktail.Validation
-  alias Cocktail.Rule.{Daily, Hourly, Minutely, Secondly}
+  alias Cocktail.Rule.{Weekly, Daily, Hourly, Minutely, Secondly}
 
   defstruct [ count: nil, until: nil, validations: [] ]
 
@@ -31,6 +31,7 @@ defmodule Cocktail.Rule do
     |> Enum.min
   end
 
+  defp build_validations(:weekly, options), do: Weekly.build_validations(options)
   defp build_validations(:daily, options), do: Daily.build_validations(options)
   defp build_validations(:hourly, options), do: Hourly.build_validations(options)
   defp build_validations(:minutely, options), do: Minutely.build_validations(options)
