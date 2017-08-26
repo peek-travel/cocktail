@@ -4,7 +4,7 @@ defmodule Cocktail.Validation.Day do
 
   defstruct [:day]
 
-  def new(day), do: %__MODULE__{ day: normalize_day(day) }
+  def new(day), do: %__MODULE__{ day: day_number(day) }
 
   def next_time(%__MODULE__{ day: day }, time, _) do
     time_wday = Timex.weekday(time)
@@ -13,12 +13,12 @@ defmodule Cocktail.Validation.Day do
     time |> shift(days: diff)
   end
 
-  defp normalize_day(:sunday), do: 0
-  defp normalize_day(:monday), do: 1
-  defp normalize_day(:tuesday), do: 2
-  defp normalize_day(:wednesday), do: 3
-  defp normalize_day(:thursday), do: 4
-  defp normalize_day(:friday), do: 5
-  defp normalize_day(:saturday), do: 6
-  defp normalize_day(day) when is_integer(day), do: day
+  defp day_number(:sunday), do: 0
+  defp day_number(:monday), do: 1
+  defp day_number(:tuesday), do: 2
+  defp day_number(:wednesday), do: 3
+  defp day_number(:thursday), do: 4
+  defp day_number(:friday), do: 5
+  defp day_number(:saturday), do: 6
+  defp day_number(day) when is_integer(day), do: day
 end
