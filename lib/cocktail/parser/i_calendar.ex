@@ -191,15 +191,15 @@ defmodule Cocktail.Parser.ICalendar do
   end
 
   defp parse_rrule_option("BYDAY=" <> by_days) do
-    days = by_days |> String.split(",") |> Enum.map(&day_number/1)
+    days = by_days |> String.split(",") |> Enum.map(&day_atom/1)
     {:days, days}
   end
 
-  defp day_number("SU"), do: :sunday
-  defp day_number("MO"), do: :monday
-  defp day_number("TU"), do: :tuesday
-  defp day_number("WE"), do: :wednesday
-  defp day_number("TH"), do: :thursday
-  defp day_number("FR"), do: :friday
-  defp day_number("SA"), do: :saturday
+  defp day_atom("SU"), do: :sunday
+  defp day_atom("MO"), do: :monday
+  defp day_atom("TU"), do: :tuesday
+  defp day_atom("WE"), do: :wednesday
+  defp day_atom("TH"), do: :thursday
+  defp day_atom("FR"), do: :friday
+  defp day_atom("SA"), do: :saturday
 end
