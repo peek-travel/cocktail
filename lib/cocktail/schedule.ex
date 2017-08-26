@@ -25,7 +25,7 @@ defmodule Cocktail.Schedule do
     time =
       schedule.recurrence_rules
       |> Enum.map(&Rule.next_time(&1, time, schedule.start_time))
-      |> Enum.min
+      |> Enum.min_by(&Timex.to_unix/1)
 
     output = span_or_time(time, schedule.duration)
 
