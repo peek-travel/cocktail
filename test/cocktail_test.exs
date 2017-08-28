@@ -4,6 +4,59 @@ defmodule CocktailTest do
 
   alias Cocktail.Schedule
 
+  test "create a schedule with a weekly recurrence rule on specific days" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly, days: [:monday, :wednesday, :friday])
+
+    expected = %Cocktail.Schedule{
+      start_time: start_time,
+      recurrence_rules: [
+        %Cocktail.Rule{
+          validations: [
+            base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+            base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+            base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+            day: [
+              %Cocktail.Validation.Day{day: 1},
+              %Cocktail.Validation.Day{day: 3},
+              %Cocktail.Validation.Day{day: 5}
+            ],
+            interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
+          ]
+        }
+      ]
+    }
+
+    assert schedule == expected
+  end
+
+  test "evaluates weekly recurrence rule with specific days" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly, days: [:monday, :wednesday, :friday])
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(6)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-14T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-16T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-18T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-21T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-23T16:00:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
   test "create a schedule with a weekly recurrence rule" do
     start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
 

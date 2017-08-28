@@ -67,6 +67,42 @@ defmodule Cocktail.Parser.ICalendar do
           }
         ]
       }
+
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY")
+      %Cocktail.Schedule{
+        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
+        recurrence_rules: [
+          %Cocktail.Rule{
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+              base_wday: [%Cocktail.Validation.ScheduleLock{type: :wday}],
+              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
+            ]
+          }
+        ]
+      }
+
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR")
+      %Cocktail.Schedule{
+        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
+        recurrence_rules: [
+          %Cocktail.Rule{
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
+              day: [
+                %Cocktail.Validation.Day{day: 1},
+                %Cocktail.Validation.Day{day: 3},
+                %Cocktail.Validation.Day{day: 5}
+              ],
+              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
+            ]
+          }
+        ]
+      }
   """
   def parse(text) do
     text
@@ -153,4 +189,17 @@ defmodule Cocktail.Parser.ICalendar do
     until = until |> parse_time() |> Timex.to_datetime
     {:until, until}
   end
+
+  defp parse_rrule_option("BYDAY=" <> by_days) do
+    days = by_days |> String.split(",") |> Enum.map(&day_atom/1)
+    {:days, days}
+  end
+
+  defp day_atom("SU"), do: :sunday
+  defp day_atom("MO"), do: :monday
+  defp day_atom("TU"), do: :tuesday
+  defp day_atom("WE"), do: :wednesday
+  defp day_atom("TH"), do: :thursday
+  defp day_atom("FR"), do: :friday
+  defp day_atom("SA"), do: :saturday
 end

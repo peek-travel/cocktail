@@ -22,13 +22,13 @@ defmodule Cocktail.Rule do
   end
 
   def next_time(%__MODULE__{ validations: validations }, time, start_time) do
-    Enum.reduce(validations, time, &(do_next_time(&1, &2, start_time)))
+    Enum.reduce(validations, time, &do_next_time(&1, &2, start_time))
   end
 
   defp do_next_time({ _, validations }, time, start_time) do
     validations
     |> Enum.map(&Validation.next_time(&1, time, start_time))
-    |> Enum.min
+    |> Enum.min_by(&Timex.to_unix/1)
   end
 
   defp build_validations(:weekly, options), do: Weekly.build_validations(options)
