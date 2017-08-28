@@ -103,6 +103,30 @@ defmodule Cocktail.Parser.ICalendar do
           }
         ]
       }
+
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;BYHOUR=10,12,14")
+      %Cocktail.Schedule{
+        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
+        recurrence_rules: [
+          %Cocktail.Rule{
+            validations: [
+              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
+              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
+              hour_of_day: [
+                %Cocktail.Validation.HourOfDay{hour: 10},
+                %Cocktail.Validation.HourOfDay{hour: 12},
+                %Cocktail.Validation.HourOfDay{hour: 14}
+              ],
+              day: [
+                %Cocktail.Validation.Day{day: 1},
+                %Cocktail.Validation.Day{day: 3},
+                %Cocktail.Validation.Day{day: 5}
+              ],
+              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
+            ]
+          }
+        ]
+      }
   """
   def parse(text) do
     text
@@ -190,6 +214,8 @@ defmodule Cocktail.Parser.ICalendar do
     {:until, until}
   end
 
+  # parses an rrule BYDAY option
+  # e.g. "BYDAY=MO,WE,FR" => {:days, [:monday, :wednesday, :friday]}
   defp parse_rrule_option("BYDAY=" <> by_days) do
     days = by_days |> String.split(",") |> Enum.map(&day_atom/1)
     {:days, days}
@@ -202,4 +228,11 @@ defmodule Cocktail.Parser.ICalendar do
   defp day_atom("TH"), do: :thursday
   defp day_atom("FR"), do: :friday
   defp day_atom("SA"), do: :saturday
+
+  # parses an rrule BYHOUR option
+  # e.g. "BYHOUR=10,12,14" => {:hours, [10, 12, 14]}
+  defp parse_rrule_option("BYHOUR=" <> by_hours) do
+    hours = by_hours |> String.split(",") |> Enum.map(&String.to_integer/1)
+    {:hours, hours}
+  end
 end
