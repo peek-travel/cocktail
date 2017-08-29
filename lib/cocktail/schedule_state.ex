@@ -19,10 +19,7 @@ defmodule Cocktail.ScheduleState do
       |> Enum.map(&RuleState.next_time(&1, state))
       |> Enum.filter(fn(r) -> !is_nil(r.current_time) end)
 
-    time =
-      rules_to_keep
-      |> Enum.min_by(fn(r) -> Timex.to_unix(r.current_time) end, fn -> nil end)
-      |> Map.get(:current_time)
+    time = min_time_for_rules(rules_to_keep)
 
     new_state(time, rules_to_keep, state)
   end
@@ -41,4 +38,11 @@ defmodule Cocktail.ScheduleState do
   defp span_or_time(nil, _), do: nil
   defp span_or_time(time, nil), do: time
   defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
+
+  defp min_time_for_rules([]), do: nil
+  defp min_time_for_rules(rules) do
+    rules
+    |> Enum.min_by(fn(r) -> Timex.to_unix(r.current_time) end, fn -> nil end)
+    |> Map.get(:current_time)
+  end
 end
