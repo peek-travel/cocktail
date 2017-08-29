@@ -1,7 +1,7 @@
 defmodule Cocktail.Schedule do
   defstruct [ :recurrence_rules, :start_time, :duration ]
 
-  alias Cocktail.{Rule, Span}
+  alias Cocktail.{Rule, ScheduleState}
   alias Cocktail.Parser.ICalendar
 
   def new(start_time, options \\ []) do
@@ -17,21 +17,8 @@ defmodule Cocktail.Schedule do
   end
 
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
-    start_time = start_time || schedule.start_time
-    Stream.unfold({ schedule, start_time }, &next_time/1)
+    schedule
+    |> ScheduleState.new(start_time)
+    |> Stream.unfold(&ScheduleState.next_time/1)
   end
-
-  defp next_time({ %__MODULE__{} = schedule, time }) do
-    time =
-      schedule.recurrence_rules
-      |> Enum.map(&Rule.next_time(&1, time, schedule.start_time))
-      |> Enum.min_by(&Timex.to_unix/1)
-
-    output = span_or_time(time, schedule.duration)
-
-    { output, { schedule, Timex.shift(time, seconds: 1) } }
-  end
-
-  defp span_or_time(time, nil), do: time
-  defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
 end

@@ -270,6 +270,28 @@ defmodule CocktailTest do
     ]
   end
 
+  test "evaluates daily recurrence rule that ends 3 days later" do
+    start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
+    until = Timex.parse!("2017-08-14T16:00:00-07:00", "{ISO:Extended}")
+
+    schedule =
+      start_time
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:daily, until: until)
+
+    times =
+      schedule
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(100)
+
+    assert times == [
+      Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-12T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-13T16:00:00-07:00", "{ISO:Extended}"),
+      Timex.parse!("2017-08-14T16:00:00-07:00", "{ISO:Extended}")
+    ]
+  end
+
   test "create a schedule with a hourly recurrence rule" do
     start_time = Timex.parse!("2017-08-11T16:00:00-07:00", "{ISO:Extended}")
 

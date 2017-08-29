@@ -1,8 +1,8 @@
 defmodule Cocktail.Rule do
-  alias Cocktail.Validation
+  alias Cocktail.Rule
   alias Cocktail.Rule.{Weekly, Daily, Hourly, Minutely, Secondly}
 
-  defstruct [ count: nil, until: nil, validations: [] ]
+  defstruct [:count, :until, :validations]
 
   # TODO: use this somewhere
   # @validation_order [
@@ -18,17 +18,7 @@ defmodule Cocktail.Rule do
     {until, options} = Keyword.pop(options, :until)
     validations = build_validations(frequency, options)
 
-    %__MODULE__{ count: count, until: until, validations: validations }
-  end
-
-  def next_time(%__MODULE__{ validations: validations }, time, start_time) do
-    Enum.reduce(validations, time, &do_next_time(&1, &2, start_time))
-  end
-
-  defp do_next_time({ _, validations }, time, start_time) do
-    validations
-    |> Enum.map(&Validation.next_time(&1, time, start_time))
-    |> Enum.min_by(&Timex.to_unix/1)
+    %Rule{ count: count, until: until, validations: validations }
   end
 
   defp build_validations(:weekly, options), do: Weekly.build_validations(options)
