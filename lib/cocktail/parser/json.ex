@@ -1,8 +1,8 @@
 defmodule Cocktail.Parser.JSON do
   alias Cocktail.{Schedule, Rule}
 
-  def parse(text) when is_binary(text) do
-    with {:ok, config} <- Poison.decode(text), do: parse(config)
+  def parse(json_string) when is_binary(json_string) do
+    with {:ok, config} <- Poison.decode(json_string), do: parse(config)
   end
   def parse(%{"start_time" => start_time} = config) do
     with {:ok, time}     <- parse_time(start_time),
