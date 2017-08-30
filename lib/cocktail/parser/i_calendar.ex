@@ -146,13 +146,12 @@ defmodule Cocktail.Parser.ICalendar do
   # parses an rrule line and adds it to the schedule
   # e.g. "RRULE:FREQ=DAILY;INTERVAL=2" => %Cocktail.Schedule{..., recurrence_rules: [...]}
   defp parse_line("RRULE:" <> line, schedule) do
-    {frequency, options} =
+    options =
       line
       |> String.split(";")
       |> Enum.map(&parse_rrule_option/1)
-      |> Keyword.pop(:frequency)
 
-    Schedule.add_recurrence_rule(schedule, frequency, options)
+    Schedule.add_recurrence_rule(schedule, options)
   end
 
   # parses dtend line and adds the calculated duration to the schedule
@@ -221,6 +220,13 @@ defmodule Cocktail.Parser.ICalendar do
     {:days, days}
   end
 
+  # parses an rrule BYHOUR option
+  # e.g. "BYHOUR=10,12,14" => {:hours, [10, 12, 14]}
+  defp parse_rrule_option("BYHOUR=" <> by_hours) do
+    hours = by_hours |> String.split(",") |> Enum.map(&String.to_integer/1)
+    {:hours, hours}
+  end
+
   defp day_atom("SU"), do: :sunday
   defp day_atom("MO"), do: :monday
   defp day_atom("TU"), do: :tuesday
@@ -228,11 +234,4 @@ defmodule Cocktail.Parser.ICalendar do
   defp day_atom("TH"), do: :thursday
   defp day_atom("FR"), do: :friday
   defp day_atom("SA"), do: :saturday
-
-  # parses an rrule BYHOUR option
-  # e.g. "BYHOUR=10,12,14" => {:hours, [10, 12, 14]}
-  defp parse_rrule_option("BYHOUR=" <> by_hours) do
-    hours = by_hours |> String.split(",") |> Enum.map(&String.to_integer/1)
-    {:hours, hours}
-  end
 end

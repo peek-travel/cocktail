@@ -21,7 +21,8 @@ defmodule Cocktail.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:timex, "~> 3.1"}
+      {:timex, "~> 3.1"},
+      {:poison, ">= 2.0.0"}
     ]
   end
 end

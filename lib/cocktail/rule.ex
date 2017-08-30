@@ -7,9 +7,13 @@ defmodule Cocktail.Rule do
   def new(frequency, options) do
     {count, options} = Keyword.pop(options, :count)
     {until, options} = Keyword.pop(options, :until)
-    validations = build_validations(frequency, options)
 
-    %Rule{ count: count, until: until, validations: validations }
+    case build_validations(frequency, options) do
+      :invalid_frequency ->
+        :invalid_rule
+      validations ->
+        %Rule{ count: count, until: until, validations: validations }
+    end
   end
 
   defp build_validations(:weekly, options), do: Weekly.build_validations(options)
@@ -17,4 +21,5 @@ defmodule Cocktail.Rule do
   defp build_validations(:hourly, options), do: Hourly.build_validations(options)
   defp build_validations(:minutely, options), do: Minutely.build_validations(options)
   defp build_validations(:secondly, options), do: Secondly.build_validations(options)
+  defp build_validations(_, _), do: :invalid_frequency
 end
