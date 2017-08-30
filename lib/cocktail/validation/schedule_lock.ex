@@ -10,9 +10,9 @@ defmodule Cocktail.Validation.ScheduleLock do
   def next_time(%__MODULE__{ type: :minute }, time, start_time), do: time |> shift(minutes: mod(start_time.minute - time.minute, 60))
   def next_time(%__MODULE__{ type: :hour }, time, start_time), do: time |> shift(hours: mod(start_time.hour - time.hour, 24))
   def next_time(%__MODULE__{ type: :wday }, time, start_time) do
-    start_time_wday = Timex.weekday(start_time)
-    time_wday = Timex.weekday(time)
-    diff = mod(start_time_wday - time_wday, 7)
+    start_time_day = Timex.weekday(start_time)
+    time_day = Timex.weekday(time)
+    diff = mod(start_time_day - time_day, 7)
 
     time |> shift(days: diff)
   end

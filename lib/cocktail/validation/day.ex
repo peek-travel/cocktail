@@ -7,8 +7,8 @@ defmodule Cocktail.Validation.Day do
   def new(day), do: %__MODULE__{ day: day_number(day) }
 
   def next_time(%__MODULE__{ day: day }, time, _) do
-    time_wday = Timex.weekday(time)
-    diff = mod(day - time_wday, 7)
+    time_day = Timex.weekday(time)
+    diff = mod(day - time_day, 7)
 
     time |> shift(days: diff)
   end
