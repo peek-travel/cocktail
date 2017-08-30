@@ -4,15 +4,6 @@ defmodule Cocktail.Rule do
 
   defstruct [:count, :until, :validations]
 
-  # TODO: use this somewhere
-  # @validation_order [
-  #   :year, :month, :day, :wday, :hour, :min, :sec, :count, :until,
-  #   :base_sec, :base_min, :base_day, :base_hour, :base_month, :base_wday,
-  #   :day_of_year, :second_of_minute, :minute_of_hour, :day_of_month,
-  #   :hour_of_day, :month_of_year, :day_of_week,
-  #   :interval
-  # ]
-
   def new(frequency, options) do
     {count, options} = Keyword.pop(options, :count)
     {until, options} = Keyword.pop(options, :until)
