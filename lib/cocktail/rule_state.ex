@@ -1,5 +1,5 @@
 defmodule Cocktail.RuleState do
-  alias Cocktail.{Rule, Validation, ScheduleState}
+  alias Cocktail.{Rule, ScheduleState}
 
   defstruct [:count, :until, :validations, :current_time]
 

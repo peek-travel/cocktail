@@ -12,7 +12,14 @@ defmodule Cocktail.Schedule do
     ICalendar.parse(text)
   end
 
-  def add_recurrence_rule(schedule, frequency, options \\ []) do
+  def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
+    %{ schedule | recurrence_rules: [rule | schedule.recurrence_rules] }
+  end
+  def add_recurrence_rule(%__MODULE__{} = schedule, options) when is_list(options) do
+    {frequency, options} = Keyword.pop(options, :frequency)
+    add_recurrence_rule(schedule, frequency, options)
+  end
+  def add_recurrence_rule(%__MODULE__{} = schedule, frequency, options \\ []) do
     %{ schedule | recurrence_rules: [Rule.new(frequency, options) | schedule.recurrence_rules] }
   end
 
