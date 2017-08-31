@@ -3,6 +3,7 @@ defmodule Cocktail.Schedule do
 
   alias Cocktail.{Rule, ScheduleState}
   alias Cocktail.Parser.ICalendar
+  alias Cocktail.Builder.String, as: StringBuilder
 
   def new(start_time, options \\ []) do
     %__MODULE__{ recurrence_rules: [], start_time: start_time, duration: options[:duration] }
@@ -27,5 +28,13 @@ defmodule Cocktail.Schedule do
     schedule
     |> ScheduleState.new(start_time)
     |> Stream.unfold(&ScheduleState.next_time/1)
+  end
+
+  defimpl Inspect, for: __MODULE__ do
+    import Inspect.Algebra
+
+    def inspect(schedule, _) do
+      concat ["#Cocktail.Schedule<", StringBuilder.build(schedule), ">"]
+    end
   end
 end
