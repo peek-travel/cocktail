@@ -4,18 +4,18 @@
 
 > NOTE: this is a temporary place for it while we work on it.  Once ready for prime-time, we will open-source this and move it to the peek-travel public repo.
 
-Elixir date recurrence library based on iCal specification.
+Elixir date recurrence library based on iCalendar specification.
 
 # Goals
 
-* export schedules as iCal format
-* import schedules from iCal format
+* export schedules as iCalendar format
+* import schedules from iCalendar format
 * generate list of schedule occurrences within a date range very quickly
 * programmtic way of creating schedules
 
 ## Help
 
-* Right now I'm just working on understanding iCal better.  See examples here: [examples.md](examples.md)
+* Right now I'm just working on understanding iCalendar better.  See examples here: [examples.md](examples.md)
 
 ## Installation
 

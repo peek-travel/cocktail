@@ -1,10 +1,10 @@
-# Example iCal schedules
+# Example iCalendar schedules
 
 Notes:
 
 * All examples below generated using IceCube
 * Timezones are using Ruby timezone IDs, which are not "correct" (should be "America/Los_Angeles" in all below examples)
-* The examples need to be wrapped in an iCal "calendar" object to be completely valid
+* The examples need to be wrapped in an iCalendar "calendar" object to be completely valid
 
 ## Daily examples
 
