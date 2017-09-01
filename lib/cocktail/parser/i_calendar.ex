@@ -4,132 +4,24 @@ defmodule Cocktail.Parser.ICalendar do
   alias Cocktail.Schedule
 
   @doc ~S"""
-  Parses the given `text` in iCalendar format into a Cocktail.Schedule.
+  Parses the given `i_calendar_string` in iCalendar format into a `Cocktail.Schedule`.
 
   ## Examples
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY;INTERVAL=2")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
-              interval: [%Cocktail.Validation.Interval{interval: 2, type: :daily}]
-            ]
-          }
-        ]
-      }
-
-      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=HOURLY;COUNT=10")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            count: 10,
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              interval: [%Cocktail.Validation.Interval{interval: 1, type: :hourly}]
-            ]
-          }
-        ]
-      }
-
-      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=MINUTELY;INTERVAL=30;UNTIL=20170811T230000Z")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            until: Timex.to_datetime({{2017, 8, 11}, {23, 0, 0}}),
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              interval: [%Cocktail.Validation.Interval{interval: 30, type: :minutely}]
-            ]
-          }
-        ]
-      }
-
-      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=DAILY\nDTEND;TZID=America/Los_Angeles:20170810T170000")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        duration: 3600,
-        recurrence_rules: [
-          %Cocktail.Rule{
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
-              interval: [%Cocktail.Validation.Interval{interval: 1, type: :daily}]
-            ]
-          }
-        ]
-      }
+      #Cocktail.Schedule<Every 2 days>
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
-              base_wday: [%Cocktail.Validation.ScheduleLock{type: :wday}],
-              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
-            ]
-          }
-        ]
-      }
+      #Cocktail.Schedule<Weekly>
 
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              base_hour: [%Cocktail.Validation.ScheduleLock{type: :hour}],
-              day: [
-                %Cocktail.Validation.Day{day: 1},
-                %Cocktail.Validation.Day{day: 3},
-                %Cocktail.Validation.Day{day: 5}
-              ],
-              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
-            ]
-          }
-        ]
-      }
+      #Cocktail.Schedule<Weekly on Mondays, Wednesdays and Fridays>
 
-      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;BYHOUR=10,12,14")
-      %Cocktail.Schedule{
-        start_time: Timex.to_datetime({{2017, 8, 10}, {16, 0, 0}}, "America/Los_Angeles"),
-        recurrence_rules: [
-          %Cocktail.Rule{
-            validations: [
-              base_sec: [%Cocktail.Validation.ScheduleLock{type: :second}],
-              base_min: [%Cocktail.Validation.ScheduleLock{type: :minute}],
-              hour_of_day: [
-                %Cocktail.Validation.HourOfDay{hour: 10},
-                %Cocktail.Validation.HourOfDay{hour: 12},
-                %Cocktail.Validation.HourOfDay{hour: 14}
-              ],
-              day: [
-                %Cocktail.Validation.Day{day: 1},
-                %Cocktail.Validation.Day{day: 3},
-                %Cocktail.Validation.Day{day: 5}
-              ],
-              interval: [%Cocktail.Validation.Interval{interval: 1, type: :weekly}]
-            ]
-          }
-        ]
-      }
+      iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14")
+      #Cocktail.Schedule<Every 2 weeks on Mondays, Wednesdays and Fridays on the 10th, 12th and 14th hours of the day>
   """
-  def parse(text) do
-    text
+  def parse(i_calendar_string) do
+    i_calendar_string
     |> String.split("\n")
     |> Enum.reduce(nil, &parse_line/2)
   end

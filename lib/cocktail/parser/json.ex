@@ -1,6 +1,16 @@
 defmodule Cocktail.Parser.JSON do
   alias Cocktail.{Schedule, Rule}
 
+  @doc ~S"""
+  Parses the given `json_string` into a `Cocktail.Schedule`.
+
+  ## Examples
+
+      iex> {:ok, schedule} = parse("{\"start_time\":{\"time\":\"2017-01-01 09:00:00\",\"zone\":\"America/Los_Angeles\"},\"recurrence_rules\":[{\"frequency\":\"daily\",\"interval\":2}]}")
+      ...> schedule
+      #Cocktail.Schedule<Every 2 days>
+  """
+
   def parse(json_string) when is_binary(json_string) do
     with {:ok, config} <- Poison.decode(json_string), do: parse(config)
   end
@@ -26,6 +36,7 @@ defmodule Cocktail.Parser.JSON do
         {:error, :invalid_time_format}
     end
   end
+  # TODO: support a pre-parsed DateTime object being passed
   defp parse_time(_), do: {:error, :invalid_time_format}
 
   defp parse_rules(rule_configs, rules \\ [])
@@ -103,6 +114,7 @@ defmodule Cocktail.Parser.JSON do
   defp parse_day("friday"), do: {:ok, :friday}
   defp parse_day("saturday"), do: {:ok, :saturday}
   defp parse_day("sunday"), do: {:ok, :sunday}
+  # TODO: support parsing days as integers
   defp parse_day(_), do: {:error, :invalid_day}
 
   defp parse_hours(%{"hours" => hours}) when is_list(hours), do: do_parse_hours(hours, [])
@@ -115,6 +127,6 @@ defmodule Cocktail.Parser.JSON do
     with {:ok, day} <- parse_hour(day), do: do_parse_hours(rest, [day | hours])
   end
 
-  defp parse_hour(hour) when is_integer(hour) and hour >= 0, do: {:ok, hour}
+  defp parse_hour(hour) when is_integer(hour) and hour >= 0 and hour < 24, do: {:ok, hour}
   defp parse_hour(_), do: {:error, :invalid_hour}
 end
