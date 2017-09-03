@@ -1,5 +1,5 @@
 defmodule Cocktail.Builder.JSON do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 

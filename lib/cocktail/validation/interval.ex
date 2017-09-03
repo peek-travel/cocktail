@@ -4,7 +4,17 @@ defmodule Cocktail.Validation.Interval do
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 
-  defstruct [:type, :interval]
+  @type frequency :: :weekly   |
+                     :daily    |
+                     :hourly   |
+                     :minutely |
+                     :secondly
+
+  @type t :: %__MODULE__{ type: frequency, interval: pos_integer }
+
+  @enforce_keys [:type, :interval]
+  defstruct type:     nil,
+            interval: nil
 
   def new(type, interval), do: %__MODULE__{ type: type, interval: interval }
 

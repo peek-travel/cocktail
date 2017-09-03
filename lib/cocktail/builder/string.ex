@@ -1,13 +1,13 @@
 defmodule Cocktail.Builder.String do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
   alias Cocktail.Rule
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
-  @doc ~S"""
-  Builds a human readable string represenation of a `Cocktail.Schedule`.
+  @doc """
+  Builds a human readable string represenation of a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 

@@ -1,5 +1,5 @@
 defmodule Cocktail.Parser.ICalendar do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
@@ -8,7 +8,7 @@ defmodule Cocktail.Parser.ICalendar do
   alias Cocktail.{Schedule, Rule}
 
   @doc ~S"""
-  Parses the given `i_calendar_string` in iCalendar format into a `Cocktail.Schedule`.
+  Parses the given `i_calendar_string` in iCalendar format into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 

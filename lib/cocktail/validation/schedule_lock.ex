@@ -4,7 +4,15 @@ defmodule Cocktail.Validation.ScheduleLock do
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 
-  defstruct [:type]
+  @type lock :: :second |
+                :minute |
+                :hour   |
+                :wday
+
+  @type t :: %__MODULE__{ type: lock }
+
+  @enforce_keys [:type]
+  defstruct type: nil
 
   def new(type), do: %__MODULE__{ type: type }
 

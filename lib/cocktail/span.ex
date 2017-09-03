@@ -1,22 +1,28 @@
 defmodule Cocktail.Span do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
-  defstruct [:from, :until]
+  @type t :: %__MODULE__{
+              from:  DateTime.t,
+              until: DateTime.t}
 
-  @doc ~S"""
+  @enforce_keys [:from, :until]
+  defstruct from:  nil,
+            until: nil
+
+  @doc """
   TODO: write doc
   """
   def new(from, until), do: %__MODULE__{from: from, until: until}
 
-  @doc ~S"""
+  @doc """
   TODO: write doc
   """
   def compare(%__MODULE__{from: t, until: until1}, %__MODULE__{from: t, until: until2}), do: Timex.compare(until1, until2)
   def compare(%__MODULE__{from: from1}, %__MODULE__{from: from2}), do: Timex.compare(from1, from2)
 
-  @doc ~S"""
+  @doc """
   TODO: write doc
   """
   def overlap_mode(%__MODULE__{from: from, until: until}, %__MODULE__{from: from, until: until}), do: :is_equal_to

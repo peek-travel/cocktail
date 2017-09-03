@@ -1,14 +1,25 @@
 defmodule Cocktail.Rule do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
   alias Cocktail.{Rule, Validation}
   alias Cocktail.Builder.String, as: StringBuilder
 
-  defstruct [:count, :until, :validations]
+  @typedoc """
+  TODO: write typedoc
+  """
+  @opaque t :: %__MODULE__{
+              count:       pos_integer | nil,
+              until:       DateTime.t | nil,
+              validations: %{atom => [Validation.t]}}
 
-  @doc ~S"""
+  @enforce_keys [:validations]
+  defstruct count:       nil,
+            until:       nil,
+            validations: %{}
+
+  @doc """
   TODO: write doc
   """
   def new(options) do

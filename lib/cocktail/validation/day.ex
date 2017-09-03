@@ -4,7 +4,12 @@ defmodule Cocktail.Validation.Day do
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 
-  defstruct [:day]
+  @type day_number :: 0..6
+
+  @type t :: %__MODULE__{ day: day_number }
+
+  @enforce_keys [:day]
+  defstruct day: nil
 
   def new(day), do: %__MODULE__{ day: day_number(day) }
 

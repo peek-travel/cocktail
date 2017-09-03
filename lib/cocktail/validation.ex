@@ -3,6 +3,8 @@ defmodule Cocktail.Validation do
 
   alias Cocktail.Validation.{ScheduleLock, Interval, Day, HourOfDay}
 
+  @type t :: ScheduleLock.t | Interval.t | Day.t | HourOfDay.t
+
   def build_validations(options) do
     {frequency, options} = Keyword.pop(options, :frequency)
     {interval, options} = Keyword.pop(options, :interval, 1)

@@ -1,12 +1,12 @@
 defmodule Cocktail.Parser.JSON do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
   alias Cocktail.{Schedule, Rule}
 
   @doc ~S"""
-  Parses the given `json_string` into a `Cocktail.Schedule`.
+  Parses the given `json_string` into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 
@@ -23,8 +23,8 @@ defmodule Cocktail.Parser.JSON do
     end
   end
 
-  @doc ~S"""
-  Parses the given `map` into a `Cocktail.Schedule`.
+  @doc """
+  Parses the given `map` into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 

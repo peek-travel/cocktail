@@ -4,7 +4,12 @@ defmodule Cocktail.Validation.HourOfDay do
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 
-  defstruct [:hour]
+  @type hour_number :: 0..23
+
+  @type t :: %__MODULE__{ hour: hour_number }
+
+  @enforce_keys [:hour]
+  defstruct hour: nil
 
   def new(hour), do: %__MODULE__{ hour: hour }
 

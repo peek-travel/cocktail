@@ -1,12 +1,12 @@
 defmodule Cocktail do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
   alias Cocktail.Schedule
 
-  @doc ~S"""
-  TODO: write doc
+  @doc """
+  see `Cocktail.Schedule.new/1`
   """
   def schedule(start_time, options \\ []), do: Schedule.new(start_time, options)
 end

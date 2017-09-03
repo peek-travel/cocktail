@@ -17,10 +17,10 @@ Elixir date recurrence library based on iCalendar specification.
 
 * [ ] 100% test coverage
 * [ ] fault tolerent iCalendar parsing
-* [ ] the rest of the iCalendar RRULE options
+* [ ] types and specs everywhere
+* [ ] fix DST and other bugs
 * [ ] performance
-* [ ] fix DST bugs
-* [ ] fix other bugs
+* [ ] the rest of the iCalendar RRULE options
 
 ## Installation
 

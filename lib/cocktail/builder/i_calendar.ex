@@ -1,11 +1,14 @@
 defmodule Cocktail.Builder.ICalendar do
-  @moduledoc ~S"""
+  @moduledoc """
   TODO: write module doc
   """
 
   alias Cocktail.{Rule, Schedule}
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
+  @doc """
+  TODO: write doc
+  """
   def build(schedule) do
     rules =
       schedule.recurrence_rules
