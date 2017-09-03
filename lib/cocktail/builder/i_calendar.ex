@@ -1,4 +1,8 @@
 defmodule Cocktail.Builder.ICalendar do
+  @moduledoc ~S"""
+  TODO: write module doc
+  """
+
   alias Cocktail.{Rule, Schedule}
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
@@ -32,21 +36,15 @@ defmodule Cocktail.Builder.ICalendar do
     "DTEND;#{time_string}"
   end
 
-  defp build_rule(%Rule{validations: validations}) do
-    {parts, _} =
-      [:interval, :day, :hour_of_day]
-      |> Enum.reduce({[], validations}, &build_validation/2)
-    "RRULE:" <> (parts |> Enum.reverse |> List.flatten |> Enum.join(";"))
-  end
-
-  defp build_validation(key, {parts, validations_kwl}) do
-    validations = Keyword.get(validations_kwl, key)
-    if is_nil(validations) do
-      {parts, validations_kwl}
-    else
-      part = build_validation_part(key, validations)
-      {[part | parts], validations_kwl}
-    end
+  defp build_rule(%Rule{validations: validations_map}) do
+    parts =
+      for key <- [:interval, :day, :hour_of_day],
+          validations = validations_map[key],
+          is_list(validations)
+      do
+        build_validation_part(key, validations)
+      end
+    "RRULE:" <> (parts |> List.flatten |> Enum.join(";"))
   end
 
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)

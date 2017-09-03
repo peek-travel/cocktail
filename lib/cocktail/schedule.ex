@@ -1,34 +1,62 @@
 defmodule Cocktail.Schedule do
-  defstruct [ :recurrence_rules, :start_time, :duration ]
+  @moduledoc ~S"""
+  TODO: write module doc
+  """
 
   alias Cocktail.{Rule, ScheduleState}
-  alias Cocktail.Parser.ICalendar
+  alias Cocktail.Parser.{ICalendar, JSON}
   alias Cocktail.Builder.String, as: StringBuilder
+  alias Cocktail.Builder.ICalendar, as: ICalendarBuilder
 
+  defstruct [ :recurrence_rules, :start_time, :duration ]
+
+  @doc ~S"""
+  TODO: write doc
+  """
   def new(start_time, options \\ []) do
     %__MODULE__{ recurrence_rules: [], start_time: start_time, duration: options[:duration] }
   end
 
-  def from_i_calendar(text) do
-    ICalendar.parse(text)
-  end
-
+  @doc ~S"""
+  TODO: write doc
+  """
   def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
     %{ schedule | recurrence_rules: [rule | schedule.recurrence_rules] }
   end
-  def add_recurrence_rule(%__MODULE__{} = schedule, options) when is_list(options) do
-    {frequency, options} = Keyword.pop(options, :frequency)
-    add_recurrence_rule(schedule, frequency, options)
-  end
-  def add_recurrence_rule(%__MODULE__{} = schedule, frequency, options \\ []) do
-    %{ schedule | recurrence_rules: [Rule.new(frequency, options) | schedule.recurrence_rules] }
-  end
 
+  @doc ~S"""
+  TODO: write doc
+  """
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
     schedule
     |> ScheduleState.new(start_time)
     |> Stream.unfold(&ScheduleState.next_time/1)
   end
+
+  @doc ~S"""
+  see `Cocktail.Parser.ICalendar.parse/1`
+  """
+  def from_i_calendar(i_calendar_string), do: ICalendar.parse(i_calendar_string)
+
+  @doc ~S"""
+  see `Cocktail.Parser.JSON.parse/1`
+  """
+  def from_json(json_string), do: JSON.parse(json_string)
+
+  @doc ~S"""
+  see `Cocktail.Parser.JSON.parse_map/1`
+  """
+  def from_map(map), do: JSON.parse(map)
+
+  @doc ~S"""
+  see `Cocktail.Builder.ICalendar.build/1`
+  """
+  def to_i_calendar(%__MODULE__{} = schedule), do: ICalendarBuilder.build(schedule)
+
+  @doc ~S"""
+  see `Cocktail.Builder.String.build/1`
+  """
+  def to_string(%__MODULE__{} = schedule), do: StringBuilder.build(schedule)
 
   defimpl Inspect, for: __MODULE__ do
     import Inspect.Algebra

@@ -1,4 +1,6 @@
 defmodule Cocktail.ScheduleState do
+  @moduledoc false
+
   alias Cocktail.{Schedule, RuleState, Span}
 
   defstruct [:recurrence_rules, :start_time, :current_time, :duration]

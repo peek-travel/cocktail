@@ -1,28 +1,37 @@
 defmodule Cocktail.Builder.String do
+  @moduledoc ~S"""
+  TODO: write module doc
+  """
+
   alias Cocktail.Rule
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
+  @doc ~S"""
+  Builds a human readable string represenation of a `Cocktail.Schedule`.
+
+  ## Examples
+
+      iex> time = Timex.to_datetime({{2017, 1, 1}, {6, 0, 0}}, "America/Los_Angeles")
+      ...> rule = Cocktail.Rule.new(frequency: :daily, interval: 2)
+      ...> schedule = Cocktail.Schedule.new(time) |> Cocktail.Schedule.add_recurrence_rule(rule)
+      ...> build(schedule)
+      "Every 2 days"
+  """
   def build(schedule) do
     schedule.recurrence_rules
     |> Enum.map(&build_rule/1)
     |> Enum.join(" / ")
   end
 
-  defp build_rule(%Rule{validations: validations}) do
-    {parts, _} =
-      [:interval, :day, :hour_of_day]
-      |> Enum.reduce({[], validations}, &build_validation/2)
-    parts |> Enum.reverse |> Enum.join(" ")
-  end
-
-  defp build_validation(key, {parts, validations_kwl}) do
-    validations = Keyword.get(validations_kwl, key)
-    if is_nil(validations) do
-      {parts, validations_kwl}
-    else
-      part = build_validation_part(key, validations)
-      {[part | parts], validations_kwl}
+  @doc false
+  def build_rule(%Rule{validations: validations_map}) do
+    for key <- [:interval, :day, :hour_of_day],
+        validations = validations_map[key],
+        is_list(validations)
+    do
+      build_validation_part(key, validations)
     end
+    |> Enum.join(" ")
   end
 
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)

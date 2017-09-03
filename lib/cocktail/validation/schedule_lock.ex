@@ -1,4 +1,6 @@
 defmodule Cocktail.Validation.ScheduleLock do
+  @moduledoc false
+
   import Integer, only: [mod: 2]
   import Timex, only: [shift: 2]
 

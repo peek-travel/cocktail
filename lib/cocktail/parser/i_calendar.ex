@@ -1,7 +1,11 @@
 defmodule Cocktail.Parser.ICalendar do
+  @moduledoc ~S"""
+  TODO: write module doc
+  """
+
   @time_pattern ~r/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})/
 
-  alias Cocktail.Schedule
+  alias Cocktail.{Schedule, Rule}
 
   @doc ~S"""
   Parses the given `i_calendar_string` in iCalendar format into a `Cocktail.Schedule`.
@@ -43,7 +47,9 @@ defmodule Cocktail.Parser.ICalendar do
       |> String.split(";")
       |> Enum.map(&parse_rrule_option/1)
 
-    Schedule.add_recurrence_rule(schedule, options)
+    rule = Rule.new(options)
+
+    Schedule.add_recurrence_rule(schedule, rule)
   end
 
   # parses dtend line and adds the calculated duration to the schedule
