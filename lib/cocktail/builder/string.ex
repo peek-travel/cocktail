@@ -88,18 +88,14 @@ defmodule Cocktail.Builder.String do
     "#{first_half} and #{last}"
   end
 
+  defp ordinalize(n) when n < 0, do: n |> abs() |> ordinalize()
+  defp ordinalize(n) when rem(n, 100) in 4..20, do: "#{n}th"
   defp ordinalize(n) do
-    num = abs(n)
-    ordinal = if rem(num, 100) in 4..20 do
-                "th"
-              else
-                case rem(num, 10) do
-                  1 -> "st"
-                  2 -> "nd"
-                  3 -> "rd"
-                  _ -> "th"
-                end
-              end
-    "#{n}#{ordinal}"
+    case rem(n, 10) do
+      1 -> "#{n}st"
+      2 -> "#{n}nd"
+      3 -> "#{n}rd"
+      _ -> "#{n}th"
+    end
   end
 end
