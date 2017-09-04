@@ -1,15 +1,18 @@
 defmodule Cocktail.Parser.JSONTest do
   use ExUnit.Case
+
   alias Cocktail.Rule
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
+
   import Cocktail.Parser.JSON
+  import TestSupport.DateTimeSigil
 
   doctest Cocktail.Parser.JSON, import: true
 
   test "parse an empty schedule" do
     empty_schedule_json_string = "{\"start_time\": {\"time\": \"2017-01-01 06:00:00\", \"zone\": \"America/Los_Angeles\"}}"
     assert {:ok, schedule} = parse(empty_schedule_json_string)
-    assert schedule.start_time == Timex.to_datetime({{2017, 1, 1}, {6, 0, 0}}, "America/Los_Angeles")
+    assert schedule.start_time == ~Y[2017-01-01 06:00:00 America/Los_Angeles]
   end
 
   test "parse a pre-parsed map" do
@@ -20,7 +23,7 @@ defmodule Cocktail.Parser.JSONTest do
       }
     }
     assert {:ok, schedule} = parse_map(empty_schedule_map)
-    assert schedule.start_time == Timex.to_datetime({{2017, 1, 1}, {6, 0, 0}}, "America/Los_Angeles")
+    assert schedule.start_time == ~Y[2017-01-01 06:00:00 America/Los_Angeles]
   end
 
   test "parse a missing duration" do
@@ -185,7 +188,7 @@ defmodule Cocktail.Parser.JSONTest do
     }
     assert {:ok, schedule} = parse_map(schedule_map)
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
-    assert rule.until == Timex.to_datetime({{2017, 1, 31}, {6, 0, 0}}, "America/Los_Angeles")
+    assert rule.until == ~Y[2017-01-31 06:00:00 America/Los_Angeles]
   end
 
   ##########

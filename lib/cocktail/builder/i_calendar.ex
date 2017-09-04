@@ -6,8 +6,16 @@ defmodule Cocktail.Builder.ICalendar do
   alias Cocktail.{Rule, Schedule}
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
-  @doc """
+  @doc ~S"""
   TODO: write doc
+
+  ## Examples
+
+      iex> time = Timex.to_datetime({{2017, 1, 1}, {6, 0, 0}}, "America/Los_Angeles")
+      ...> rule = Cocktail.Rule.new(frequency: :daily, interval: 2)
+      ...> schedule = Cocktail.Schedule.new(time) |> Cocktail.Schedule.add_recurrence_rule(rule)
+      ...> build(schedule)
+      "DTSTART;TZID=America/Los_Angeles:20170101T060000\nRRULE:FREQ=DAILY;INTERVAL=2"
   """
   def build(schedule) do
     rules =

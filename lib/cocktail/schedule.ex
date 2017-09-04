@@ -38,6 +38,18 @@ defmodule Cocktail.Schedule do
   @doc """
   TODO: write doc
   """
+  def add_recurrence_rule(%__MODULE__{} = schedule, frequency, options \\ []) do
+    rule =
+      options
+      |> Keyword.put(:frequency, frequency)
+      |> Rule.new
+
+    add_recurrence_rule(schedule, rule)
+  end
+
+  @doc """
+  TODO: write doc
+  """
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
     schedule
     |> ScheduleState.new(start_time)
