@@ -6,7 +6,7 @@ defmodule Cocktail.Parser.JSON do
   alias Cocktail.{Schedule, Rule}
 
   @doc ~S"""
-  Parses the given `json_string` into a `t:Cocktail.Schedule.t/0`.
+  Parses a string of JSON into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 
@@ -14,6 +14,7 @@ defmodule Cocktail.Parser.JSON do
       ...> schedule
       #Cocktail.Schedule<Every 2 days>
   """
+  @spec parse(String.t) :: {:ok, Schedule.t} | {:error, term}
   def parse(json_string) when is_binary(json_string) do
     with {:ok, config} <- Poison.decode(json_string)
     do
@@ -24,7 +25,7 @@ defmodule Cocktail.Parser.JSON do
   end
 
   @doc """
-  Parses the given `map` into a `t:Cocktail.Schedule.t/0`.
+  Parses JSON-like map into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 
@@ -32,17 +33,16 @@ defmodule Cocktail.Parser.JSON do
       ...> schedule
       #Cocktail.Schedule<Every 2 days>
   """
+  @spec parse_map(map) :: {:ok, Schedule.t} | {:error, term}
   def parse_map(%{"start_time" => start_time} = map) do
     with {:ok, time}     <- parse_time(start_time),
          {:ok, rules}    <- parse_rules(map["recurrence_rules"]),
          {:ok, schedule} <- create_schedule(time, map["duration"])
     do
-      {:ok, Enum.reduce(rules |> Enum.reverse, schedule, &add_recurrence_rule/2)}
+      {:ok, Enum.reduce(rules |> Enum.reverse, schedule, &Schedule.add_recurrence_rule(&2, &1))}
     end
   end
   def parse_map(map) when is_map(map), do: {:error, :missing_start_time}
-
-  defp add_recurrence_rule(rule, schedule), do: Schedule.add_recurrence_rule(schedule, rule)
 
   defp parse_time(%{"time" => time_string, "zone" => zone_id}) do
     with {:ok, time}         <- Timex.parse(time_string, "{ISO:Extended}"),

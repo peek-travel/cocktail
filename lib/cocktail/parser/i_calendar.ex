@@ -24,6 +24,7 @@ defmodule Cocktail.Parser.ICalendar do
       iex> parse("DTSTART;TZID=America/Los_Angeles:20170810T160000\nRRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14")
       #Cocktail.Schedule<Every 2 weeks on Mondays, Wednesdays and Fridays on the 10th, 12th and 14th hours of the day>
   """
+  @spec parse(String.t) :: {:ok, Schedule.t} | {:error, term}
   def parse(i_calendar_string) do
     i_calendar_string
     |> String.split("\n")
