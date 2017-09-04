@@ -196,11 +196,11 @@ defmodule Cocktail.Parser.JSONTest do
   ##########
 
   test "parse an empty string" do
-    assert {:error, :invalid_json, _} = parse("")
+    assert {:error, {:invalid_json, _}} = parse("")
   end
 
   test "parse an invalid json string" do
-    assert {:error, :invalid_json, _} = parse("invalid")
+    assert {:error, {:invalid_json, _}} = parse("invalid")
   end
 
   test "parse an empty object" do
@@ -234,7 +234,7 @@ defmodule Cocktail.Parser.JSONTest do
       },
       "recurrence_rules" => [ "invalid" ]
     }
-    assert {:error, :invalid_rule, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_rule, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with empty invalid rule map" do
@@ -245,7 +245,7 @@ defmodule Cocktail.Parser.JSONTest do
       },
       "recurrence_rules" => [ %{} ]
     }
-    assert {:error, :missing_frequency, 0} = parse_map(schedule_map)
+    assert {:error, {:missing_frequency, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a rule with an invalid frequency" do
@@ -256,7 +256,7 @@ defmodule Cocktail.Parser.JSONTest do
       },
       "recurrence_rules" => [ %{"frequency" => "quarterly"} ]
     }
-    assert {:error, :invalid_frequency, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_frequency, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a rule with an invalid interval" do
@@ -267,7 +267,7 @@ defmodule Cocktail.Parser.JSONTest do
       },
       "recurrence_rules" => [ %{"frequency" => "daily", "interval" => "invalid"} ]
     }
-    assert {:error, :invalid_interval, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_interval, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a single weekly repeat rule, with invalid days of the week specified" do
@@ -284,7 +284,7 @@ defmodule Cocktail.Parser.JSONTest do
         }
       ]
     }
-    assert {:error, :invalid_days, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_days, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a single weekly repeat rule, with days of the week specified, but containing an invalid day" do
@@ -301,7 +301,7 @@ defmodule Cocktail.Parser.JSONTest do
         }
       ]
     }
-    assert {:error, :invalid_day, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_day, 0}} = parse_map(schedule_map)
   end
 
 
@@ -320,7 +320,7 @@ defmodule Cocktail.Parser.JSONTest do
         }
       ]
     }
-    assert {:error, :invalid_hours, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_hours, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a single weekly repeat rule, with hours of the day specified, but containing an invalid hour" do
@@ -337,7 +337,7 @@ defmodule Cocktail.Parser.JSONTest do
         }
       ]
     }
-    assert {:error, :invalid_hour, 0} = parse_map(schedule_map)
+    assert {:error, {:invalid_hour, 0}} = parse_map(schedule_map)
   end
 
   test "parse a schedule with a rule that has an invalid until option" do
@@ -354,6 +354,20 @@ defmodule Cocktail.Parser.JSONTest do
         }
       ]
     }
-    assert {:error, :invalid_time_format} = parse_map(schedule_map)
+    assert {:error, {:invalid_time_format, 0}} = parse_map(schedule_map)
+  end
+
+  test "parse a schedule with one valid rule and one invalid rule" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{ "frequency" => "daily", "interval" => 1 },
+        "invalid"
+      ]
+    }
+    assert {:error, {:invalid_rule, 1}} = parse_map(schedule_map)
   end
 end

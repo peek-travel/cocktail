@@ -19,7 +19,7 @@ defmodule Cocktail.Parser.JSON do
     do
       parse_map(config)
     else
-      error -> {:error, :invalid_json, error}
+      error -> {:error, {:invalid_json, error}}
     end
   end
 
@@ -68,7 +68,7 @@ defmodule Cocktail.Parser.JSON do
       parse_rules(rest, [rule | rules], index + 1)
     end
   end
-  defp parse_rules(_, _, index), do: {:error, :invalid_rule, index}
+  defp parse_rules(_, _, index), do: {:error, {:invalid_rule, index}}
 
   defp create_schedule(time, nil), do: {:ok, Schedule.new(time)}
   defp create_schedule(time, duration) when is_integer(duration) and duration > 0, do: {:ok, Schedule.new(time, duration: duration)}
@@ -77,7 +77,7 @@ defmodule Cocktail.Parser.JSON do
   defp validate_rule_options(options, index) when is_map(options) do
     with {:ok, frequency} <- parse_frequency(options, index),
          {:ok, interval}  <- parse_interval(options, index),
-         {:ok, until}     <- parse_until(options),
+         {:ok, until}     <- parse_until(options, index),
          {:ok, days}      <- parse_days(options, index),
          {:ok, hours}     <- parse_hours(options, index)
     do
@@ -98,21 +98,28 @@ defmodule Cocktail.Parser.JSON do
   defp parse_frequency(%{"frequency" => "weekly"}, _), do: {:ok, :weekly}
   defp parse_frequency(%{"frequency" => "monthly"}, _), do: {:ok, :monthly}
   defp parse_frequency(%{"frequency" => "yearly"}, _), do: {:ok, :yearly}
-  defp parse_frequency(%{"frequency" => _}, index), do: {:error, :invalid_frequency, index}
-  defp parse_frequency(_, index), do: {:error, :missing_frequency, index}
+  defp parse_frequency(%{"frequency" => _}, index), do: {:error, {:invalid_frequency, index}}
+  defp parse_frequency(_, index), do: {:error, {:missing_frequency, index}}
 
   defp parse_interval(%{"interval" => interval}, _) when is_integer(interval) and interval > 0, do: {:ok, interval}
-  defp parse_interval(_, index), do: {:error, :invalid_interval, index}
+  defp parse_interval(_, index), do: {:error, {:invalid_interval, index}}
 
-  defp parse_until(%{"until" => until}), do: parse_time(until)
-  defp parse_until(_), do: {:ok, nil}
+  defp parse_until(%{"until" => until}, index) do
+    case parse_time(until) do
+      {:ok, time} ->
+        {:ok, time}
+      {:error, term} ->
+        {:error, {term, index}}
+    end
+  end
+  defp parse_until(_, _), do: {:ok, nil}
 
   # TODO: parse count
 
   defp parse_days(%{"days" => []}, _), do: {:ok, nil}
   defp parse_days(%{"days" => days}, index) when is_list(days), do: do_parse_days(days, [], index)
   defp parse_days(%{"days" => nil}, _), do: {:ok, nil}
-  defp parse_days(%{"days" => _}, index), do: {:error, :invalid_days, index}
+  defp parse_days(%{"days" => _}, index), do: {:error, {:invalid_days, index}}
   defp parse_days(_, _), do: {:ok, nil}
 
   defp do_parse_days([], days, _), do: {:ok, days |> Enum.reverse}
@@ -128,12 +135,12 @@ defmodule Cocktail.Parser.JSON do
   defp parse_day("saturday", _), do: {:ok, :saturday}
   defp parse_day("sunday", _), do: {:ok, :sunday}
   # TODO: support parsing days as integers
-  defp parse_day(_, index), do: {:error, :invalid_day, index}
+  defp parse_day(_, index), do: {:error, {:invalid_day, index}}
 
   defp parse_hours(%{"hours" => []}, _), do: {:ok, nil}
   defp parse_hours(%{"hours" => hours}, index) when is_list(hours), do: do_parse_hours(hours, [], index)
   defp parse_hours(%{"hours" => nil}, _), do: {:ok, nil}
-  defp parse_hours(%{"hours" => _}, index), do: {:error, :invalid_hours, index}
+  defp parse_hours(%{"hours" => _}, index), do: {:error, {:invalid_hours, index}}
   defp parse_hours(_, _), do: {:ok, nil}
 
   defp do_parse_hours([], hours, _), do: {:ok, hours |> Enum.reverse}
@@ -142,5 +149,5 @@ defmodule Cocktail.Parser.JSON do
   end
 
   defp parse_hour(hour, _) when is_integer(hour) and hour >= 0 and hour < 24, do: {:ok, hour}
-  defp parse_hour(_, index), do: {:error, :invalid_hour, index}
+  defp parse_hour(_, index), do: {:error, {:invalid_hour, index}}
 end
