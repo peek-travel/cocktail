@@ -1,15 +1,10 @@
 defmodule Cocktail.Rule do
-  @moduledoc """
-  TODO: write module doc
-  """
+  @moduledoc false
 
   alias Cocktail.{Rule, Validation}
   alias Cocktail.Builder.String, as: StringBuilder
 
-  @typedoc """
-  TODO: write typedoc
-  """
-  @opaque t :: %__MODULE__{
+  @type t :: %__MODULE__{
               count:       pos_integer | nil,
               until:       DateTime.t | nil,
               validations: %{atom => [Validation.t]}}
@@ -19,9 +14,7 @@ defmodule Cocktail.Rule do
             until:       nil,
             validations: %{}
 
-  @doc """
-  TODO: write doc
-  """
+  @spec new(Cocktail.rule_options) :: t
   def new(options) do
     {count, options} = Keyword.pop(options, :count)
     {until, options} = Keyword.pop(options, :until)

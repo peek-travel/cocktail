@@ -8,7 +8,7 @@ defmodule Cocktail.Parser.ICalendar do
   alias Cocktail.{Schedule, Rule}
 
   @doc ~S"""
-  Parses the given `i_calendar_string` in iCalendar format into a `t:Cocktail.Schedule.t/0`.
+  Parses a string in iCalendar format into a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 
