@@ -5,7 +5,7 @@ defmodule Cocktail.Parser.JSONTest do
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
   import Cocktail.Parser.JSON
-  import TestSupport.DateTimeSigil
+  import Cocktail.TestSupport.DateTimeSigil
 
   doctest Cocktail.Parser.JSON, import: true
 

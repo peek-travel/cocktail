@@ -1,4 +1,4 @@
-defmodule TestSupport.DateTimeSigil do
+defmodule Cocktail.TestSupport.DateTimeSigil do
   def sigil_Y(string, []) do
     [date, time, zone] = String.split(string, " ")
 

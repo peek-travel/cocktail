@@ -3,7 +3,7 @@ defmodule Cocktail.MinutelyTest do
 
   alias Cocktail.Schedule
 
-  import TestSupport.DateTimeSigil
+  import Cocktail.TestSupport.DateTimeSigil
 
   test "Minutely" do
     times =
@@ -70,7 +70,6 @@ defmodule Cocktail.MinutelyTest do
     ]
   end
 
-  @tag :pending
   test "Every 15 minutes on the 10th and 14th hours of the day" do
     times =
       ~Y[2017-01-01 06:00:00 PST]
@@ -92,16 +91,16 @@ defmodule Cocktail.MinutelyTest do
     ]
   end
 
-  @tag :pending
   test "Every 360 minutes on Mondays and Fridays" do
     times =
       ~Y[2017-01-01 06:00:00 PST]
       |> Cocktail.schedule
       |> Schedule.add_recurrence_rule(:minutely, interval: 360, days: [:monday, :friday])
       |> Cocktail.Schedule.occurrences
-      |> Enum.take(8)
+      |> Enum.take(9)
 
     assert times == [
+      ~Y[2017-01-02 00:00:00 PST],
       ~Y[2017-01-02 06:00:00 PST],
       ~Y[2017-01-02 12:00:00 PST],
       ~Y[2017-01-02 18:00:00 PST],
@@ -113,7 +112,6 @@ defmodule Cocktail.MinutelyTest do
     ]
   end
 
-  @tag :pending
   test "Every 30 minutes on Mondays and Fridays on the 10th and 14th hours of the day" do
     times =
       ~Y[2017-01-01 06:00:00 PST]

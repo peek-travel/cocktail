@@ -2,7 +2,7 @@ defmodule Cocktail.Validation.Day do
   @moduledoc false
 
   import Integer, only: [mod: 2]
-  import Timex, only: [shift: 2]
+  import Cocktail.Validation.Shift
 
   @type day_number :: 0..6
 
@@ -14,10 +14,8 @@ defmodule Cocktail.Validation.Day do
   def new(day), do: %__MODULE__{ day: day_number(day) }
 
   def next_time(%__MODULE__{ day: day }, time, _) do
-    time_day = Timex.weekday(time)
-    diff = mod(day - time_day, 7)
-
-    time |> shift(days: diff)
+    diff = day - Timex.weekday(time) |> mod(7)
+    shift_by_bod(diff, :days, time)
   end
 
   defp day_number(:sunday), do: 0

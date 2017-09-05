@@ -3,7 +3,7 @@ defmodule Cocktail.DailyTest do
 
   alias Cocktail.Schedule
 
-  import TestSupport.DateTimeSigil
+  import Cocktail.TestSupport.DateTimeSigil
 
   test "Daily" do
     times =
@@ -87,7 +87,6 @@ defmodule Cocktail.DailyTest do
     ]
   end
 
-  @tag :pending
   test "Every 6 days on Mondays and Fridays" do
     times =
       ~Y[2017-01-01 06:00:00 PST]

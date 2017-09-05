@@ -2,7 +2,7 @@ defmodule Cocktail.Validation.Interval do
   @moduledoc false
 
   import Integer, only: [mod: 2]
-  import Timex, only: [shift: 2]
+  import Cocktail.Validation.Shift
 
   @type frequency :: :weekly   |
                      :daily    |
@@ -24,7 +24,7 @@ defmodule Cocktail.Validation.Interval do
   def next_time(%__MODULE__{ type: :minutely, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :minutes)
   def next_time(%__MODULE__{ type: :secondly, interval: interval }, time, start_time), do: apply_interval(time, start_time, interval, :seconds)
 
-  defp apply_interval(time, _, 1, _), do: time
+  defp apply_interval(time, _, 1, _), do: {:no_change, time}
 
   defp apply_interval(time, start_time, interval, :weeks) do
     {_, start_weeknum} = Timex.iso_week(start_time) # TODO: sunday week start
@@ -32,15 +32,25 @@ defmodule Cocktail.Validation.Interval do
     diff = current_weeknum - start_weeknum # TODO: rollover
     off_by = mod(diff, interval)
 
-    shift(time, days: off_by * 7)
+    shift_by(off_by * 7, :days, time)
+  end
+
+  defp apply_interval(time, start_time, interval, :days) do
+    date = DateTime.to_date(time)
+    start_date = DateTime.to_date(start_time)
+
+    diff =
+      start_date
+      |> Timex.diff(date, :days)
+      |> mod(interval)
+
+    shift_by(diff, :days, time)
   end
 
   defp apply_interval(time, start_time, interval, type) do
-    off_by =
-      start_time
-      |> Timex.diff(time, type)
-      |> mod(interval)
-
-    shift(time, "#{type}": off_by)
+    start_time
+    |> Timex.diff(time, type)
+    |> mod(interval)
+    |> shift_by(type, time)
   end
 end
