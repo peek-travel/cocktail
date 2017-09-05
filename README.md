@@ -13,9 +13,14 @@ Elixir date recurrence library based on iCalendar specification.
 * generate list of schedule occurrences within a date range very quickly
 * programmtic way of creating schedules
 
-## Help
+## TODO
 
-* Right now I'm just working on understanding iCalendar better.  See examples here: [examples.md](examples.md)
+* [ ] 100% test coverage
+* [ ] fault tolerent iCalendar parsing
+* [ ] types and specs everywhere
+* [ ] fix DST and other bugs
+* [ ] performance
+* [ ] the rest of the iCalendar RRULE options
 
 ## Installation
 

@@ -1,7 +1,23 @@
 defmodule Cocktail.Builder.ICalendar do
+  @moduledoc """
+  TODO: write module doc
+  """
+
   alias Cocktail.{Rule, Schedule}
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
+  @doc ~S"""
+  Builds an iCalendar format string represenation of a `t:Cocktail.Schedule.t/0`.
+
+  ## Examples
+
+      iex> alias Cocktail.Schedule
+      ...> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> schedule = Schedule.new(start_time)
+      ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, interval: 2, hours: [10, 12])
+      ...> build(schedule)
+      "DTSTART;TZID=America/Los_Angeles:20170101T060000\nRRULE:FREQ=DAILY;INTERVAL=2;BYHOUR=10,12"
+  """
   def build(schedule) do
     rules =
       schedule.recurrence_rules
@@ -32,21 +48,15 @@ defmodule Cocktail.Builder.ICalendar do
     "DTEND;#{time_string}"
   end
 
-  defp build_rule(%Rule{validations: validations}) do
-    {parts, _} =
-      [:interval, :day, :hour_of_day]
-      |> Enum.reduce({[], validations}, &build_validation/2)
-    "RRULE:" <> (parts |> Enum.reverse |> List.flatten |> Enum.join(";"))
-  end
-
-  defp build_validation(key, {parts, validations_kwl}) do
-    validations = Keyword.get(validations_kwl, key)
-    if is_nil(validations) do
-      {parts, validations_kwl}
-    else
-      part = build_validation_part(key, validations)
-      {[part | parts], validations_kwl}
-    end
+  defp build_rule(%Rule{validations: validations_map}) do
+    parts =
+      for key <- [:interval, :day, :hour_of_day],
+          validations = validations_map[key],
+          is_list(validations)
+      do
+        build_validation_part(key, validations)
+      end
+    "RRULE:" <> (parts |> List.flatten |> Enum.join(";"))
   end
 
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)

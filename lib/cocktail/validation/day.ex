@@ -1,18 +1,24 @@
 defmodule Cocktail.Validation.Day do
+  @moduledoc false
+
   import Integer, only: [mod: 2]
-  import Timex, only: [shift: 2]
+  import Cocktail.Validation.Shift
 
-  defstruct [:day]
+  @type t :: %__MODULE__{ day: Cocktail.day_number }
 
+  @enforce_keys [:day]
+  defstruct day: nil
+
+  @spec new(Cocktail.day) :: t
   def new(day), do: %__MODULE__{ day: day_number(day) }
 
+  @spec next_time(t, DateTime.t, DateTime.t) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{ day: day }, time, _) do
-    time_day = Timex.weekday(time)
-    diff = mod(day - time_day, 7)
-
-    time |> shift(days: diff)
+    diff = day - Timex.weekday(time) |> mod(7)
+    shift_by_bod(diff, :days, time)
   end
 
+  @spec day_number(Cocktail.day) :: Cocktail.day_number
   defp day_number(:sunday), do: 0
   defp day_number(:monday), do: 1
   defp day_number(:tuesday), do: 2
