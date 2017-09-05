@@ -8,6 +8,7 @@ defmodule Cocktail.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       deps: deps(),
+      dialyzer: [ flags: [:unmatched_returns, :error_handling, :underspecs]],
 
       # Docs
       name: "Cocktail",
