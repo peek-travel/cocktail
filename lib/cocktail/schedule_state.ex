@@ -15,7 +15,7 @@ defmodule Cocktail.ScheduleState do
             current_time:     nil,
             duration:         nil
 
-  # @spec new(Schedule.t, DateTime.t | nil) :: t # TODO: this spec doesn't work for some reason
+  # @spec new(Schedule.t, DateTime.t | nil) :: t # FIXME: this spec doesn't work for some reason
   def new(%Schedule{} = schedule, nil), do: new(schedule, schedule.start_time)
   def new(%Schedule{} = schedule, current_time) do
     %__MODULE__{
@@ -26,7 +26,7 @@ defmodule Cocktail.ScheduleState do
     }
   end
 
-  @spec next_time(t) :: { DateTime.t | Span.t, t }
+  @spec next_time(t) :: {DateTime.t | Span.t, t}
   def next_time(%__MODULE__{} = state) do
     rules_to_keep =
       state.recurrence_rules
@@ -38,16 +38,16 @@ defmodule Cocktail.ScheduleState do
     new_state(time, rules_to_keep, state)
   end
 
-  @spec new_state(DateTime.t, [RuleState.t], t) :: { DateTime.t | Span.t, t }
+  @spec new_state(DateTime.t, [RuleState.t], t) :: {DateTime.t | Span.t, t}
   defp new_state(nil, _, _), do: nil
   defp new_state(time, rules, state) do
     output = span_or_time(time, state.duration)
-    new_state = %{ state |
+    new_state = %{state |
       recurrence_rules: rules,
       current_time: Timex.shift(time, seconds: 1)
     }
 
-    { output, new_state }
+    {output, new_state}
   end
 
   @spec span_or_time(DateTime.t, pos_integer | nil) :: DateTime.t | Span.t

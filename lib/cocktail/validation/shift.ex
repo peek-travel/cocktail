@@ -15,5 +15,5 @@ defmodule Cocktail.Validation.Shift do
 
   @spec shift_by_bod(integer, shift_type, DateTime.t) :: result
   def shift_by_bod(0, _, time), do: {:no_change, time}
-  def shift_by_bod(amount, type, time), do: {:updated, shift(time, "#{type}": amount) |> beginning_of_day()}
+  def shift_by_bod(amount, type, time), do: {:updated, time |> shift("#{type}": amount) |> beginning_of_day()}
 end

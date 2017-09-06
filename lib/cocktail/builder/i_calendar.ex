@@ -44,7 +44,11 @@ defmodule Cocktail.Builder.ICalendar do
 
   defp build_end_time(%Schedule{duration: nil}), do: nil
   defp build_end_time(%Schedule{start_time: start_time, duration: duration}) do
-    time_string = Timex.shift(start_time, seconds: duration) |> build_time
+    time_string =
+      start_time
+      |> Timex.shift(seconds: duration)
+      |> build_time
+
     "DTEND;#{time_string}"
   end
 

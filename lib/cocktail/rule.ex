@@ -20,7 +20,7 @@ defmodule Cocktail.Rule do
     {until, options} = Keyword.pop(options, :until)
     validations = Validation.build_validations(options)
 
-    %Rule{ count: count, until: until, validations: validations }
+    %Rule{count: count, until: until, validations: validations}
   end
 
   defimpl Inspect, for: __MODULE__ do

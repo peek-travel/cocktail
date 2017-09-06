@@ -69,8 +69,8 @@ defmodule Cocktail.RuleState do
   end
 
   @spec new_state(t, DateTime.t) :: t
-  defp new_state(%__MODULE__{ until: nil } = rule_state, time), do: %{rule_state | current_time: time}
-  defp new_state(%__MODULE__{ until: until } = rule_state, time) do
+  defp new_state(%__MODULE__{until: nil} = rule_state, time), do: %{rule_state | current_time: time}
+  defp new_state(%__MODULE__{until: until} = rule_state, time) do
     if Timex.compare(until, time) == -1 do
       %{rule_state | current_time: nil}
     else

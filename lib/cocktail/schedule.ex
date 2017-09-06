@@ -26,13 +26,13 @@ defmodule Cocktail.Schedule do
   """
   @spec new(DateTime.t, Cocktail.schedule_options) :: t
   def new(start_time, options \\ []) do
-    %__MODULE__{ recurrence_rules: [], start_time: start_time, duration: options[:duration] }
+    %__MODULE__{recurrence_rules: [], start_time: start_time, duration: options[:duration]}
   end
 
   @doc false
   @spec add_recurrence_rule(t, Rule.t) :: t
   def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
-    %{ schedule | recurrence_rules: [rule | schedule.recurrence_rules] }
+    %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
   end
 
   @doc """

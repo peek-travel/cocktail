@@ -39,7 +39,9 @@ defmodule Cocktail.Mixfile do
       {:excoveralls, "~> 0.7", only: :test},
 
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
-      {:dialyxir, "~> 0.5", only: :dev, runtime: false}
+      {:dialyxir, "~> 0.5", only: :dev, runtime: false},
+
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
     ]
   end
 end

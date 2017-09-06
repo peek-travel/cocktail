@@ -59,7 +59,7 @@ defmodule Cocktail.Parser.ICalendar do
     end_time = parse_time_with_zone(line)
     duration = Timex.diff(end_time, schedule.start_time, :seconds)
 
-    %{ schedule | duration: duration }
+    %{schedule | duration: duration}
   end
 
   # parses a simple time string into a pair of date/time triplets
@@ -81,7 +81,7 @@ defmodule Cocktail.Parser.ICalendar do
 
     time_string
     |> parse_time()
-    |> Timex.to_datetime(timezone_id) # TODO: can return AmbiguousDateTime
+    |> Timex.to_datetime(timezone_id) # FIXME: this can return AmbiguousDateTime
   end
 
   # parses an rrule FREQ options
