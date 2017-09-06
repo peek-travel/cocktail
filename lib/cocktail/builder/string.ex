@@ -1,6 +1,6 @@
 defmodule Cocktail.Builder.String do
   @moduledoc """
-  TODO: write module doc
+  Build human readable strings from schedules.
   """
 
   alias Cocktail.{Rule, Schedule}

@@ -2,7 +2,23 @@ defmodule Cocktail.Schedule do
   @moduledoc """
   Struct used to represent a schedule of recurring events.
 
-  TODO: write long description.
+  Use the `new/2` function to create a new schedule, and the
+  `add_recurrence_rule/2` function to add rules to describe how to repeat.
+
+  Currently, Cocktail supports the following types of repeat rules:
+
+    * Weekly - Every week, relative to the schedule's start time
+    * Daily - Every day at the schedule's start time
+    * Hourly - Every hour, starting at the schedule's start time
+    * Minutely - Every minute, starting at the schedule's start time
+    * Secondly - Every second, starting at the schedule's start time
+
+  Once a schedule has been created, you can use `occurrences/2` to generate
+  a stream of occurrences, which are either `t:DateTime.t/0`s or
+  `t:Cocktail.Span.t/0`s if a `duration` option was given to the schedule.
+
+  Various options can be given to modify the way the repeat rule and schedule
+  behave. See `add_recurrence_rule/3` for details on them.
   """
 
   alias Cocktail.{Rule, ScheduleState}
@@ -11,7 +27,15 @@ defmodule Cocktail.Schedule do
   alias Cocktail.Builder.ICalendar, as: ICalendarBuilder
 
   @typedoc """
-  TODO: write typedoc
+  Struct used to represent a schedule of recurring events.
+
+  This type is opaque, so its fields shouldn't be modified directly. Instead,
+  use the functions provided in this module to create and manipulate schedules.
+
+  ## Fields:
+
+    * `:start_time` - The schedule's start time
+    * `:duration` - The duration of each occurrence (in seconds)
   """
   @opaque t :: %__MODULE__{
                 recurrence_rules: [Rule.t],

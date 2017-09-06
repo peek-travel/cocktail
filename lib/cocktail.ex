@@ -1,6 +1,9 @@
 defmodule Cocktail do
   @moduledoc """
-  TODO: write module doc
+  Top level types and convenience functions.
+
+  This module holds some top-level types and a convenience function for
+  creating a new schedule. Details available in the `Cocktail.Schedule` module.
   """
 
   alias Cocktail.Schedule
