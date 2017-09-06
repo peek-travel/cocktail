@@ -8,6 +8,9 @@ defmodule Cocktail.Span do
 
   When expanding a `t:Cocktail.Schedule.t/0`, if it has a duration it will
   produce a list of `t:t/0` instead of a list of `t:DateTime.t/0`.
+
+  > NOTE: all examples below use `NaiveDateTime`s for brevity, but
+    Cocktail currently only supports using `DateTime`s for schedules.
   """
 
   @type t :: %__MODULE__{

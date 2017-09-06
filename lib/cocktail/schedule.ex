@@ -1,6 +1,8 @@
 defmodule Cocktail.Schedule do
   @moduledoc """
-  TODO: write module doc
+  Struct used to represent a schedule of recurring events.
+
+  TODO: write long description.
   """
 
   alias Cocktail.{Rule, ScheduleState}
@@ -22,7 +24,20 @@ defmodule Cocktail.Schedule do
             duration:         nil
 
   @doc """
-  TODO: write doc
+  Creates a new schedule using the given start time and options.
+
+  This schdule will be empty and needs recurrence rules added to it before it is useful.
+  Use `add_recurrence_rule/3` to add rules to a schedule.
+
+  ## Options
+
+    * `:duration` - The duration of each event in the schedule (in seconds).
+
+  ## Examples
+
+      iex> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> new(start_time, duration: 3_600)
+      #Cocktail.Schedule<>
   """
   @spec new(DateTime.t, Cocktail.schedule_options) :: t
   def new(start_time, options \\ []) do
@@ -36,7 +51,27 @@ defmodule Cocktail.Schedule do
   end
 
   @doc """
-  TODO: write doc
+  Adds a recurrence rule of the given frequency to a schedule.
+
+  The frequency can be one of `:weekly`, `:daily`, `:hourly`, `:minutely` or `:secondly`.
+
+  > NOTE: more frequencies are planned to be supported in the future. (e.g. `:monthly`)
+
+  ## Options
+
+    * `:interval` - How often to repeat, given the frequency. For example a `:daily` rule with interval `2` would be "every other day".
+    * `:count` - The number of times this rule can produce an occurrence.
+    * `:until` - The end date/time after which the rule will no longer produce occurrences.
+    * `:days` - Restrict this rule to specific days. (e.g. `[:monday, :wednesday, :friday]`)
+    * `:hours` - Restrict this rule to certain hours of the day. (e.g. `[10, 12, 14]`)
+
+  > NOTE: more options are planned to be supported in the future. (e.g. `:days_of_month`)
+
+  ## Examples
+
+      iex> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> start_time |> new() |> add_recurrence_rule(:daily, interval: 2, hours: [10, 14])
+      #Cocktail.Schedule<Every 2 days on the 10th and 14th hours of the day>
   """
   @spec add_recurrence_rule(t, Cocktail.frequency, Cocktail.rule_options) :: t
   def add_recurrence_rule(%__MODULE__{} = schedule, frequency, options \\ []) do
@@ -49,7 +84,18 @@ defmodule Cocktail.Schedule do
   end
 
   @doc """
-  TODO: write doc
+  Creates a stream of occurrences from the given schedule.
+
+  An optional `start_time` can be supplied to not start at the schedule's start time.
+
+  ## Examples
+
+      iex> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> schedule = start_time |> new() |> add_recurrence_rule(:daily, interval: 2, hours: [10, 14])
+      ...> schedule |> occurrences() |> Stream.map(&inspect/1) |> Enum.take(3)
+      ["#DateTime<2017-01-01 10:00:00-08:00 PST America/Los_Angeles>",
+       "#DateTime<2017-01-01 14:00:00-08:00 PST America/Los_Angeles>",
+       "#DateTime<2017-01-03 10:00:00-08:00 PST America/Los_Angeles>"]
   """
   @spec occurrences(t, DateTime.t | nil) :: Enumerable.t
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
