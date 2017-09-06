@@ -1,6 +1,8 @@
 defmodule Cocktail.Builder.ICalendar do
   @moduledoc """
-  TODO: write module doc
+  Build iCalendar format strings from schedules.
+
+  TODO: write long description
   """
 
   alias Cocktail.{Rule, Schedule}

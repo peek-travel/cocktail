@@ -1,6 +1,9 @@
 defmodule Cocktail do
   @moduledoc """
-  TODO: write module doc
+  Top level types and convenience functions.
+
+  This module holds some top-level types and a convenience function for
+  creating a new schedule. Details available in the `Cocktail.Schedule` module.
   """
 
   alias Cocktail.Schedule
@@ -41,9 +44,9 @@ defmodule Cocktail do
   @type rule_options :: [rule_option]
 
   @doc """
-  TODO: write short description
+  Creates a new schedule using the given start time and options.
 
-  see `Cocktail.Schedule.new/1`
+  see `Cocktail.Schedule.new/1` for details.
   """
   @spec schedule(DateTime.t, schedule_options) :: Schedule.t
   def schedule(start_time, options \\ []), do: Schedule.new(start_time, options)

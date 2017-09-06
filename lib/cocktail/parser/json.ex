@@ -1,6 +1,8 @@
 defmodule Cocktail.Parser.JSON do
   @moduledoc """
-  TODO: write module doc
+  Create schedules from JSON strings or maps.
+
+  TODO: write long description
   """
 
   alias Cocktail.{Schedule, Rule}

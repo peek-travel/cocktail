@@ -1,6 +1,16 @@
 defmodule Cocktail.Span do
   @moduledoc """
-  TODO: write module doc
+  Struct used to represent a span of time.
+
+  It is composed of the following fields:
+  * from: the start time of the span
+  * until: the end time of the span
+
+  When expanding a `t:Cocktail.Schedule.t/0`, if it has a duration it will
+  produce a list of `t:t/0` instead of a list of `t:DateTime.t/0`.
+
+  > NOTE: all examples below use `NaiveDateTime`s for brevity, but
+    Cocktail currently only supports using `DateTime`s for schedules.
   """
 
   @type t :: %__MODULE__{
@@ -19,20 +29,66 @@ defmodule Cocktail.Span do
             until: nil
 
   @doc """
-  TODO: write doc
+  Creates a new `t:t/0` from the given start time and end time.
+
+  ## Examples
+
+      iex> new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      %Cocktail.Span{from: ~N[2017-01-01 06:00:00], until: ~N[2017-01-01 10:00:00]}
   """
   @spec new(DateTime.t, DateTime.t) :: t
   def new(from, until), do: %__MODULE__{from: from, until: until}
 
   @doc """
-  TODO: write doc
+  Uses `Timex.compare/2` to determine which span comes first.
+
+  Compares `from` first, then, if equal, compares `until`.
+
+  ## Examples
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> compare(span1, span2)
+      0
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> span2 = new(~N[2017-01-01 07:00:00], ~N[2017-01-01 12:00:00])
+      ...> compare(span1, span2)
+      -1
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 07:00:00])
+      ...> compare(span1, span2)
+      1
   """
   @spec compare(t, t) :: Timex.Comparable.compare_result
   def compare(%__MODULE__{from: t, until: until1}, %__MODULE__{from: t, until: until2}), do: Timex.compare(until1, until2)
   def compare(%__MODULE__{from: from1}, %__MODULE__{from: from2}), do: Timex.compare(from1, from2)
 
   @doc """
-  TODO: write doc
+  Returns an `t:overlap_mode/0` to describe how the first span overlaps the second.
+
+  ## Examples
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> overlap_mode(span1, span2)
+      :is_equal_to
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> span2 = new(~N[2017-01-01 07:00:00], ~N[2017-01-01 09:00:00])
+      ...> overlap_mode(span1, span2)
+      :contains
+
+      iex> span1 = new(~N[2017-01-01 07:00:00], ~N[2017-01-01 09:00:00])
+      ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
+      ...> overlap_mode(span1, span2)
+      :is_inside
+
+      iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 07:00:00])
+      ...> span2 = new(~N[2017-01-01 09:00:00], ~N[2017-01-01 10:00:00])
+      ...> overlap_mode(span1, span2)
+      :is_before
   """
   @spec overlap_mode(t, t) :: overlap_mode
   def overlap_mode(%__MODULE__{from: from, until: until}, %__MODULE__{from: from, until: until}), do: :is_equal_to

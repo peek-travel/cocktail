@@ -1,6 +1,8 @@
 defmodule Cocktail.Parser.ICalendar do
   @moduledoc """
-  TODO: write module doc
+  Create schedules from iCalendar format.
+
+  TODO: write long description
   """
 
   @time_pattern ~r/([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})/
