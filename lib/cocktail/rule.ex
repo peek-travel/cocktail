@@ -7,7 +7,7 @@ defmodule Cocktail.Rule do
   @type t :: %__MODULE__{
               count:       pos_integer | nil,
               until:       DateTime.t | nil,
-              validations: %{atom => [Validation.t]}}
+              validations: Validation.validations_map}
 
   @enforce_keys [:validations]
   defstruct count:       nil,

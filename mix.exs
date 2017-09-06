@@ -1,36 +1,55 @@
 defmodule Cocktail.Mixfile do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :cocktail,
-      version: "0.1.0",
-      elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
-      deps: deps(),
-      dialyzer: [ flags: [:unmatched_returns, :error_handling, :underspecs]],
-
-      # Docs
       name: "Cocktail",
       source_url: "https://github.com/peek-travel/cocktail",
-      docs: [main: "Cocktail",
-            #  logo: "path/to/logo.png",
-             extras: ["README.md"]],
-
-      # Coverage
+      version: @version,
+      elixir: "~> 1.5",
+      description: description(),
+      package: package(),
+      deps: deps(),
+      docs: docs(),
+      dialyzer: [ flags: [:unmatched_returns, :error_handling, :underspecs]],
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
+    [extra_applications: [:logger]]
+  end
+
+  defp description do
+    """
+    Cocktail is a date/time recurrence library for Elixir based on the iCalendar specification.
+    It can generate a stream of dates/times based on a set of repeat rules.
+    """
+  end
+
+  defp package do
     [
-      extra_applications: [:logger]
+      files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
+      maintainers: ["Chris Dosé"],
+      licenses: ["MIT"],
+      links: %{"GitHub": "https://github.com/peek-travel/cocktail"}
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  defp docs do
+    [
+      main: "readme",
+      # logo: "path/to/logo.png",
+      source_ref: @version,
+      source_url: "https://github.com/peek-travel/cocktail",
+      extras: ["README.md"]
+    ]
+  end
+
   defp deps do
     [
       {:timex, "~> 3.1"},
