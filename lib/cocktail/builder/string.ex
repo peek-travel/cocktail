@@ -18,7 +18,7 @@ defmodule Cocktail.Builder.String do
       ...> build(schedule)
       "Every 2 days on the 10th and 12th hours of the day"
   """
-  # @spec build(Schedule.t) :: String.t # TODO: for some reason this spec doesn't work
+  # @spec build(Schedule.t) :: String.t # FIXME: for some reason this spec doesn't work
   def build(%Schedule{recurrence_rules: recurrence_rules}) do
     recurrence_rules
     |> Enum.map(&build_rule/1)
