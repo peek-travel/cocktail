@@ -49,7 +49,7 @@ defmodule Cocktail.Builder.ICalendar do
       |> Timex.shift(seconds: duration)
       |> build_time
 
-      "DTEND;#{time_string}"
+    "DTEND;#{time_string}"
   end
 
   defp build_rule(%Rule{validations: validations_map}) do
