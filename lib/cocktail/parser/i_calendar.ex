@@ -39,7 +39,7 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_line("DTSTART;TZID=" <> line, nil) do
     line
     |> parse_time_with_zone()
-    |> Cocktail.schedule
+    |> Schedule.new
   end
 
   # parses an rrule line and adds it to the schedule
