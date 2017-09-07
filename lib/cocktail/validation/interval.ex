@@ -24,26 +24,15 @@ defmodule Cocktail.Validation.Interval do
 
   @spec apply_interval(DateTime.t, DateTime.t, pos_integer, interval_shift_type) :: Cocktail.Validation.Shift.result
   defp apply_interval(time, _, 1, _), do: {:no_change, time}
-  defp apply_interval(time, start_time, interval, :weeks) do
-    # FIXME: there are some bugs here regarding start of week (Sunday vs. Monday),
-    # and rollover (since a year has 52 OR 53 weeks in it, depending on the year)
-    {_, start_weeknum} = Timex.iso_week(start_time)
-    {_, current_weeknum} = Timex.iso_week(time)
-    diff = current_weeknum - start_weeknum
-    off_by = mod(diff, interval)
-
-    shift_by(off_by * 7, :days, time)
-  end
+  defp apply_interval(time, start_time, interval, :weeks), do: apply_interval(time, start_time, interval * 7, :days)
   defp apply_interval(time, start_time, interval, :days) do
     date = DateTime.to_date(time)
     start_date = DateTime.to_date(start_time)
 
-    diff =
-      start_date
-      |> Timex.diff(date, :days)
-      |> mod(interval)
-
-    shift_by(diff, :days, time)
+    start_date
+    |> Timex.diff(date, :days)
+    |> mod(interval)
+    |> shift_by(:days, time)
   end
   defp apply_interval(time, start_time, interval, type) do
     start_time
