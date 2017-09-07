@@ -7,15 +7,12 @@ defmodule Cocktail.Span do
   * until: the end time of the span
 
   When expanding a `t:Cocktail.Schedule.t/0`, if it has a duration it will
-  produce a list of `t:t/0` instead of a list of `t:DateTime.t/0`.
-
-  > NOTE: all examples below use `NaiveDateTime`s for brevity, but
-    Cocktail currently only supports using `DateTime`s for schedules.
+  produce a list of `t:t/0` instead of a list of `t:Cocktail.time/0`.
   """
 
   @type t :: %__MODULE__{
-              from:  DateTime.t,
-              until: DateTime.t}
+              from:  Cocktail.time,
+              until: Cocktail.time}
 
   @type overlap_mode :: :contains              |
                         :is_inside             |
@@ -36,7 +33,7 @@ defmodule Cocktail.Span do
       iex> new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       %Cocktail.Span{from: ~N[2017-01-01 06:00:00], until: ~N[2017-01-01 10:00:00]}
   """
-  @spec new(DateTime.t, DateTime.t) :: t
+  @spec new(Cocktail.time, Cocktail.time) :: t
   def new(from, until), do: %__MODULE__{from: from, until: until}
 
   @doc """

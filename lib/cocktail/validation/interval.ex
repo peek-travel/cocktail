@@ -15,19 +15,19 @@ defmodule Cocktail.Validation.Interval do
   @spec new(Cocktail.frequency, pos_integer) :: t
   def new(type, interval), do: %__MODULE__{type: type, interval: interval}
 
-  @spec next_time(t, DateTime.t, DateTime.t) :: Cocktail.Validation.Shift.result
+  @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{type: :weekly, interval: interval}, time, start_time), do: apply_interval(time, start_time, interval, :weeks)
   def next_time(%__MODULE__{type: :daily, interval: interval}, time, start_time), do: apply_interval(time, start_time, interval, :days)
   def next_time(%__MODULE__{type: :hourly, interval: interval}, time, start_time), do: apply_interval(time, start_time, interval, :hours)
   def next_time(%__MODULE__{type: :minutely, interval: interval}, time, start_time), do: apply_interval(time, start_time, interval, :minutes)
   def next_time(%__MODULE__{type: :secondly, interval: interval}, time, start_time), do: apply_interval(time, start_time, interval, :seconds)
 
-  @spec apply_interval(DateTime.t, DateTime.t, pos_integer, interval_shift_type) :: Cocktail.Validation.Shift.result
+  @spec apply_interval(Cocktail.time, Cocktail.time, pos_integer, interval_shift_type) :: Cocktail.Validation.Shift.result
   defp apply_interval(time, _, 1, _), do: {:no_change, time}
   defp apply_interval(time, start_time, interval, :weeks), do: apply_interval(time, start_time, interval * 7, :days)
   defp apply_interval(time, start_time, interval, :days) do
-    date = DateTime.to_date(time)
-    start_date = DateTime.to_date(start_time)
+    date = Timex.to_date(time)
+    start_date = Timex.to_date(start_time)
 
     start_date
     |> Timex.diff(date, :days)

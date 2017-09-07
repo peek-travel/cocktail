@@ -12,7 +12,7 @@ defmodule Cocktail.Validation.Day do
   @spec new(Cocktail.day) :: t
   def new(day), do: %__MODULE__{day: day_number(day)}
 
-  @spec next_time(t, DateTime.t, DateTime.t) :: Cocktail.Validation.Shift.result
+  @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{day: day}, time, _) do
     diff = day - Timex.weekday(time) |> mod(7)
     shift_by_bod(diff, :days, time)

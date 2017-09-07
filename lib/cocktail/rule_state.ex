@@ -8,9 +8,9 @@ defmodule Cocktail.RuleState do
 
   @type t :: %__MODULE__{
               count:             pos_integer | nil,
-              until:             DateTime.t | nil,
+              until:             Cocktail.time | nil,
               validation_groups: grouped_validations,
-              current_time:      DateTime.t | nil}
+              current_time:      Cocktail.time | nil}
 
   @enforce_keys [:validation_groups]
   defstruct count:             nil,
@@ -45,7 +45,7 @@ defmodule Cocktail.RuleState do
     new_state(rule_state, time)
   end
 
-  @spec do_next_time(grouped_validations, DateTime.t, DateTime.t) :: DateTime.t
+  @spec do_next_time(grouped_validations, Cocktail.time, Cocktail.time) :: Cocktail.time
   defp do_next_time(validation_groups, time, start_time) do
     case Enum.reduce(validation_groups, {:no_change, time}, &next_time_for_validations(&1, &2, start_time)) do
       {:no_change, new_time} ->
@@ -55,7 +55,7 @@ defmodule Cocktail.RuleState do
     end
   end
 
-  @spec next_time_for_validations([Validation.t], Shift.result, DateTime.t) :: Shift.result
+  @spec next_time_for_validations([Validation.t], Shift.result, Cocktail.time) :: Shift.result
   defp next_time_for_validations(validations, {change, time}, start_time) do
     validations
     |> Enum.map(&next_time_for_validation(&1, time, start_time))
@@ -63,12 +63,12 @@ defmodule Cocktail.RuleState do
     |> mark_change(change)
   end
 
-  @spec next_time_for_validation(Validation.t, DateTime.t, DateTime.t) :: Shift.result
+  @spec next_time_for_validation(Validation.t, Cocktail.time, Cocktail.time) :: Shift.result
   defp next_time_for_validation(%mod{} = validation, time, start_time) do
     mod.next_time(validation, time, start_time)
   end
 
-  @spec new_state(t, DateTime.t) :: t
+  @spec new_state(t, Cocktail.time) :: t
   defp new_state(%__MODULE__{until: nil} = rule_state, time), do: %{rule_state | current_time: time}
   defp new_state(%__MODULE__{until: until} = rule_state, time) do
     if Timex.compare(until, time) == -1 do

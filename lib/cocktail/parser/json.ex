@@ -12,7 +12,7 @@ defmodule Cocktail.Parser.JSON do
 
   ## Examples
 
-      iex> {:ok, schedule} = parse("{\"start_time\":{\"time\":\"2017-01-01 09:00:00\",\"zone\":\"America/Los_Angeles\"},\"recurrence_rules\":[{\"frequency\":\"daily\",\"interval\":2}]}")
+      iex> {:ok, schedule} = parse("{\"start_time\":\"2017-01-01 09:00:00\",\"recurrence_rules\":[{\"frequency\":\"daily\",\"interval\":2}]}")
       ...> schedule
       #Cocktail.Schedule<Every 2 days>
   """
@@ -31,7 +31,7 @@ defmodule Cocktail.Parser.JSON do
 
   ## Examples
 
-      iex> {:ok, schedule} = parse_map(%{"start_time"=>%{"time"=>"2017-01-01 09:00:00","zone"=>"America/Los_Angeles"},"recurrence_rules"=>[%{"frequency"=>"daily","interval"=>2}]})
+      iex> {:ok, schedule} = parse_map(%{"start_time"=>"2017-01-01 09:00:00","recurrence_rules"=>[%{"frequency"=>"daily","interval"=>2}]})
       ...> schedule
       #Cocktail.Schedule<Every 2 days>
   """
@@ -56,7 +56,16 @@ defmodule Cocktail.Parser.JSON do
         {:error, :invalid_time_format}
     end
   end
-  # TODO: support a pre-parsed DateTime object being passed
+  defp parse_time(time_string) when is_binary(time_string) do
+    with {:ok, time} <- Timex.parse(time_string, "{ISO:Extended}")
+    do
+      {:ok, time}
+    else
+      _ ->
+        {:error, :invalid_time_format}
+    end
+  end
+  # TODO: support a pre-parsed DateTime or NaiveDateTime object being passed
   defp parse_time(nil), do: {:error, :missing_start_time}
   defp parse_time(_), do: {:error, :invalid_time_format}
 

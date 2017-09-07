@@ -37,17 +37,19 @@ defmodule Cocktail do
   @type rule_option :: {:frequency, frequency}  |
                        {:interval, pos_integer} |
                        {:count, pos_integer}    |
-                       {:until, DateTime.t}     |
-                       {:days, [day]}    |
+                       {:until, time}           |
+                       {:days, [day]}           |
                        {:hours, [hour_number]}
 
   @type rule_options :: [rule_option]
+
+  @type time :: DateTime.t | NaiveDateTime.t
 
   @doc """
   Creates a new schedule using the given start time and options.
 
   see `Cocktail.Schedule.new/1` for details.
   """
-  @spec schedule(DateTime.t, schedule_options) :: Schedule.t
+  @spec schedule(time, schedule_options) :: Schedule.t
   def schedule(start_time, options \\ []), do: Schedule.new(start_time, options)
 end
