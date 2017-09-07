@@ -12,8 +12,7 @@ defmodule Cocktail.Builder.String do
   ## Examples
 
       iex> alias Cocktail.Schedule
-      ...> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
-      ...> schedule = Schedule.new(start_time)
+      ...> schedule = Schedule.new(~N[2017-01-01 06:00:00])
       ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, interval: 2, hours: [10, 12])
       ...> build(schedule)
       "Every 2 days on the 10th and 12th hours of the day"

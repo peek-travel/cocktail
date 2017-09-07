@@ -26,6 +26,12 @@ defmodule Cocktail.Parser.JSONTest do
     assert schedule.start_time == ~Y[2017-01-01 06:00:00 America/Los_Angeles]
   end
 
+  test "parse a schedule with a naive time" do
+    empty_schedule_map = %{"start_time" => "2017-01-01 06:00:00"}
+    assert {:ok, schedule} = parse_map(empty_schedule_map)
+    assert schedule.start_time == ~N[2017-01-01 06:00:00]
+  end
+
   test "parse a missing duration" do
     schedule_map = %{
       "start_time" => %{
