@@ -20,7 +20,7 @@ Then to get a list of the first 10 occurrences of this schedule, you would do:
 
 ## Installation
 
-Cocktail is [available in Hex](https://hex.pm/docs/publish) and can be installed
+Cocktail is [available in Hex](https://hex.pm/packages/cocktail) and can be installed
 by adding `cocktail` to your list of dependencies in `mix.exs`:
 
 ```elixir
