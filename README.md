@@ -1,27 +1,26 @@
 # Cocktail
 
-![cocktail](https://user-images.githubusercontent.com/221693/29235380-00d58c3c-7eb3-11e7-8366-007c6d010efc.jpg)
+Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). It's primary use case currently is to expand schedules with recurrence rules into streams of ocurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
 
-> NOTE: this is a temporary place for it while we work on it.  Once ready for prime-time, we will open-source this and move it to the peek-travel public repo.
+```elixir
+iex> schedule = Cocktail.Schedule.new(~N[2017-01-02 10:00:00])
+...> schedule = Cocktail.Schedule.add_recurrence_rule(schedule, :weekly, interval: 2, days: [:monday, :wednesday, :friday], hours: [10, 16])
+#Cocktail.Schedule<Every 2 weeks on Mondays, Wednesdays and Fridays on the 10th and 16th hours of the day>
+```
 
-Elixir date recurrence library based on iCalendar specification.
-
-# Goals
-
-* export schedules as iCalendar format
-* import schedules from iCalendar format
-* generate list of schedule occurrences within a date range very quickly
-* programmtic way of creating schedules
-
-## TODO
-
-* [ ] 100% test coverage
-* [ ] investigate and fix DST bugs
-* [ ] the rest of the iCalendar RRULE options
+Then to get a list of the first 10 occurrences of this schedule, you would do:
+```elixir
+...> stream = Cocktail.Schedule.occurrences(schedule)
+...> Enum.take(stream, 10)
+[~N[2017-01-02 10:00:00], ~N[2017-01-02 16:00:00], ~N[2017-01-04 10:00:00],
+ ~N[2017-01-04 16:00:00], ~N[2017-01-06 10:00:00], ~N[2017-01-06 16:00:00],
+ ~N[2017-01-16 10:00:00], ~N[2017-01-16 16:00:00], ~N[2017-01-18 10:00:00],
+ ~N[2017-01-18 16:00:00]]
+```
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+Cocktail is [available in Hex](https://hex.pm/docs/publish) and can be installed
 by adding `cocktail` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -32,6 +31,20 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/cocktail](https://hexdocs.pm/cocktail).
+## Documentation
+
+Detailed documentation with all available options can be found at [https://hexdocs.pm/cocktail](https://hexdocs.pm/cocktail).
+
+## Roadmap
+
+* [ ] 100% test coverage
+* [ ] investigate and fix DST bugs
+* [ ] add the rest of the iCalendar RRULE options
+
+## Credits
+
+Cocktail is heavily inspired by and based on a very similar Ruby library, [ice_cube](https://github.com/seejohnrun/ice_cube).
+
+## License
+
+[MIT](LICENSE.md)
