@@ -104,6 +104,40 @@ defmodule Cocktail.WeeklyTest do
     ]
   end
 
+  test "Every 2 weeks on Mondays and Fridays; starting on a sunday" do
+    times =
+      ~Y[2017-01-01 06:00:00 PST]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly, interval: 2, days: [:monday, :friday])
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(5)
+
+    assert times == [
+      ~Y[2017-01-09 06:00:00 PST],
+      ~Y[2017-01-13 06:00:00 PDT],
+      ~Y[2017-01-23 06:00:00 PDT],
+      ~Y[2017-01-27 06:00:00 PDT],
+      ~Y[2017-02-06 06:00:00 PDT]
+    ]
+  end
+
+  test "Every 2 weeks on Mondays and Fridays; starting on a monday" do
+    times =
+      ~Y[2017-01-02 06:00:00 PST]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:weekly, interval: 2, days: [:monday, :friday])
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(5)
+
+    assert times == [
+      ~Y[2017-01-02 06:00:00 PST],
+      ~Y[2017-01-06 06:00:00 PDT],
+      ~Y[2017-01-16 06:00:00 PDT],
+      ~Y[2017-01-20 06:00:00 PDT],
+      ~Y[2017-01-30 06:00:00 PDT]
+    ]
+  end
+
   test "Weekly on Mondays and Fridays on the 10th and 14th hours of the day" do
     times =
       ~Y[2017-01-01 06:00:00 PST]
