@@ -47,8 +47,8 @@ defmodule Cocktail.Validation.Interval do
     |> shift_by(type, time)
   end
 
-  defp weeks_diff({year, week1}, {year, week2}), do: week2 - week1
-  defp weeks_diff({year1, week1}, {year2, week2}) do
+  defp weeks_diff({year, week1}, {year, week2}) when week2 >= week1, do: week2 - week1
+  defp weeks_diff({year1, week1}, {year2, week2}) when year2 > year1 do
     (year1..(year2 - 1) |> Enum.map(&iso_weeks_per_year/1) |> Enum.sum) - week1 + week2
   end
 
