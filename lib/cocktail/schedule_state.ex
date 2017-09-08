@@ -15,7 +15,7 @@ defmodule Cocktail.ScheduleState do
             current_time:     nil,
             duration:         nil
 
-  # @spec new(Schedule.t, Cocktail.time | nil) :: t # FIXME: this spec doesn't work for some reason
+  # @spec new(Schedule.t, Cocktail.time | nil) :: t # FIXME: why doesn't this spec work?
   def new(%Schedule{} = schedule, nil), do: new(schedule, schedule.start_time)
   def new(%Schedule{} = schedule, current_time) do
     %__MODULE__{

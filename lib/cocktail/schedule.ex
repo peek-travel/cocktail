@@ -68,6 +68,25 @@ defmodule Cocktail.Schedule do
   end
 
   @doc false
+  @spec set_start_time(t, Cocktail.time) :: t
+  def set_start_time(schedule, start_time) do
+    %{schedule | start_time: start_time}
+  end
+
+  @doc false
+  @spec set_duration(t, pos_integer) :: t
+  def set_duration(schedule, duration) do
+    %{schedule | duration: duration}
+  end
+
+  @doc false
+  @spec set_end_time(t, Cocktail.time) :: t
+  def set_end_time(%__MODULE__{start_time: start_time} = schedule, end_time) do
+    duration = Timex.diff(end_time, start_time, :seconds)
+    %{schedule | duration: duration}
+  end
+
+  @doc false
   @spec add_recurrence_rule(t, Rule.t) :: t
   def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
     %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
@@ -148,7 +167,6 @@ defmodule Cocktail.Schedule do
 
   see `Cocktail.Parser.JSON.parse_map/1` for details.
   """
-  # TODO: write spec
   @spec from_map(map) :: {:ok, t} | {:error, term}
   def from_map(map), do: JSON.parse_map(map)
 

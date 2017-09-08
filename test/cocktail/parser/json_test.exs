@@ -214,7 +214,7 @@ defmodule Cocktail.Parser.JSONTest do
   end
 
   test "parse a null start time" do
-    assert {:error, :missing_start_time} = parse("{\"start_time\": null}")
+    assert {:error, :invalid_time_format} = parse("{\"start_time\": null}")
   end
 
   test "parse an invalid start time" do
