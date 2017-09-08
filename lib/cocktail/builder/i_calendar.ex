@@ -5,7 +5,7 @@ defmodule Cocktail.Builder.ICalendar do
   TODO: write long description
   """
 
-  alias Cocktail.{Rule, Schedule}
+  alias Cocktail.{Rule, Schedule, Validation}
   alias Cocktail.Validation.{Interval, Day, HourOfDay}
 
   @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
@@ -34,6 +34,7 @@ defmodule Cocktail.Builder.ICalendar do
       ...> build(schedule)
       "DTSTART:20170101T060000\nRRULE:FREQ=DAILY;COUNT=3"
   """
+  # @spec build(Schedule.t) :: String.t # FIXME: why doesn't this spec work?
   def build(schedule) do
     rules =
       schedule.recurrence_rules
@@ -47,6 +48,7 @@ defmodule Cocktail.Builder.ICalendar do
     |> Enum.join("\n")
   end
 
+  @spec build_time(Cocktail.time, String.t) :: String.t
   defp build_time(%DateTime{} = time, prefix) do
     timezone = time.time_zone
     time_string = Timex.format!(time, @time_format_string)
@@ -57,8 +59,10 @@ defmodule Cocktail.Builder.ICalendar do
     "#{prefix}:#{time_string}"
   end
 
+  @spec build_start_time(Cocktail.time) :: String.t
   defp build_start_time(time), do: build_time(time, "DTSTART")
 
+  # @spec build_end_time(Schedule.t) :: String.t | nil # FIXME: why does this spec not work?
   defp build_end_time(%Schedule{duration: nil}), do: nil
   defp build_end_time(%Schedule{start_time: start_time, duration: duration}) do
     start_time
@@ -66,6 +70,7 @@ defmodule Cocktail.Builder.ICalendar do
     |> build_time("DTEND")
   end
 
+  @spec build_utc_time(Cocktail.time) :: String.t
   defp build_utc_time(%NaiveDateTime{} = time), do: Timex.format!(time, @time_format_string)
   defp build_utc_time(%DateTime{} = time) do
     time
@@ -73,6 +78,7 @@ defmodule Cocktail.Builder.ICalendar do
     |> Timex.format!(@time_format_string <> "Z")
   end
 
+  @spec build_rule(Rule.t) :: String.t
   defp build_rule(%Rule{validations: validations_map, until: until, count: count}) do
     parts =
       for key <- [:interval, :day, :hour_of_day],
@@ -84,28 +90,34 @@ defmodule Cocktail.Builder.ICalendar do
 
     parts = parts ++ build_until(until) ++ build_count(count)
 
-    "RRULE:" <> (parts |> List.flatten |> Enum.join(";"))
+    "RRULE:" <> (parts |> Enum.join(";"))
   end
 
+  @spec build_validation_part(Validation.validation_key, [Validation.t]) :: String.t
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
   defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
   defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
 
+  @spec build_until(Cocktail.time | nil) :: [String.t]
   defp build_until(nil), do: []
   defp build_until(time), do: ["UNTIL=" <> build_utc_time(time)]
 
+  @spec build_count(pos_integer | nil) :: [String.t]
   defp build_count(nil), do: []
   defp build_count(count), do: ["COUNT=#{count}"]
 
   # intervals
 
+  @spec build_interval(Cocktail.frequency, pos_integer) :: String.t
   defp build_interval(type, 1), do: "FREQ=" <> build_frequency(type)
-  defp build_interval(type, n), do: ["FREQ=" <> build_frequency(type), "INTERVAL=#{n}"]
+  defp build_interval(type, n), do: "FREQ=" <> build_frequency(type) <> ";INTERVAL=#{n}"
 
+  @spec build_frequency(Cocktail.frequency) :: String.t
   defp build_frequency(type), do: type |> Atom.to_string |> String.upcase
 
   # "day" validation
 
+  @spec build_days([Cocktail.day_number]) :: String.t
   defp build_days(days) do
     days_list =
       days
@@ -116,6 +128,7 @@ defmodule Cocktail.Builder.ICalendar do
     "BYDAY=#{days_list}"
   end
 
+  @spec by_day(Cocktail.day_number) :: String.t
   defp by_day(0), do: "SU"
   defp by_day(1), do: "MO"
   defp by_day(2), do: "TU"
@@ -126,6 +139,7 @@ defmodule Cocktail.Builder.ICalendar do
 
   # "hour of day" validation
 
+  @spec build_hours([Cocktail.hour_number]) :: String.t
   defp build_hours(hours) do
     hours_list =
       hours

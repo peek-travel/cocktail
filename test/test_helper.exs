@@ -1,4 +1,4 @@
-ExUnit.configure(exclude: [pending: true])
+ExUnit.configure(exclude: [pending: true], formatters: [ExUnit.CLIFormatter, ExUnitNotifier])
 ExUnit.start()
 
 {:ok, files} = File.ls("./test/support")

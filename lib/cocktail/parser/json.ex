@@ -46,14 +46,14 @@ defmodule Cocktail.Parser.JSON do
   end
   def parse_map(map) when is_map(map), do: {:error, :missing_start_time}
 
+  @spec parse_time(map | String.t | nil) :: {:ok, Cocktail.time} | {:error, term}
   defp parse_time(%{"time" => time_string, "zone" => zone_id}) do
     with {:ok, time}         <- Timex.parse(time_string, "{ISO:Extended}"),
          %DateTime{} = time  <- Timex.to_datetime(time, zone_id)
     do
       {:ok, time}
     else
-      _ ->
-        {:error, :invalid_time_format}
+      _ -> {:error, :invalid_time_format}
     end
   end
   defp parse_time(time_string) when is_binary(time_string) do
@@ -61,36 +61,39 @@ defmodule Cocktail.Parser.JSON do
     do
       {:ok, time}
     else
-      _ ->
-        {:error, :invalid_time_format}
+      _ -> {:error, :invalid_time_format}
     end
   end
   # TODO: support a pre-parsed DateTime or NaiveDateTime object being passed
-  defp parse_time(nil), do: {:error, :missing_start_time}
   defp parse_time(_), do: {:error, :invalid_time_format}
 
+  @spec parse_rules([map] | nil, [Rule.t]) :: {:ok, [Rule.t]} | {:error, term}
   defp parse_rules(rule_configs, rules \\ [], index \\ 0)
   defp parse_rules(nil, rules, _), do: {:ok, rules}
   defp parse_rules([], rules, _), do: {:ok, rules}
   defp parse_rules([rule_config | rest], rules, index) when is_map(rule_config) do
-    with {:ok, options} <- validate_rule_options(rule_config, index)
+    with {:ok, options} <- parse_rule_options(rule_config)
     do
       rule = Rule.new(options)
       parse_rules(rest, [rule | rules], index + 1)
+    else
+      {:error, term} -> {:error, {term, index}}
     end
   end
   defp parse_rules(_, _, index), do: {:error, {:invalid_rule, index}}
 
+  @spec create_schedule(Cocktail.time, pos_integer | nil) :: {:ok, Schedule.t} | {:error, term}
   defp create_schedule(time, nil), do: {:ok, Schedule.new(time)}
   defp create_schedule(time, duration) when is_integer(duration) and duration > 0, do: {:ok, Schedule.new(time, duration: duration)}
   defp create_schedule(_, _), do: {:error, :invalid_duration}
 
-  defp validate_rule_options(options, index) when is_map(options) do
-    with {:ok, frequency} <- parse_frequency(options, index),
-         {:ok, interval}  <- parse_interval(options, index),
-         {:ok, until}     <- parse_until(options, index),
-         {:ok, days}      <- parse_days(options, index),
-         {:ok, hours}     <- parse_hours(options, index)
+  @spec parse_rule_options(map) :: {:ok, Cocktail.rule_options} | {:error, term}
+  defp parse_rule_options(options) when is_map(options) do
+    with {:ok, frequency} <- parse_frequency(options),
+         {:ok, interval}  <- parse_interval(options),
+         {:ok, until}     <- parse_until(options),
+         {:ok, days}      <- parse_days(options),
+         {:ok, hours}     <- parse_hours(options)
     do
       {:ok, [
         frequency: frequency,
@@ -102,63 +105,65 @@ defmodule Cocktail.Parser.JSON do
     end
   end
 
-  defp parse_frequency(%{"frequency" => "secondly"}, _), do: {:ok, :secondly}
-  defp parse_frequency(%{"frequency" => "minutely"}, _), do: {:ok, :minutely}
-  defp parse_frequency(%{"frequency" => "hourly"}, _), do: {:ok, :hourly}
-  defp parse_frequency(%{"frequency" => "daily"}, _), do: {:ok, :daily}
-  defp parse_frequency(%{"frequency" => "weekly"}, _), do: {:ok, :weekly}
-  defp parse_frequency(%{"frequency" => "monthly"}, _), do: {:ok, :monthly}
-  defp parse_frequency(%{"frequency" => "yearly"}, _), do: {:ok, :yearly}
-  defp parse_frequency(%{"frequency" => _}, index), do: {:error, {:invalid_frequency, index}}
-  defp parse_frequency(_, index), do: {:error, {:missing_frequency, index}}
+  @spec parse_frequency(map) :: {:ok, Cocktail.frequency} | {:error, term}
+  defp parse_frequency(%{"frequency" => "secondly"}), do: {:ok, :secondly}
+  defp parse_frequency(%{"frequency" => "minutely"}), do: {:ok, :minutely}
+  defp parse_frequency(%{"frequency" => "hourly"}), do: {:ok, :hourly}
+  defp parse_frequency(%{"frequency" => "daily"}), do: {:ok, :daily}
+  defp parse_frequency(%{"frequency" => "weekly"}), do: {:ok, :weekly}
+  defp parse_frequency(%{"frequency" => "monthly"}), do: {:ok, :monthly}
+  defp parse_frequency(%{"frequency" => "yearly"}), do: {:ok, :yearly}
+  defp parse_frequency(%{"frequency" => _}), do: {:error, :invalid_frequency}
+  defp parse_frequency(_), do: {:error, :missing_frequency}
 
-  defp parse_interval(%{"interval" => interval}, _) when is_integer(interval) and interval > 0, do: {:ok, interval}
-  defp parse_interval(_, index), do: {:error, {:invalid_interval, index}}
+  @spec parse_interval(map) :: {:ok, pos_integer} | {:error, :invalid_interval}
+  defp parse_interval(%{"interval" => interval}) when is_integer(interval) and interval > 0, do: {:ok, interval}
+  defp parse_interval(_), do: {:error, :invalid_interval}
 
-  defp parse_until(%{"until" => until}, index) do
-    case parse_time(until) do
-      {:ok, time} ->
-        {:ok, time}
-      {:error, term} ->
-        {:error, {term, index}}
-    end
-  end
-  defp parse_until(_, _), do: {:ok, nil}
+  @spec parse_until(map) :: {:ok, Cocktail.time | nil} | {:error, term}
+  defp parse_until(%{"until" => until}), do: parse_time(until)
+  defp parse_until(_), do: {:ok, nil}
 
   # TODO: parse count
 
-  defp parse_days(%{"days" => []}, _), do: {:ok, nil}
-  defp parse_days(%{"days" => days}, index) when is_list(days), do: do_parse_days(days, [], index)
-  defp parse_days(%{"days" => nil}, _), do: {:ok, nil}
-  defp parse_days(%{"days" => _}, index), do: {:error, {:invalid_days, index}}
-  defp parse_days(_, _), do: {:ok, nil}
+  @spec parse_days(map) :: {:ok, [Cocktail.day_atom] | nil} | {:error, term}
+  defp parse_days(%{"days" => []}), do: {:ok, nil}
+  defp parse_days(%{"days" => days}) when is_list(days), do: do_parse_days(days, [])
+  defp parse_days(%{"days" => nil}), do: {:ok, nil}
+  defp parse_days(%{"days" => _}), do: {:error, :invalid_days}
+  defp parse_days(_), do: {:ok, nil}
 
-  defp do_parse_days([], days, _), do: {:ok, days |> Enum.reverse}
-  defp do_parse_days([day | rest], days, index) do
-    with {:ok, day} <- parse_day(day, index), do: do_parse_days(rest, [day | days], index)
+  @spec do_parse_days([String.t], [Cocktail.day_atom]) :: {:ok, [Cocktail.day_atom]} | {:error, :invalid_day}
+  defp do_parse_days([], days), do: {:ok, days |> Enum.reverse}
+  defp do_parse_days([day | rest], days) do
+    with {:ok, day} <- parse_day(day), do: do_parse_days(rest, [day | days])
   end
 
-  defp parse_day("monday", _), do: {:ok, :monday}
-  defp parse_day("tuesday", _), do: {:ok, :tuesday}
-  defp parse_day("wednesday", _), do: {:ok, :wednesday}
-  defp parse_day("thursday", _), do: {:ok, :thursday}
-  defp parse_day("friday", _), do: {:ok, :friday}
-  defp parse_day("saturday", _), do: {:ok, :saturday}
-  defp parse_day("sunday", _), do: {:ok, :sunday}
+  @spec parse_day(String.t) :: {:ok, Cocktail.day_atom} | {:error, :invalid_day}
+  defp parse_day("monday"), do: {:ok, :monday}
+  defp parse_day("tuesday"), do: {:ok, :tuesday}
+  defp parse_day("wednesday"), do: {:ok, :wednesday}
+  defp parse_day("thursday"), do: {:ok, :thursday}
+  defp parse_day("friday"), do: {:ok, :friday}
+  defp parse_day("saturday"), do: {:ok, :saturday}
+  defp parse_day("sunday"), do: {:ok, :sunday}
   # TODO: support parsing days as integers
-  defp parse_day(_, index), do: {:error, {:invalid_day, index}}
+  defp parse_day(_), do: {:error, :invalid_day}
 
-  defp parse_hours(%{"hours" => []}, _), do: {:ok, nil}
-  defp parse_hours(%{"hours" => hours}, index) when is_list(hours), do: do_parse_hours(hours, [], index)
-  defp parse_hours(%{"hours" => nil}, _), do: {:ok, nil}
-  defp parse_hours(%{"hours" => _}, index), do: {:error, {:invalid_hours, index}}
-  defp parse_hours(_, _), do: {:ok, nil}
+  @spec parse_hours(map) :: {:ok, [Cocktail.hour_number] | nil} | {:error, term}
+  defp parse_hours(%{"hours" => []}), do: {:ok, nil}
+  defp parse_hours(%{"hours" => hours}) when is_list(hours), do: do_parse_hours(hours, [])
+  defp parse_hours(%{"hours" => nil}), do: {:ok, nil}
+  defp parse_hours(%{"hours" => _}), do: {:error, :invalid_hours}
+  defp parse_hours(_), do: {:ok, nil}
 
-  defp do_parse_hours([], hours, _), do: {:ok, hours |> Enum.reverse}
-  defp do_parse_hours([day | rest], hours, index) do
-    with {:ok, day} <- parse_hour(day, index), do: do_parse_hours(rest, [day | hours], index)
+  @spec do_parse_hours([integer], [Cocktail.hour_number]) :: {:ok, [Cocktail.hour_number]} | {:error, :invalid_hour}
+  defp do_parse_hours([], hours), do: {:ok, hours |> Enum.reverse}
+  defp do_parse_hours([hour | rest], hours) do
+    with {:ok, hour} <- parse_hour(hour), do: do_parse_hours(rest, [hour | hours])
   end
 
-  defp parse_hour(hour, _) when is_integer(hour) and hour >= 0 and hour < 24, do: {:ok, hour}
-  defp parse_hour(_, index), do: {:error, {:invalid_hour, index}}
+  @spec parse_hour(integer) :: {:ok, Cocktail.hour_number} | {:error, :invalid_hour}
+  defp parse_hour(hour) when is_integer(hour) and hour >= 0 and hour < 24, do: {:ok, hour}
+  defp parse_hour(_), do: {:error, :invalid_hour}
 end
