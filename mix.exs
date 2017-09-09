@@ -69,7 +69,9 @@ defmodule Cocktail.Mixfile do
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
 
-      {:ex_unit_notifier, "~> 0.1", only: :test}
+      {:ex_unit_notifier, "~> 0.1", only: :test},
+
+      {:inch_ex, ">= 0.0.0", only: :docs}
     ]
   end
 end
