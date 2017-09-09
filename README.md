@@ -1,5 +1,5 @@
 # Cocktail
-[![Build Status](https://travis-ci.org/peek-travel/cocktail.svg?branch=master)](https://travis-ci.org/peek-travel/cocktail)
+[![Build Status](https://travis-ci.org/peek-travel/cocktail.svg?branch=master)](https://travis-ci.org/peek-travel/cocktail) [![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/master/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail)
 
 Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). It's primary use case currently is to expand schedules with recurrence rules into streams of ocurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
 
