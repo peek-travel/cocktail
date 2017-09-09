@@ -3,4 +3,5 @@ elixir:
   - 1.4
   - 1.5
 script:
-  - mix do test, dialyzer
+  - mix test
+  - mix dialyzer
