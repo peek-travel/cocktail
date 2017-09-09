@@ -16,7 +16,13 @@ defmodule Cocktail.Mixfile do
       docs: docs(),
       dialyzer: [ flags: [:unmatched_returns, :error_handling, :underspecs]],
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.json": :test
+      ]
     ]
   end
 
