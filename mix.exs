@@ -26,7 +26,7 @@ defmodule Cocktail.Mixfile do
 
   defp description do
     """
-    Cocktail is a date/time recurrence library for Elixir based on the iCalendar specification.
+    Cocktail is a date/time recurrence library for Elixir based on iCalendar events.
     It can generate a stream of dates/times based on a set of repeat rules.
     """
   end
