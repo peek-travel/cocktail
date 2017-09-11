@@ -130,6 +130,15 @@ defmodule Cocktail.Schedule do
 
   An optional `start_time` can be supplied to not start at the schedule's start time.
 
+  The occurrences that are produced by the stream can be one of several types:
+    * If the schedule's start time is a `t:DateTime.t/0`, then it will produce
+      `t:DateTime.t/0`s
+    * If the schedule's start time is a `t:NaiveDateTime.t/0`, the it will
+      produce `t:NaiveDateTime.t/0`s
+    * If a duration is supplied when creating the schedule, the stream will
+      produce `t:Cocktail.Span.t/0`s with `:from` and `:until` fields matching
+      the type of the schedule's start time
+
   ## Examples
 
       iex> start_time = ~N[2017-01-01 06:00:00]
@@ -138,6 +147,20 @@ defmodule Cocktail.Schedule do
       [~N[2017-01-01 10:00:00],
        ~N[2017-01-01 14:00:00],
        ~N[2017-01-03 10:00:00]]
+
+      iex> start_time = Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles")
+      ...> schedule = start_time |> new() |> add_recurrence_rule(:daily)
+      ...> schedule |> occurrences() |> Enum.take(3)
+      [Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles"),
+       Timex.to_datetime(~N[2017-01-03 10:00:00], "America/Los_Angeles"),
+       Timex.to_datetime(~N[2017-01-04 10:00:00], "America/Los_Angeles")]
+
+      iex> start_time = ~N[2017-02-01 12:00:00]
+      ...> schedule = start_time |> new(duration: 3_600) |> add_recurrence_rule(:weekly)
+      ...> schedule |> occurrences() |> Enum.take(3)
+      [%Cocktail.Span{from: ~N[2017-02-01 12:00:00], until: ~N[2017-02-01 13:00:00]},
+       %Cocktail.Span{from: ~N[2017-02-08 12:00:00], until: ~N[2017-02-08 13:00:00]},
+       %Cocktail.Span{from: ~N[2017-02-15 12:00:00], until: ~N[2017-02-15 13:00:00]}]
   """
   @spec occurrences(t, Cocktail.time | nil) :: Enumerable.t
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
