@@ -19,6 +19,18 @@ Then to get a list of the first 10 occurrences of this schedule, you would do:
  ~N[2017-01-18 16:00:00]]
 ```
 
+## Durations
+When you create a new `Schedule`, the events will be duration-less - that's why in the example above, calling `Schedule.occurrences` results in a stream of simple DateTimes. If the end-time is important for your application, simply pass in a duration to your `Schedule`. Now, when you call `Schedule.occurrences` instead of getting back simple DateTimes, each will be a `Cocktail.Span`, which has a `from` and `until`:
+```elixir
+...> ~N[2017-01-02 10:00:00]
+     |> Cocktail.Schedule.new(duration: 3_600)
+     |> Cocktail.Schedule.add_recurrence_rule(:daily)
+     |> Cocktail.Schedule.occurrences
+     |> Enum.take(2)
+[%Cocktail.Span{from: ~N[2017-01-02 10:00:00], until: ~N[2017-01-02 11:00:00]},
+ %Cocktail.Span{from: ~N[2017-01-03 10:00:00], until: ~N[2017-01-03 11:00:00]}]
+```
+
 ## Installation
 
 Cocktail is [available in Hex](https://hex.pm/packages/cocktail) and can be installed
