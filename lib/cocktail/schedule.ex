@@ -141,6 +141,7 @@ defmodule Cocktail.Schedule do
 
   ## Examples
 
+      # using a NaiveDateTime
       iex> start_time = ~N[2017-01-01 06:00:00]
       ...> schedule = start_time |> new() |> add_recurrence_rule(:daily, interval: 2, hours: [10, 14])
       ...> schedule |> occurrences() |> Enum.take(3)
@@ -148,13 +149,23 @@ defmodule Cocktail.Schedule do
        ~N[2017-01-01 14:00:00],
        ~N[2017-01-03 10:00:00]]
 
+      # using an alternate start time
+      iex> start_time = ~N[2017-01-01 06:00:00]
+      ...> schedule = start_time |> new() |> add_recurrence_rule(:daily, interval: 2, hours: [10, 14])
+      ...> schedule |> occurrences(~N[2017-10-01 06:00:00]) |> Enum.take(3)
+      [~N[2017-10-02 10:00:00],
+       ~N[2017-10-02 14:00:00],
+       ~N[2017-10-04 10:00:00]]
+
+      # using a DateTime with a time zone
       iex> start_time = Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles")
       ...> schedule = start_time |> new() |> add_recurrence_rule(:daily)
-      ...> schedule |> occurrences() |> Enum.take(3)
-      [Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles"),
-       Timex.to_datetime(~N[2017-01-03 10:00:00], "America/Los_Angeles"),
-       Timex.to_datetime(~N[2017-01-04 10:00:00], "America/Los_Angeles")]
+      ...> schedule |> occurrences() |> Enum.take(3) |> Enum.map(&inspect/1)
+      ["#DateTime<2017-01-02 10:00:00-08:00 PST America/Los_Angeles>",
+       "#DateTime<2017-01-03 10:00:00-08:00 PST America/Los_Angeles>",
+       "#DateTime<2017-01-04 10:00:00-08:00 PST America/Los_Angeles>"]
 
+      # using a NaiveDateTime with a duration
       iex> start_time = ~N[2017-02-01 12:00:00]
       ...> schedule = start_time |> new(duration: 3_600) |> add_recurrence_rule(:weekly)
       ...> schedule |> occurrences() |> Enum.take(3)
