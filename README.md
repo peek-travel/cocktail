@@ -27,7 +27,7 @@ by adding `cocktail` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cocktail, "~> 0.2.0"}
+    {:cocktail, "~> 0.2"}
   ]
 end
 ```
