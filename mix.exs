@@ -49,7 +49,7 @@ defmodule Cocktail.Mixfile do
   defp docs do
     [
       main: "readme",
-      # logo: "path/to/logo.png",
+      logo: "logo.png",
       source_ref: @version,
       source_url: "https://github.com/peek-travel/cocktail",
       extras: ["README.md"]
