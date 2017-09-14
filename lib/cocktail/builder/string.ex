@@ -4,7 +4,7 @@ defmodule Cocktail.Builder.String do
   """
 
   alias Cocktail.{Rule, Schedule}
-  alias Cocktail.Validation.{Interval, Day, HourOfDay}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
 
   @doc """
   Builds a human readable string represenation of a `t:Cocktail.Schedule.t/0`.
@@ -27,7 +27,7 @@ defmodule Cocktail.Builder.String do
   @doc false
   @spec build_rule(Rule.t) :: String.t
   def build_rule(%Rule{validations: validations_map}) do
-    for key <- [:interval, :day, :hour_of_day],
+    for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute],
         validations = validations_map[key],
         is_list(validations)
     do
@@ -40,6 +40,8 @@ defmodule Cocktail.Builder.String do
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
   defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
   defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
+  defp build_validation_part(:minute_of_hour, minutes), do: minutes |> Enum.map(fn(%MinuteOfHour{minute: minute}) -> minute end) |> build_minutes()
+  defp build_validation_part(:second_of_minute, seconds), do: seconds |> Enum.map(fn(%SecondOfMinute{second: second}) -> second end) |> build_seconds()
 
   # intervals
 
@@ -94,6 +96,32 @@ defmodule Cocktail.Builder.String do
   @spec build_hours_sentence([Cocktail.hour_number]) :: String.t
   defp build_hours_sentence([hour]), do: "on the #{ordinalize(hour)} hour of the day"
   defp build_hours_sentence(hours), do: "on the " <> (hours |> Enum.map(&ordinalize/1) |> sentence()) <> " hours of the day"
+
+  # "minute of hour" validation
+
+  @spec build_minutes([Cocktail.minute_number]) :: String.t
+  defp build_minutes(minutes) do
+    minutes
+    |> Enum.sort
+    |> build_minutes_sentence()
+  end
+
+  @spec build_minutes_sentence([Cocktail.minute_number]) :: String.t
+  defp build_minutes_sentence([minute]), do: "on the #{ordinalize(minute)} minute of the hour"
+  defp build_minutes_sentence(minutes), do: "on the " <> (minutes |> Enum.map(&ordinalize/1) |> sentence()) <> " minutes of the hour"
+
+  # "second of minute" validation
+
+  @spec build_seconds([Cocktail.second_number]) :: String.t
+  defp build_seconds(seconds) do
+    seconds
+    |> Enum.sort
+    |> build_seconds_sentence()
+  end
+
+  @spec build_seconds_sentence([Cocktail.second_number]) :: String.t
+  defp build_seconds_sentence([second]), do: "on the #{ordinalize(second)} second of the minute"
+  defp build_seconds_sentence(seconds), do: "on the " <> (seconds |> Enum.map(&ordinalize/1) |> sentence()) <> " seconds of the minute"
 
   # utils
 

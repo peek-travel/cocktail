@@ -158,6 +158,16 @@ defmodule Cocktail.Parser.ICalendar do
       {:ok, {:hours, hours |> Enum.reverse}}
     end
   end
+  defp parse_rrule_option("BYMINUTE=" <> minutes_string) do
+    with {:ok, minutes} <- parse_minutes_string(minutes_string) do
+      {:ok, {:minutes, minutes |> Enum.reverse}}
+    end
+  end
+  defp parse_rrule_option("BYSECOND=" <> seconds_string) do
+    with {:ok, seconds} <- parse_seconds_string(seconds_string) do
+      {:ok, {:seconds, seconds |> Enum.reverse}}
+    end
+  end
   defp parse_rrule_option(_), do: {:error, :unknown_rrulparam}
 
   @spec parse_frequency(String.t) :: {:ok, Cocktail.frequency} | {:error, :invalid_frequency}
@@ -220,6 +230,8 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_day("SA"), do: {:ok, :saturday}
   defp parse_day(_), do: {:error, :invalid_day}
 
+  # hour of day
+
   @spec parse_hours_string(String.t) :: {:ok, [Cocktail.hour_number]} | {:error, :invalid_hours}
   defp parse_hours_string(""), do: {:error, :invalid_hours}
   defp parse_hours_string(hours_string) do
@@ -250,4 +262,70 @@ defmodule Cocktail.Parser.ICalendar do
   @spec validate_hour(integer) :: {:ok, Cocktail.hour_number} | :error
   defp validate_hour(n) when n >= 0 and n < 24, do: {:ok, n}
   defp validate_hour(_), do: :error
+
+  # minute of hour
+
+  @spec parse_minutes_string(String.t) :: {:ok, [Cocktail.minute_number]} | {:error, :invalid_minutes}
+  defp parse_minutes_string(""), do: {:error, :invalid_minutes}
+  defp parse_minutes_string(minutes_string) do
+    minutes_string
+    |> String.split(",")
+    |> parse_minutes([])
+  end
+
+  @spec parse_minutes([String.t], [Cocktail.minute_number]) :: {:ok, [Cocktail.minute_number]}
+  defp parse_minutes([], minutes), do: {:ok, minutes}
+  defp parse_minutes([minute_string | rest], minutes) do
+    with {:ok, minute} <- parse_minute(minute_string) do
+      parse_minutes(rest, [minute | minutes])
+    end
+  end
+
+  @spec parse_minute(String.t) :: {:ok, Cocktail.minute_number} | {:error, :invalid_minute}
+  defp parse_minute(minute_string) do
+    with {integer, _} <- Integer.parse(minute_string),
+         {:ok, minute}  <- validate_minute(integer)
+    do
+      {:ok, minute}
+    else
+      :error -> {:error, :invalid_minute}
+    end
+  end
+
+  @spec validate_minute(integer) :: {:ok, Cocktail.minute_number} | :error
+  defp validate_minute(n) when n >= 0 and n < 60, do: {:ok, n}
+  defp validate_minute(_), do: :error
+
+  # second of minute
+
+  @spec parse_seconds_string(String.t) :: {:ok, [Cocktail.second_number]} | {:error, :invalid_seconds}
+  defp parse_seconds_string(""), do: {:error, :invalid_seconds}
+  defp parse_seconds_string(seconds_string) do
+    seconds_string
+    |> String.split(",")
+    |> parse_seconds([])
+  end
+
+  @spec parse_seconds([String.t], [Cocktail.second_number]) :: {:ok, [Cocktail.second_number]}
+  defp parse_seconds([], seconds), do: {:ok, seconds}
+  defp parse_seconds([second_string | rest], seconds) do
+    with {:ok, second} <- parse_second(second_string) do
+      parse_seconds(rest, [second | seconds])
+    end
+  end
+
+  @spec parse_second(String.t) :: {:ok, Cocktail.second_number} | {:error, :invalid_second}
+  defp parse_second(second_string) do
+    with {integer, _} <- Integer.parse(second_string),
+         {:ok, second}  <- validate_second(integer)
+    do
+      {:ok, second}
+    else
+      :error -> {:error, :invalid_second}
+    end
+  end
+
+  @spec validate_second(integer) :: {:ok, Cocktail.second_number} | :error
+  defp validate_second(n) when n >= 0 and n < 60, do: {:ok, n}
+  defp validate_second(_), do: :error
 end

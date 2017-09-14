@@ -18,7 +18,8 @@ defmodule Cocktail.RuleState do
             validation_groups: [],
             current_time:      nil
 
-  @validation_order [:base_sec, :base_min, :base_hour, :hour_of_day, :base_wday, :day, :interval]
+  @validation_order [:base_sec, :second_of_minute, :base_min, :minute_of_hour,
+                     :base_hour, :hour_of_day, :base_wday, :day, :interval]
 
   @spec new(Rule.t) :: t
   def new(%Rule{} = rule) do

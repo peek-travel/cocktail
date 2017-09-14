@@ -93,18 +93,23 @@ defmodule Cocktail.Parser.JSON do
          {:ok, interval}  <- parse_interval(options),
          {:ok, until}     <- parse_until(options),
          {:ok, days}      <- parse_days(options),
-         {:ok, hours}     <- parse_hours(options)
+         {:ok, hours}     <- parse_hours(options),
+         {:ok, minutes}   <- parse_minutes(options),
+         {:ok, seconds}   <- parse_seconds(options)
     do
       {:ok, [
         frequency: frequency,
         interval: interval,
         until: until,
         days: days,
-        hours: hours
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
       ] |> Enum.reject(fn({_, x}) -> is_nil(x) end)}
     end
   end
 
+  # frequency
   @spec parse_frequency(map) :: {:ok, Cocktail.frequency} | {:error, term}
   defp parse_frequency(%{"frequency" => "secondly"}), do: {:ok, :secondly}
   defp parse_frequency(%{"frequency" => "minutely"}), do: {:ok, :minutely}
@@ -116,16 +121,19 @@ defmodule Cocktail.Parser.JSON do
   defp parse_frequency(%{"frequency" => _}), do: {:error, :invalid_frequency}
   defp parse_frequency(_), do: {:error, :missing_frequency}
 
+  # interval
   @spec parse_interval(map) :: {:ok, pos_integer} | {:error, :invalid_interval}
   defp parse_interval(%{"interval" => interval}) when is_integer(interval) and interval > 0, do: {:ok, interval}
   defp parse_interval(_), do: {:error, :invalid_interval}
 
+  #until
   @spec parse_until(map) :: {:ok, Cocktail.time | nil} | {:error, term}
   defp parse_until(%{"until" => until}), do: parse_time(until)
   defp parse_until(_), do: {:ok, nil}
 
   # TODO: parse count
 
+  # days
   @spec parse_days(map) :: {:ok, [Cocktail.day_atom] | nil} | {:error, term}
   defp parse_days(%{"days" => []}), do: {:ok, nil}
   defp parse_days(%{"days" => days}) when is_list(days), do: do_parse_days(days, [])
@@ -150,6 +158,7 @@ defmodule Cocktail.Parser.JSON do
   # TODO: support parsing days as integers
   defp parse_day(_), do: {:error, :invalid_day}
 
+  # hours
   @spec parse_hours(map) :: {:ok, [Cocktail.hour_number] | nil} | {:error, term}
   defp parse_hours(%{"hours" => []}), do: {:ok, nil}
   defp parse_hours(%{"hours" => hours}) when is_list(hours), do: do_parse_hours(hours, [])
@@ -166,4 +175,40 @@ defmodule Cocktail.Parser.JSON do
   @spec parse_hour(integer) :: {:ok, Cocktail.hour_number} | {:error, :invalid_hour}
   defp parse_hour(hour) when is_integer(hour) and hour >= 0 and hour < 24, do: {:ok, hour}
   defp parse_hour(_), do: {:error, :invalid_hour}
+
+  # minutes
+  @spec parse_minutes(map) :: {:ok, [Cocktail.minute_number] | nil} | {:error, term}
+  defp parse_minutes(%{"minutes" => []}), do: {:ok, nil}
+  defp parse_minutes(%{"minutes" => minutes}) when is_list(minutes), do: do_parse_minutes(minutes, [])
+  defp parse_minutes(%{"minutes" => nil}), do: {:ok, nil}
+  defp parse_minutes(%{"minutes" => _}), do: {:error, :invalid_minutes}
+  defp parse_minutes(_), do: {:ok, nil}
+
+  @spec do_parse_minutes([integer], [Cocktail.minute_number]) :: {:ok, [Cocktail.minute_number]} | {:error, :invalid_minute}
+  defp do_parse_minutes([], minutes), do: {:ok, minutes |> Enum.reverse}
+  defp do_parse_minutes([minute | rest], minutes) do
+    with {:ok, minute} <- parse_minute(minute), do: do_parse_minutes(rest, [minute | minutes])
+  end
+
+  @spec parse_minute(integer) :: {:ok, Cocktail.minute_number} | {:error, :invalid_minute}
+  defp parse_minute(minute) when is_integer(minute) and minute >= 0 and minute < 60, do: {:ok, minute}
+  defp parse_minute(_), do: {:error, :invalid_minute}
+
+  # seconds
+  @spec parse_seconds(map) :: {:ok, [Cocktail.second_number] | nil} | {:error, term}
+  defp parse_seconds(%{"seconds" => []}), do: {:ok, nil}
+  defp parse_seconds(%{"seconds" => seconds}) when is_list(seconds), do: do_parse_seconds(seconds, [])
+  defp parse_seconds(%{"seconds" => nil}), do: {:ok, nil}
+  defp parse_seconds(%{"seconds" => _}), do: {:error, :invalid_seconds}
+  defp parse_seconds(_), do: {:ok, nil}
+
+  @spec do_parse_seconds([integer], [Cocktail.second_number]) :: {:ok, [Cocktail.second_number]} | {:error, :invalid_second}
+  defp do_parse_seconds([], seconds), do: {:ok, seconds |> Enum.reverse}
+  defp do_parse_seconds([second | rest], seconds) do
+    with {:ok, second} <- parse_second(second), do: do_parse_seconds(rest, [second | seconds])
+  end
+
+  @spec parse_second(integer) :: {:ok, Cocktail.second_number} | {:error, :invalid_second}
+  defp parse_second(second) when is_integer(second) and second >= 0 and second < 60, do: {:ok, second}
+  defp parse_second(_), do: {:error, :invalid_second}
 end
