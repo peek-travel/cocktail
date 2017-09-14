@@ -30,16 +30,22 @@ defmodule Cocktail do
 
   @type hour_number :: 0..23
 
+  @type minute_number :: 0..59
+
+  @type second_number :: 0..59
+
   @type schedule_option :: {:duration, pos_integer}
 
   @type schedule_options :: [schedule_option]
 
-  @type rule_option :: {:frequency, frequency}  |
-                       {:interval, pos_integer} |
-                       {:count, pos_integer}    |
-                       {:until, time}           |
-                       {:days, [day]}           |
-                       {:hours, [hour_number]}
+  @type rule_option :: {:frequency, frequency}     |
+                       {:interval, pos_integer}    |
+                       {:count, pos_integer}       |
+                       {:until, time}              |
+                       {:days, [day]}              |
+                       {:hours, [hour_number]}     |
+                       {:minutes, [minute_number]} |
+                       {:seconds, [second_number]}
 
   @type rule_options :: [rule_option]
 

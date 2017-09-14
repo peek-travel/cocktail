@@ -6,7 +6,7 @@ defmodule Cocktail.Builder.ICalendar do
   """
 
   alias Cocktail.{Rule, Schedule, Validation}
-  alias Cocktail.Validation.{Interval, Day, HourOfDay}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
 
   @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
 
@@ -81,7 +81,7 @@ defmodule Cocktail.Builder.ICalendar do
   @spec build_rule(Rule.t) :: String.t
   defp build_rule(%Rule{validations: validations_map, until: until, count: count}) do
     parts =
-      for key <- [:interval, :day, :hour_of_day],
+      for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute],
           validations = validations_map[key],
           is_list(validations)
       do
@@ -97,6 +97,8 @@ defmodule Cocktail.Builder.ICalendar do
   defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
   defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
   defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
+  defp build_validation_part(:minute_of_hour, minutes), do: minutes |> Enum.map(fn(%MinuteOfHour{minute: minute}) -> minute end) |> build_minutes()
+  defp build_validation_part(:second_of_minute, seconds), do: seconds |> Enum.map(fn(%SecondOfMinute{second: second}) -> second end) |> build_seconds()
 
   @spec build_until(Cocktail.time | nil) :: [String.t]
   defp build_until(nil), do: []
@@ -147,5 +149,29 @@ defmodule Cocktail.Builder.ICalendar do
       |> Enum.join(",")
 
     "BYHOUR=#{hours_list}"
+  end
+
+  # "minute of hour" validation
+
+  @spec build_minutes([Cocktail.minute_number]) :: String.t
+  defp build_minutes(minutes) do
+    minutes_list =
+      minutes
+      |> Enum.sort
+      |> Enum.join(",")
+
+    "BYMINUTE=#{minutes_list}"
+  end
+
+  # "second of minute" validation
+
+  @spec build_seconds([Cocktail.second_number]) :: String.t
+  defp build_seconds(seconds) do
+    seconds_list =
+      seconds
+      |> Enum.sort
+      |> Enum.join(",")
+
+    "BYSECOND=#{seconds_list}"
   end
 end

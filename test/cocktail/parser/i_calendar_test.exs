@@ -2,7 +2,7 @@ defmodule Cocktail.Parser.ICalendarTest do
   use ExUnit.Case
 
   alias Cocktail.Rule
-  alias Cocktail.Validation.{Interval, Day, HourOfDay}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
 
   import Cocktail.Parser.ICalendar
   import Cocktail.TestSupport.DateTimeSigil
@@ -77,6 +77,30 @@ defmodule Cocktail.Parser.ICalendarTest do
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
     assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
     assert rule.validations[:day] == [ %Day{day: 1}, %Day{day: 3}, %Day{day: 5} ]
+  end
+
+  test "parse a schedule with a daily rrule with minutes" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=DAILY;BYMINUTE=0,15,30,45
+      """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:minute_of_hour] == [ %MinuteOfHour{minute: 0}, %MinuteOfHour{minute: 15}, %MinuteOfHour{minute: 30}, %MinuteOfHour{minute: 45} ]
+  end
+
+  test "parse a schedule with a daily rrule with seconds" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=DAILY;BYSECOND=0,30
+      """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:second_of_minute] == [ %SecondOfMinute{second: 0}, %SecondOfMinute{second: 30} ]
   end
 
   ##########
@@ -200,5 +224,45 @@ defmodule Cocktail.Parser.ICalendarTest do
       """
 
     assert {:error, {:invalid_hours, 1}} = parse(schedule_string)
+  end
+
+  test "parse a schedule with an rrule with an invalid minute" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,INVALID
+      """
+
+    assert {:error, {:invalid_minute, 1}} = parse(schedule_string)
+  end
+
+  test "parse a schedule with an rrule with empty minutes" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=
+      """
+
+    assert {:error, {:invalid_minutes, 1}} = parse(schedule_string)
+  end
+
+  test "parse a schedule with an rrule with an invalid second" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=0,INVALID
+      """
+
+    assert {:error, {:invalid_second, 1}} = parse(schedule_string)
+  end
+
+  test "parse a schedule with an rrule with empty seconds" do
+    schedule_string =
+      """
+      DTSTART:20170810T160000
+      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=
+      """
+
+    assert {:error, {:invalid_seconds, 1}} = parse(schedule_string)
   end
 end

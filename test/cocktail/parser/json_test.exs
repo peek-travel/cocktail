@@ -2,7 +2,7 @@ defmodule Cocktail.Parser.JSONTest do
   use ExUnit.Case
 
   alias Cocktail.Rule
-  alias Cocktail.Validation.{Interval, Day, HourOfDay}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
 
   import Cocktail.Parser.JSON
   import Cocktail.TestSupport.DateTimeSigil
@@ -197,6 +197,95 @@ defmodule Cocktail.Parser.JSONTest do
     assert rule.until == ~Y[2017-01-31 06:00:00 America/Los_Angeles]
   end
 
+  test "parse a schedule with a single weekly repeat rule, with empty minutes of the hour specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "minutes" => []
+        }
+      ]
+    }
+    assert {:ok, schedule} = parse_map(schedule_map)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:base_min] != nil
+    assert rule.validations[:minute_of_hour] == nil
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with hours of the day and minutes of the hour specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "hours" => [10, 12, 14],
+          "minutes" => [0, 15, 30, 45]
+        }
+      ]
+    }
+    assert {:ok, schedule} = parse_map(schedule_map)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:base_hour] == nil
+    assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
+    assert rule.validations[:base_minute] == nil
+    assert rule.validations[:minute_of_hour] == [ %MinuteOfHour{minute: 0}, %MinuteOfHour{minute: 15}, %MinuteOfHour{minute: 30}, %MinuteOfHour{minute: 45} ]
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with empty seconds of the minute specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "seconds" => []
+        }
+      ]
+    }
+    assert {:ok, schedule} = parse_map(schedule_map)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:base_sec] != nil
+    assert rule.validations[:second_of_minute] == nil
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with hours of the day, minutes of the hour, and seconds of the minute specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "hours" => [10, 12, 14],
+          "minutes" => [0, 15, 30, 45],
+          "seconds" => [0, 30]
+        }
+      ]
+    }
+    assert {:ok, schedule} = parse_map(schedule_map)
+    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert rule.validations[:base_hour] == nil
+    assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
+    assert rule.validations[:base_minute] == nil
+    assert rule.validations[:minute_of_hour] == [ %MinuteOfHour{minute: 0}, %MinuteOfHour{minute: 15}, %MinuteOfHour{minute: 30}, %MinuteOfHour{minute: 45} ]
+    assert rule.validations[:base_second] == nil
+    assert rule.validations[:second_of_minute] == [ %SecondOfMinute{second: 0}, %SecondOfMinute{second: 30} ]
+  end
+
   ##########
   # Errors #
   ##########
@@ -375,5 +464,73 @@ defmodule Cocktail.Parser.JSONTest do
       ]
     }
     assert {:error, {:invalid_rule, 1}} = parse_map(schedule_map)
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with invalid minutes of the hour specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "minutes" => "invalid"
+        }
+      ]
+    }
+    assert {:error, {:invalid_minutes, 0}} = parse_map(schedule_map)
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with minutes of the hour specified, but containing an invalid minute" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "minutes" => ["invalid"]
+        }
+      ]
+    }
+    assert {:error, {:invalid_minute, 0}} = parse_map(schedule_map)
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with invalid seconds of the minute specified" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "seconds" => "invalid"
+        }
+      ]
+    }
+    assert {:error, {:invalid_seconds, 0}} = parse_map(schedule_map)
+  end
+
+  test "parse a schedule with a single weekly repeat rule, with seconds of the minute specified, but containing an invalid second" do
+    schedule_map = %{
+      "start_time" => %{
+        "time" => "2017-01-01 06:00:00",
+        "zone" => "America/Los_Angeles"
+      },
+      "recurrence_rules" => [
+        %{
+          "frequency" => "weekly",
+          "interval" => 1,
+          "seconds" => ["invalid"]
+        }
+      ]
+    }
+    assert {:error, {:invalid_second, 0}} = parse_map(schedule_map)
   end
 end
