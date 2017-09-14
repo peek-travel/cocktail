@@ -111,7 +111,7 @@ defmodule Cocktail.DailyTest do
     times =
       ~Y[2017-01-01 06:00:00 PST]
       |> Cocktail.schedule
-      |> Schedule.add_recurrence_rule(:daily, hours: [10, 14],  days: [:monday, :friday])
+      |> Schedule.add_recurrence_rule(:daily, days: [:monday, :friday], hours: [10, 14])
       |> Cocktail.Schedule.occurrences
       |> Enum.take(5)
 
@@ -121,6 +121,27 @@ defmodule Cocktail.DailyTest do
       ~Y[2017-01-06 10:00:00 PST],
       ~Y[2017-01-06 14:00:00 PST],
       ~Y[2017-01-09 10:00:00 PST]
+    ]
+  end
+
+  test "Daily on Mondays and Fridays on the 10th and 14th hours of the day on the 15th and 45th minutes of the hour on the 0th and 30th seconds of the minute" do
+    times =
+      ~Y[2017-01-01 06:00:00 PST]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:daily, days: [:monday, :friday], hours: [10, 14], minutes: [15, 45], seconds: [0, 30])
+      |> Cocktail.Schedule.occurrences
+      |> Enum.take(9)
+
+    assert times == [
+      ~Y[2017-01-02 10:15:00 PST],
+      ~Y[2017-01-02 10:15:30 PST],
+      ~Y[2017-01-02 10:45:00 PST],
+      ~Y[2017-01-02 10:45:30 PST],
+      ~Y[2017-01-02 14:15:00 PST],
+      ~Y[2017-01-02 14:15:30 PST],
+      ~Y[2017-01-02 14:45:00 PST],
+      ~Y[2017-01-02 14:45:30 PST],
+      ~Y[2017-01-06 10:15:00 PST]
     ]
   end
 end
