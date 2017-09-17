@@ -39,11 +39,15 @@ defmodule Cocktail.Schedule do
   """
   @opaque t :: %__MODULE__{
                 recurrence_rules: [Rule.t],
+                recurrence_times: [Cocktail.time],
+                exception_times:  [Cocktail.time],
                 start_time:       Cocktail.time,
                 duration:         pos_integer | nil}
 
-  @enforce_keys [:recurrence_rules, :start_time]
+  @enforce_keys [:start_time]
   defstruct recurrence_rules: [],
+            recurrence_times: [],
+            exception_times:  [],
             start_time:       nil,
             duration:         nil
 
@@ -64,7 +68,10 @@ defmodule Cocktail.Schedule do
   """
   @spec new(Cocktail.time, Cocktail.schedule_options) :: t
   def new(start_time, options \\ []) do
-    %__MODULE__{recurrence_rules: [], start_time: start_time, duration: options[:duration]}
+    %__MODULE__{
+      start_time: start_time,
+      duration: options[:duration]
+    }
   end
 
   @doc false
@@ -125,6 +132,18 @@ defmodule Cocktail.Schedule do
       |> Rule.new
 
     add_recurrence_rule(schedule, rule)
+  end
+
+  # TODO: doc
+  @spec add_recurrence_time(t, Cocktail.time) :: t
+  def add_recurrence_time(%__MODULE__{} = schedule, time) do
+    %{schedule | recurrence_times: [time | schedule.recurrence_times]}
+  end
+
+  # TODO: doc
+  @spec add_exception_time(t, Cocktail.time) :: t
+  def add_exception_time(%__MODULE__{} = schedule, time) do
+    %{schedule | exception_times: [time | schedule.exception_times]}
   end
 
   @doc """
