@@ -34,26 +34,33 @@ defmodule Cocktail.ScheduleState do
 
   @spec next_time(t) :: {Cocktail.occurrence, t}
   def next_time(%__MODULE__{} = state) do
-    {time, rules_to_keep} = next_time_from_recurrence_rules(state)
-    {time, times_to_keep} = next_time_from_recurrence_times(state.recurrence_times, time)
+    {time, remaining_rules} = next_time_from_recurrence_rules(state)
+    {time, remaining_times} = next_time_from_recurrence_times(state.recurrence_times, time)
+    {is_exception, remaining_excpetions} = apply_exception_time(state.exception_times, time)
+    state = new_state(time, remaining_rules, remaining_times, remaining_excpetions, state)
 
-    new_state(time, rules_to_keep, times_to_keep, state)
+    if is_exception do
+      next_time(state)
+    else
+      {span_or_time(time, state.duration), state}
+    end
   end
 
-  # TODO: spec
+  @spec next_time_from_recurrence_rules(t) :: {Cocktail.time | nil, [RuleState.t]}
   defp next_time_from_recurrence_rules(state) do
-    rules_to_keep =
+    remaining_rules =
       state.recurrence_rules
       |> Enum.map(&RuleState.next_time(&1, state))
       |> Enum.filter(fn(r) -> !is_nil(r.current_time) end)
 
-    time = min_time_for_rules(rules_to_keep)
+    time = min_time_for_rules(remaining_rules)
 
-    {time, rules_to_keep}
+    {time, remaining_rules}
   end
 
-  # TODO: spec
+  @spec next_time_from_recurrence_times([Cocktail.time], Cocktail.time | nil) :: {Cocktail.time | nil, [Cocktail.time]}
   defp next_time_from_recurrence_times([], current_time), do: {current_time, []}
+  defp next_time_from_recurrence_times([next_time | rest], nil), do: {next_time, rest}
   defp next_time_from_recurrence_times([next_time | rest] = times, current_time) do
     if Timex.compare(next_time, current_time) <= 0 do
       {next_time, rest}
@@ -62,20 +69,30 @@ defmodule Cocktail.ScheduleState do
     end
   end
 
-  @spec new_state(Cocktail.time, [RuleState.t], [Cocktail.time], t) :: {Cocktail.occurrence, t}
-  defp new_state(nil, _, _, _), do: nil
-  defp new_state(time, rules, times, state) do
-    output = span_or_time(time, state.duration)
-    new_state = %{state |
-      recurrence_rules: rules,
-      recurrence_times: times,
-      current_time: Timex.shift(time, seconds: 1)
-    }
-
-    {output, new_state}
+  @spec apply_exception_time([Cocktail.time], Cocktail.time | nil) :: {boolean, [Cocktail.time]}
+  defp apply_exception_time([], _), do: {false, []}
+  defp apply_exception_time(exceptions, nil), do: {false, exceptions}
+  defp apply_exception_time([next_exception | rest] = exceptions, current_time) do
+    if Timex.compare(next_exception, current_time) == 0 do
+      {true, rest}
+    else
+      {false, exceptions}
+    end
   end
 
-  @spec span_or_time(Cocktail.time, pos_integer | nil) :: Cocktail.occurrence
+  @spec new_state(Cocktail.time | nil, [RuleState.t], [Cocktail.time], [Cocktail.time], t) :: t
+  defp new_state(nil, _, _, _, _), do: nil
+  defp new_state(time, rules, times, exceptions, state) do
+    %{state |
+      recurrence_rules: rules,
+      recurrence_times: times,
+      exception_times: exceptions,
+      current_time: Timex.shift(time, seconds: 1)
+    }
+  end
+
+  @spec span_or_time(Cocktail.time | nil, pos_integer | nil) :: Cocktail.occurrence | nil
+  defp span_or_time(nil, _), do: nil
   defp span_or_time(time, nil), do: time
   defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
 
