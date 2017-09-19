@@ -40,10 +40,18 @@ defmodule Cocktail.Builder.ICalendar do
       schedule.recurrence_rules
       |> Enum.map(&build_rule/1)
 
+    times =
+      schedule.recurrence_times
+      |> Enum.map(&build_time(&1, "RDATE"))
+
+    exceptions =
+      schedule.exception_times
+      |> Enum.map(&build_time(&1, "EXDATE"))
+
     start_time = build_start_time(schedule.start_time)
     end_time = build_end_time(schedule)
 
-    [start_time] ++ rules ++ [end_time]
+    [start_time] ++ rules ++ times ++ exceptions ++ [end_time]
     |> Enum.reject(&is_nil/1)
     |> Enum.join("\n")
   end
