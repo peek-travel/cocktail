@@ -30,6 +30,7 @@ defmodule Cocktail.ScheduleState do
       current_time: current_time,
       duration: schedule.duration
     }
+    |> at_least_one_time()
   end
 
   @spec next_time(t) :: {Cocktail.occurrence, t}
@@ -37,12 +38,16 @@ defmodule Cocktail.ScheduleState do
     {time, remaining_rules} = next_time_from_recurrence_rules(state)
     {time, remaining_times} = next_time_from_recurrence_times(state.recurrence_times, time)
     {is_exception, remaining_excpetions} = apply_exception_time(state.exception_times, time)
-    state = new_state(time, remaining_rules, remaining_times, remaining_excpetions, state)
 
-    if is_exception do
-      next_time(state)
-    else
-      {span_or_time(time, state.duration), state}
+    case next_occurence_and_state(time, remaining_rules, remaining_times, remaining_excpetions, state) do
+      {occurrence, state} ->
+        if is_exception do
+          next_time(state)
+        else
+          {occurrence, state}
+        end
+      nil ->
+        nil
     end
   end
 
@@ -80,19 +85,21 @@ defmodule Cocktail.ScheduleState do
     end
   end
 
-  @spec new_state(Cocktail.time | nil, [RuleState.t], [Cocktail.time], [Cocktail.time], t) :: t
-  defp new_state(nil, _, _, _, _), do: nil
-  defp new_state(time, rules, times, exceptions, state) do
-    %{state |
+  @spec next_occurence_and_state(Cocktail.time, [RuleState.t], [Cocktail.time], [Cocktail.time], t) :: {Cocktail.occurrence, t} | nil
+  defp next_occurence_and_state(nil, _, _, _, _), do: nil
+  defp next_occurence_and_state(time, rules, times, exceptions, state) do
+    occurence = span_or_time(time, state.duration)
+    new_state = %{state |
       recurrence_rules: rules,
       recurrence_times: times,
       exception_times: exceptions,
       current_time: Timex.shift(time, seconds: 1)
     }
+
+    {occurence, new_state}
   end
 
-  @spec span_or_time(Cocktail.time | nil, pos_integer | nil) :: Cocktail.occurrence | nil
-  defp span_or_time(nil, _), do: nil
+  @spec span_or_time(Cocktail.time | nil, pos_integer | nil) :: Cocktail.occurrence
   defp span_or_time(time, nil), do: time
   defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
 
@@ -103,4 +110,10 @@ defmodule Cocktail.ScheduleState do
     |> Enum.min_by(fn(r) -> Timex.to_unix(r.current_time) end, fn -> nil end)
     |> Map.get(:current_time)
   end
+
+  @spec at_least_one_time(t) :: t
+  def at_least_one_time(%__MODULE__{recurrence_rules: [], recurrence_times: []} = state) do
+    %{state | recurrence_times: [state.start_time]}
+  end
+  def at_least_one_time(%__MODULE__{} = state), do: state
 end
