@@ -27,7 +27,7 @@ by adding `cocktail` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cocktail, "~> 0.3"}
+    {:cocktail, "~> 0.4"}
   ]
 end
 ```
@@ -38,10 +38,10 @@ Detailed documentation with all available options can be found at [https://hexdo
 
 ## Roadmap
 
-* [ ] 100% test coverage
-* [ ] investigate and fix DST bugs
-* [ ] add the rest of the iCalendar RRULE options
-* [ ] more / better docs and more examples (getting started guide)
+*   [ ] 100% test coverage
+*   [ ] investigate and fix DST bugs
+*   [ ] add the rest of the iCalendar RRULE options
+*   [ ] more / better docs and more examples (getting started guide)
 
 ## Credits
 
