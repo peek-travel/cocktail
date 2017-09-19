@@ -52,6 +52,8 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_line("DTSTART" <> time_string, schedule, index), do: parse_dtstart(time_string, schedule, index)
   defp parse_line("DTEND" <> time_string, schedule, index), do: parse_dtend(time_string, schedule, index)
   defp parse_line("RRULE:" <> options_string, schedule, index), do: parse_rrule(options_string, schedule, index)
+  defp parse_line("RDATE" <> time_string, schedule, index), do: parse_rdate(time_string, schedule, index)
+  defp parse_line("EXDATE" <> time_string, schedule, index), do: parse_exdate(time_string, schedule, index)
   defp parse_line(_, _, index), do: {:error, {:unknown_eventprop, index}}
 
   @spec parse_dtstart(String.t, Schedule.t, non_neg_integer) :: {:ok, Schedule.t} | {:error, term}
@@ -328,4 +330,24 @@ defmodule Cocktail.Parser.ICalendar do
   @spec validate_second(integer) :: {:ok, Cocktail.second_number} | :error
   defp validate_second(n) when n >= 0 and n < 60, do: {:ok, n}
   defp validate_second(_), do: :error
+
+  # rdates and exdates
+
+  @spec parse_rdate(String.t, Schedule.t, non_neg_integer) :: {:ok, Schedule.t} | {:error, term}
+  defp parse_rdate(time_string, schedule, index) do
+    with {:ok, datetime} <- parse_datetime(time_string) do
+      {:ok, Schedule.add_recurrence_time(schedule, datetime)}
+    else
+      {:error, term} -> {:error, {term, index}}
+    end
+  end
+
+  @spec parse_exdate(String.t, Schedule.t, non_neg_integer) :: {:ok, Schedule.t} | {:error, term}
+  defp parse_exdate(time_string, schedule, index) do
+    with {:ok, datetime} <- parse_datetime(time_string) do
+      {:ok, Schedule.add_exception_time(schedule, datetime)}
+    else
+      {:error, term} -> {:error, {term, index}}
+    end
+  end
 end

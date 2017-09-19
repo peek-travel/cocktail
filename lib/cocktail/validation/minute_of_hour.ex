@@ -15,7 +15,6 @@ defmodule Cocktail.Validation.MinuteOfHour do
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{minute: minute}, time, _) do
     diff = minute - time.minute |> mod(60)
-    shift_by(diff, :minutes, time)
-    # TODO: this might also need a "beginning of minute" on it like `day.ex`
+    shift_by(diff, :minutes, time, :beginning_of_minute)
   end
 end

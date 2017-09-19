@@ -6,7 +6,7 @@ defmodule Cocktail do
   creating a new schedule. Details available in the `Cocktail.Schedule` module.
   """
 
-  alias Cocktail.Schedule
+  alias Cocktail.{Schedule, Span}
 
   @type frequency :: :yearly   |
                      :monthly  |
@@ -50,6 +50,8 @@ defmodule Cocktail do
   @type rule_options :: [rule_option]
 
   @type time :: DateTime.t | NaiveDateTime.t
+
+  @type occurrence :: time | Span.t
 
   @doc """
   Creates a new schedule using the given start time and options.

@@ -39,11 +39,15 @@ defmodule Cocktail.Schedule do
   """
   @opaque t :: %__MODULE__{
                 recurrence_rules: [Rule.t],
+                recurrence_times: [Cocktail.time],
+                exception_times:  [Cocktail.time],
                 start_time:       Cocktail.time,
                 duration:         pos_integer | nil}
 
-  @enforce_keys [:recurrence_rules, :start_time]
+  @enforce_keys [:start_time]
   defstruct recurrence_rules: [],
+            recurrence_times: [],
+            exception_times:  [],
             start_time:       nil,
             duration:         nil
 
@@ -64,7 +68,10 @@ defmodule Cocktail.Schedule do
   """
   @spec new(Cocktail.time, Cocktail.schedule_options) :: t
   def new(start_time, options \\ []) do
-    %__MODULE__{recurrence_rules: [], start_time: start_time, duration: options[:duration]}
+    %__MODULE__{
+      start_time: start_time,
+      duration: options[:duration]
+    }
   end
 
   @doc false
@@ -128,6 +135,29 @@ defmodule Cocktail.Schedule do
   end
 
   @doc """
+  Adds a one-off recurrence time to the schedule.
+
+  This recurrence time can be any time after (or including) the schedule's start
+  time. When generating occurrences from this schedule, the given time will be
+  included in the set of occurrences alongside any recurrence rules.
+  """
+  @spec add_recurrence_time(t, Cocktail.time) :: t
+  def add_recurrence_time(%__MODULE__{} = schedule, time) do
+    %{schedule | recurrence_times: [time | schedule.recurrence_times]}
+  end
+
+  @doc """
+  Adds an exception time to the schedule.
+
+  This exception time will cancel out any occurrence generated from the
+  schedule's recurrence rules or recurrence times.
+  """
+  @spec add_exception_time(t, Cocktail.time) :: t
+  def add_exception_time(%__MODULE__{} = schedule, time) do
+    %{schedule | exception_times: [time | schedule.exception_times]}
+  end
+
+  @doc """
   Creates a stream of occurrences from the given schedule.
 
   An optional `start_time` can be supplied to not start at the schedule's start time.
@@ -162,10 +192,10 @@ defmodule Cocktail.Schedule do
       # using a DateTime with a time zone
       iex> start_time = Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles")
       ...> schedule = start_time |> new() |> add_recurrence_rule(:daily)
-      ...> schedule |> occurrences() |> Enum.take(3)
-      [Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles"),
-       Timex.to_datetime(~N[2017-01-03 10:00:00], "America/Los_Angeles"),
-       Timex.to_datetime(~N[2017-01-04 10:00:00], "America/Los_Angeles")]
+      ...> schedule |> occurrences() |> Enum.take(3) |> Enum.map(&Timex.format!(&1, "{ISO:Extended}"))
+      ["2017-01-02T10:00:00-08:00",
+       "2017-01-03T10:00:00-08:00",
+       "2017-01-04T10:00:00-08:00"]
 
       # using a NaiveDateTime with a duration
       iex> start_time = ~N[2017-02-01 12:00:00]
