@@ -183,7 +183,7 @@ defmodule Cocktail.Schedule do
   end
 
   @doc """
-  And an end time to all recurrence rules in the schedule.
+  Add an end time to all recurrence rules in the schedule.
 
   This has the same effect as if you'd passed the `:until` option when adding
   all recurrence rules to the schedule.
