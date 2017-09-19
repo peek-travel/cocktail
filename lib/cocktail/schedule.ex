@@ -183,6 +183,17 @@ defmodule Cocktail.Schedule do
   end
 
   @doc """
+  Add an end time to all recurrence rules in the schedule.
+
+  This has the same effect as if you'd passed the `:until` option when adding
+  all recurrence rules to the schedule.
+  """
+  @spec end_all_recurrence_rules(t, Cocktail.time) :: t
+  def end_all_recurrence_rules(%__MODULE__{recurrence_rules: rules} = schedule, end_time) do
+    %{schedule | recurrence_rules: Enum.map(rules, &Rule.set_until(&1, end_time))}
+  end
+
+  @doc """
   Parses a string in iCalendar format into a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Parser.ICalendar.parse/1` for details.
