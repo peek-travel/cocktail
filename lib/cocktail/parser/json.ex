@@ -2,6 +2,10 @@ defmodule Cocktail.Parser.JSON do
   @moduledoc """
   Create schedules from JSON strings or maps.
 
+  WIP: this module doesn't currently support the `:count` option, nor does it
+  support recurrence times or exception times.  Also, there's no associated
+  builder yet to actually generate output that this parser would parse.
+
   TODO: write long description
   """
 

@@ -1,6 +1,13 @@
 defmodule Cocktail.Builder.String do
   @moduledoc """
   Build human readable strings from schedules.
+
+  This module exposes functions for building human readable string
+  represenations of schedules. It currently only represents the recurrence rules
+  of a schedule, and doesn't indicate the start time, duration, nor any
+  recurrence times or exception times. This is mainly useful for quick glances
+  at schedules in IEx sessions (because it's used for the `inspect`
+  implementation) and for simple doctests.
   """
 
   alias Cocktail.{Rule, Schedule}

@@ -134,13 +134,24 @@ defmodule Cocktail.Schedule do
     add_recurrence_rule(schedule, rule)
   end
 
-  # TODO: doc
+  @doc """
+  Adds a one-off recurrence time to the schedule.
+
+  This recurrence time can be any time after (or including) the schedule's start
+  time. When generating occurrences from this schedule, the given time will be
+  included in the set of occurrences alongside any recurrence rules.
+  """
   @spec add_recurrence_time(t, Cocktail.time) :: t
   def add_recurrence_time(%__MODULE__{} = schedule, time) do
     %{schedule | recurrence_times: [time | schedule.recurrence_times]}
   end
 
-  # TODO: doc
+  @doc """
+  Adds an exception time to the schedule.
+
+  This exception time will cancel out any occurrence generated from the
+  schedule's recurrence rules or recurrence times.
+  """
   @spec add_exception_time(t, Cocktail.time) :: t
   def add_exception_time(%__MODULE__{} = schedule, time) do
     %{schedule | exception_times: [time | schedule.exception_times]}

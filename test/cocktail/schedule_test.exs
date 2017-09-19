@@ -27,4 +27,35 @@ defmodule Cocktail.ScheduleTest do
 
     assert length(times) == 23
   end
+
+  test "an empty schedule produces a single occurrence at its start time" do
+    schedule = ~N[2017-09-09 09:00:00] |> Schedule.new
+    times = schedule |> Schedule.occurrences |> Enum.to_list
+
+    assert times == [~N[2017-09-09 09:00:00]]
+  end
+
+  test "recurrence times" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Schedule.new
+      |> Schedule.add_recurrence_time(~N[2017-09-09 09:00:00])
+      |> Schedule.add_recurrence_time(~N[2017-09-10 09:00:00])
+
+    times = schedule |> Schedule.occurrences |> Enum.to_list
+
+    assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-10 09:00:00]]
+  end
+
+  test "exception times" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Schedule.new
+      |> Schedule.add_recurrence_rule(:daily)
+      |> Schedule.add_exception_time(~N[2017-09-10 09:00:00])
+
+    times = schedule |> Schedule.occurrences |> Enum.take(2)
+
+    assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-11 09:00:00]]
+  end
 end
