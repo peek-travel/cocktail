@@ -7,7 +7,7 @@ defmodule Cocktail.Validation.HourOfDay do
   @type t :: %__MODULE__{hours: [Cocktail.hour_number]}
 
   @enforce_keys [:hours]
-  defstruct hours: nil
+  defstruct hours: []
 
   @spec new([Cocktail.hour_number]) :: t
   def new(hours), do: %__MODULE__{hours: Enum.sort(hours)}
