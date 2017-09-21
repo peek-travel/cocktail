@@ -69,4 +69,27 @@ defmodule Cocktail.ScheduleTest do
 
     assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-10 09:00:00]]
   end
+
+  test "add day of week recurrence rule with day numbers instead of atoms" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Schedule.new
+      |> Schedule.add_recurrence_rule(:weekly, days: [1, 3, 5])
+
+    times = schedule |> Schedule.occurrences |> Enum.take(3)
+
+    assert times == [~N[2017-09-11 09:00:00], ~N[2017-09-13 09:00:00], ~N[2017-09-15 09:00:00]]
+  end
+
+  test "a schedule with a recurrence rule and a recurrence time" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Schedule.new
+      |> Schedule.add_recurrence_rule(:daily, interval: 2)
+      |> Schedule.add_recurrence_time(~N[2017-09-12 09:00:00])
+
+    times = schedule |> Schedule.occurrences |> Enum.take(3)
+
+    assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-11 09:00:00], ~N[2017-09-12 09:00:00]]
+  end
 end
