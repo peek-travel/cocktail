@@ -91,7 +91,7 @@ defmodule Cocktail.Parser.JSONTest do
       }
       assert {:ok, schedule} = parse_map(schedule_map)
       assert [ %Rule{} = rule ] = schedule.recurrence_rules
-      assert rule.validations[:interval] == [ %Interval{type: unquote(frequency), interval: 1} ]
+      assert rule.validations[:interval] == %Interval{type: unquote(frequency), interval: 1}
     end
   end
 
@@ -132,7 +132,7 @@ defmodule Cocktail.Parser.JSONTest do
     assert {:ok, schedule} = parse_map(schedule_map)
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
     assert rule.validations[:base_wday] == nil
-    assert rule.validations[:day] == [ %Day{day: 1}, %Day{day: 3}, %Day{day: 5} ]
+    assert rule.validations[:day] == %Day{days: [1, 3, 5]}
   end
 
   test "parse a schedule with a single weekly repeat rule, with empty hours of day specified" do
@@ -172,7 +172,7 @@ defmodule Cocktail.Parser.JSONTest do
     assert {:ok, schedule} = parse_map(schedule_map)
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
     assert rule.validations[:base_hour] == nil
-    assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
+    assert rule.validations[:hour_of_day] == %HourOfDay{hours: [10, 12, 14]}
   end
 
   test "parse a schedule with a rule that has an until option" do
@@ -235,9 +235,9 @@ defmodule Cocktail.Parser.JSONTest do
     assert {:ok, schedule} = parse_map(schedule_map)
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
     assert rule.validations[:base_hour] == nil
-    assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
+    assert rule.validations[:hour_of_day] == %HourOfDay{hours: [10, 12, 14]}
     assert rule.validations[:base_minute] == nil
-    assert rule.validations[:minute_of_hour] == [ %MinuteOfHour{minute: 0}, %MinuteOfHour{minute: 15}, %MinuteOfHour{minute: 30}, %MinuteOfHour{minute: 45} ]
+    assert rule.validations[:minute_of_hour] == %MinuteOfHour{minutes: [0, 15, 30, 45]}
   end
 
   test "parse a schedule with a single weekly repeat rule, with empty seconds of the minute specified" do
@@ -279,11 +279,11 @@ defmodule Cocktail.Parser.JSONTest do
     assert {:ok, schedule} = parse_map(schedule_map)
     assert [ %Rule{} = rule ] = schedule.recurrence_rules
     assert rule.validations[:base_hour] == nil
-    assert rule.validations[:hour_of_day] == [ %HourOfDay{hour: 10}, %HourOfDay{hour: 12}, %HourOfDay{hour: 14} ]
+    assert rule.validations[:hour_of_day] == %HourOfDay{hours: [10, 12, 14]}
     assert rule.validations[:base_minute] == nil
-    assert rule.validations[:minute_of_hour] == [ %MinuteOfHour{minute: 0}, %MinuteOfHour{minute: 15}, %MinuteOfHour{minute: 30}, %MinuteOfHour{minute: 45} ]
+    assert rule.validations[:minute_of_hour] == %MinuteOfHour{minutes: [0, 15, 30, 45]}
     assert rule.validations[:base_second] == nil
-    assert rule.validations[:second_of_minute] == [ %SecondOfMinute{second: 0}, %SecondOfMinute{second: 30} ]
+    assert rule.validations[:second_of_minute] == %SecondOfMinute{seconds: [0, 30]}
   end
 
   ##########

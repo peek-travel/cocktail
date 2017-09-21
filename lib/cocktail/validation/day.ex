@@ -4,17 +4,20 @@ defmodule Cocktail.Validation.Day do
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
 
-  @type t :: %__MODULE__{day: Cocktail.day_number}
+  @type t :: %__MODULE__{days: [Cocktail.day_number]}
 
-  @enforce_keys [:day]
-  defstruct day: nil
+  @enforce_keys [:days]
+  defstruct days: []
 
-  @spec new(Cocktail.day) :: t
-  def new(day), do: %__MODULE__{day: day_number(day)}
+  @spec new([Cocktail.day]) :: t
+  def new(days), do: %__MODULE__{days: Enum.map(days, &day_number/1) |> Enum.sort}
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
-  def next_time(%__MODULE__{day: day}, time, _) do
-    diff = day - Timex.weekday(time) |> mod(7)
+  def next_time(%__MODULE__{days: days}, time, _) do
+    current_day = Timex.weekday(time)
+    day = Enum.find(days, hd(days), fn(day) -> current_day <= day end)
+    diff = day - current_day |> mod(7)
+
     shift_by(diff, :days, time, :beginning_of_day)
   end
 

@@ -35,20 +35,20 @@ defmodule Cocktail.Builder.String do
   @spec build_rule(Rule.t) :: String.t
   def build_rule(%Rule{validations: validations_map}) do
     for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute],
-        validations = validations_map[key],
-        is_list(validations)
+        validation = validations_map[key],
+        !is_nil(validation)
     do
-      build_validation_part(key, validations)
+      build_validation_part(key, validation)
     end
     |> Enum.join(" ")
   end
 
-  @spec build_validation_part(:interval | :day | :hour_of_day, [Cocktail.Validation.t]) :: String.t
-  defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
-  defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
-  defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
-  defp build_validation_part(:minute_of_hour, minutes), do: minutes |> Enum.map(fn(%MinuteOfHour{minute: minute}) -> minute end) |> build_minutes()
-  defp build_validation_part(:second_of_minute, seconds), do: seconds |> Enum.map(fn(%SecondOfMinute{second: second}) -> second end) |> build_seconds()
+  @spec build_validation_part(:interval | :day | :hour_of_day, Cocktail.Validation.t) :: String.t
+  defp build_validation_part(:interval, %Interval{interval: interval, type: type}), do: build_interval(type, interval)
+  defp build_validation_part(:day, %Day{days: days}), do: days |> build_days()
+  defp build_validation_part(:hour_of_day, %HourOfDay{hours: hours}), do: hours |> build_hours()
+  defp build_validation_part(:minute_of_hour, %MinuteOfHour{minutes: minutes}), do: minutes |> build_minutes()
+  defp build_validation_part(:second_of_minute, %SecondOfMinute{seconds: seconds}), do: seconds |> build_seconds()
 
   # intervals
 

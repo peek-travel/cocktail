@@ -55,7 +55,7 @@ defmodule Cocktail.ScheduleState do
   defp next_time_from_recurrence_rules(state) do
     remaining_rules =
       state.recurrence_rules
-      |> Enum.map(&RuleState.next_time(&1, state))
+      |> Enum.map(&RuleState.next_time(&1, state.current_time, state.start_time))
       |> Enum.filter(fn(r) -> !is_nil(r.current_time) end)
 
     time = min_time_for_rules(remaining_rules)
@@ -105,9 +105,10 @@ defmodule Cocktail.ScheduleState do
 
   @spec min_time_for_rules([RuleState.t]) :: Cocktail.time | nil
   defp min_time_for_rules([]), do: nil
+  defp min_time_for_rules([rule]), do: rule.current_time
   defp min_time_for_rules(rules) do
     rules
-    |> Enum.min_by(fn(r) -> Timex.to_unix(r.current_time) end, fn -> nil end)
+    |> Enum.min_by(&Timex.to_erl(&1.current_time))
     |> Map.get(:current_time)
   end
 

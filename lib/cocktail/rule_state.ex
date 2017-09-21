@@ -1,22 +1,20 @@
 defmodule Cocktail.RuleState do
   @moduledoc false
 
-  alias Cocktail.{Rule, ScheduleState, Validation}
+  alias Cocktail.{Rule, Validation}
   alias Cocktail.Validation.Shift
 
-  @type grouped_validations :: [[Validation.t, ...], ...]
-
   @type t :: %__MODULE__{
-              count:             pos_integer | nil,
-              until:             Cocktail.time | nil,
-              validation_groups: grouped_validations,
-              current_time:      Cocktail.time | nil}
+              count:        pos_integer | nil,
+              until:        Cocktail.time | nil,
+              validations:  [Validation.t, ...],
+              current_time: Cocktail.time | nil}
 
-  @enforce_keys [:validation_groups]
-  defstruct count:             nil,
-            until:             nil,
-            validation_groups: [],
-            current_time:      nil
+  @enforce_keys [:validations]
+  defstruct count:        nil,
+            until:        nil,
+            validations:  [],
+            current_time: nil
 
   @validation_order [:base_sec, :second_of_minute, :base_min, :minute_of_hour,
                      :base_hour, :hour_of_day, :base_wday, :day, :interval]
@@ -26,47 +24,40 @@ defmodule Cocktail.RuleState do
     %__MODULE__{
       count: rule.count,
       until: rule.until,
-      validation_groups: rule.validations |> sort_and_group_validations()
+      validations: rule.validations |> sort_validations()
     }
   end
 
-  @spec sort_and_group_validations(Validation.validations_map) :: grouped_validations
-  defp sort_and_group_validations(validations_map) do
+  @spec sort_validations(Validation.validations_map) :: [Validation.t, ...]
+  defp sort_validations(validations_map) do
     for key <- @validation_order,
-        validations = validations_map[key],
-        is_list(validations)
+        validation = validations_map[key],
+        !is_nil(validation)
     do
-      validations
+      validation
     end
   end
 
-  @spec next_time(t, ScheduleState.t) :: t
-  def next_time(%__MODULE__{} = rule_state, %ScheduleState{} = schedule_state) do
-    time = do_next_time(rule_state.validation_groups, schedule_state.current_time, schedule_state.start_time)
+  @spec next_time(t, Cocktail.time, Cocktail.time) :: t
+  def next_time(%__MODULE__{} = rule_state, current_time, start_time) do
+    time = do_next_time(rule_state.validations, current_time, start_time)
     new_state(rule_state, time)
   end
 
-  @spec do_next_time(grouped_validations, Cocktail.time, Cocktail.time) :: Cocktail.time
-  defp do_next_time(validation_groups, time, start_time) do
-    case Enum.reduce(validation_groups, {:no_change, time}, &next_time_for_validations(&1, &2, start_time)) do
+  @spec do_next_time([Validation.t], Cocktail.time, Cocktail.time) :: Cocktail.time
+  defp do_next_time(validations, time, start_time) do
+    case Enum.reduce(validations, {:no_change, time}, &next_time_for_validation(&1, &2, start_time)) do
       {:no_change, new_time} ->
         new_time
       {:updated, new_time} ->
-        do_next_time(validation_groups, new_time, start_time)
+        do_next_time(validations, new_time, start_time)
     end
   end
 
-  @spec next_time_for_validations([Validation.t], Shift.result, Cocktail.time) :: Shift.result
-  defp next_time_for_validations(validations, {change, time}, start_time) do
-    validations
-    |> Enum.map(&next_time_for_validation(&1, time, start_time))
-    |> Enum.min_by(fn({_, time}) -> Timex.to_unix(time) end, fn -> nil end)
-    |> mark_change(change)
-  end
-
-  @spec next_time_for_validation(Validation.t, Cocktail.time, Cocktail.time) :: Shift.result
-  defp next_time_for_validation(%mod{} = validation, time, start_time) do
+  @spec next_time_for_validation(Validation.t, Shift.result, Cocktail.time) :: Shift.result
+  defp next_time_for_validation(%mod{} = validation, {change, time}, start_time) do
     mod.next_time(validation, time, start_time)
+    |> mark_change(change)
   end
 
   @spec new_state(t, Cocktail.time) :: t

@@ -47,11 +47,13 @@ defmodule Cocktail.Validation.Interval do
     |> shift_by(type, time)
   end
 
+  # TODO: spec
   defp weeks_diff({year, week1}, {year, week2}) when week2 >= week1, do: week2 - week1
   defp weeks_diff({year1, week1}, {year2, week2}) when year2 > year1 do
     (year1..(year2 - 1) |> Enum.map(&iso_weeks_per_year/1) |> Enum.sum) - week1 + week2
   end
 
+  # TODO: spec
   defp iso_weeks_per_year(year) do
     if year_cycle(year) == 4 || year_cycle(year - 1) == 3 do
       53
@@ -60,6 +62,7 @@ defmodule Cocktail.Validation.Interval do
     end
   end
 
+  # TODO: spec
   defp year_cycle(year) do
     year + floor_div(year, 4) - floor_div(year, 100) + floor_div(year, 400) |> mod(7)
   end
