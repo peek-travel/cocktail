@@ -56,7 +56,8 @@ defmodule Cocktail.RuleState do
 
   @spec next_time_for_validation(Validation.t, Shift.result, Cocktail.time) :: Shift.result
   defp next_time_for_validation(%mod{} = validation, {change, time}, start_time) do
-    mod.next_time(validation, time, start_time)
+    validation
+    |> mod.next_time(time, start_time)
     |> mark_change(change)
   end
 

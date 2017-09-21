@@ -10,7 +10,7 @@ defmodule Cocktail.Validation.Day do
   defstruct days: []
 
   @spec new([Cocktail.day]) :: t
-  def new(days), do: %__MODULE__{days: Enum.map(days, &day_number/1) |> Enum.sort}
+  def new(days), do: %__MODULE__{days: days |> Enum.map(&day_number/1) |> Enum.sort}
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{days: days}, time, _) do
