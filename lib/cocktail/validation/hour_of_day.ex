@@ -3,6 +3,7 @@ defmodule Cocktail.Validation.HourOfDay do
 
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util, only: [next_gte: 2]
 
   @type t :: %__MODULE__{hours: [Cocktail.hour_number]}
 
@@ -15,7 +16,7 @@ defmodule Cocktail.Validation.HourOfDay do
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{hours: hours}, time, _) do
     current_hour = time.hour
-    hour = Enum.find(hours, hd(hours), fn(hour) -> current_hour <= hour end)
+    hour = next_gte(hours, current_hour) || hd(hours)
     diff = hour - current_hour |> mod(24)
 
     shift_by(diff, :hours, time, :beginning_of_hour)

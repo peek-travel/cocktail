@@ -3,6 +3,7 @@ defmodule Cocktail.Validation.SecondOfMinute do
 
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util, only: [next_gte: 2]
 
   @type t :: %__MODULE__{seconds: [Cocktail.second_number]}
 
@@ -15,7 +16,7 @@ defmodule Cocktail.Validation.SecondOfMinute do
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{seconds: seconds}, time, _) do
     current_second = time.second
-    second = Enum.find(seconds, hd(seconds), fn(second) -> current_second <= second end)
+    second = next_gte(seconds, current_second) || hd(seconds)
     diff = second - current_second |> mod(60)
 
     shift_by(diff, :seconds, time)

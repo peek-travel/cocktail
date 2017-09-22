@@ -3,6 +3,7 @@ defmodule Cocktail.Validation.Day do
 
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util, only: [next_gte: 2]
 
   @type t :: %__MODULE__{days: [Cocktail.day_number]}
 
@@ -15,7 +16,7 @@ defmodule Cocktail.Validation.Day do
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{days: days}, time, _) do
     current_day = Timex.weekday(time)
-    day = Enum.find(days, hd(days), fn(day) -> current_day <= day end)
+    day = next_gte(days, current_day) || hd(days)
     diff = day - current_day |> mod(7)
 
     shift_by(diff, :days, time, :beginning_of_day)
