@@ -21,10 +21,7 @@ defmodule Cocktail.Schedule do
   behave. See `add_recurrence_rule/3` for details on them.
   """
 
-  alias Cocktail.{Rule, ScheduleState}
-  alias Cocktail.Parser.{ICalendar, JSON}
-  alias Cocktail.Builder.String, as: StringBuilder
-  alias Cocktail.Builder.ICalendar, as: ICalendarBuilder
+  alias Cocktail.{Rule, ScheduleState, Parser, Builder}
 
   @typedoc """
   Struct used to represent a schedule of recurring events.
@@ -229,7 +226,7 @@ defmodule Cocktail.Schedule do
   see `Cocktail.Parser.ICalendar.parse/1` for details.
   """
   @spec from_i_calendar(String.t) :: {:ok, t} | {:error, term}
-  def from_i_calendar(i_calendar_string), do: ICalendar.parse(i_calendar_string)
+  def from_i_calendar(i_calendar_string), do: Parser.ICalendar.parse(i_calendar_string)
 
   @doc """
   Parses a string of JSON into a `t:Cocktail.Schedule.t/0`.
@@ -237,7 +234,7 @@ defmodule Cocktail.Schedule do
   see `Cocktail.Parser.JSON.parse/1` for details.
   """
   @spec from_json(String.t) :: {:ok, t} | {:error, term}
-  def from_json(json_string), do: JSON.parse(json_string)
+  def from_json(json_string), do: Parser.JSON.parse(json_string)
 
   @doc """
   Parses JSON-like map into a `t:Cocktail.Schedule.t/0`.
@@ -245,7 +242,7 @@ defmodule Cocktail.Schedule do
   see `Cocktail.Parser.JSON.parse_map/1` for details.
   """
   @spec from_map(map) :: {:ok, t} | {:error, term}
-  def from_map(map), do: JSON.parse_map(map)
+  def from_map(map), do: Parser.JSON.parse_map(map)
 
   @doc """
   Builds an iCalendar format string represenation of a `t:Cocktail.Schedule.t/0`.
@@ -253,7 +250,7 @@ defmodule Cocktail.Schedule do
   see `Cocktail.Builder.ICalendar.build/1` for details.
   """
   @spec to_i_calendar(t) :: String.t
-  def to_i_calendar(%__MODULE__{} = schedule), do: ICalendarBuilder.build(schedule)
+  def to_i_calendar(%__MODULE__{} = schedule), do: Builder.ICalendar.build(schedule)
 
   @doc """
   Builds a human readable string represenation of a `t:Cocktail.Schedule.t/0`.
@@ -261,13 +258,13 @@ defmodule Cocktail.Schedule do
   see `Cocktail.Builder.String.build/1` for details.
   """
   @spec to_string(t) :: String.t
-  def to_string(%__MODULE__{} = schedule), do: StringBuilder.build(schedule)
+  def to_string(%__MODULE__{} = schedule), do: Builder.String.build(schedule)
 
   defimpl Inspect, for: __MODULE__ do
     import Inspect.Algebra
 
     def inspect(schedule, _) do
-      concat ["#Cocktail.Schedule<", StringBuilder.build(schedule), ">"]
+      concat ["#Cocktail.Schedule<", Builder.String.build(schedule), ">"]
     end
   end
 end
