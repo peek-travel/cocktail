@@ -1,7 +1,7 @@
 defmodule Cocktail.Validation do
   @moduledoc false
 
-  alias Cocktail.Validation.{ScheduleLock, Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
+  alias Cocktail.Validation.{ScheduleLock, Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute, TimeOfDay}
 
   @type validation_key :: :base_sec         |
                           :base_min         |
@@ -11,11 +11,12 @@ defmodule Cocktail.Validation do
                           :hour_of_day      |
                           :minute_of_hour   |
                           :second_of_minute |
+                          :time_of_day      |
                           :interval
 
   @type validations_map :: %{validation_key => t}
 
-  @type t :: ScheduleLock.t | Interval.t | Day.t | HourOfDay.t | MinuteOfHour.t | SecondOfMinute.t
+  @type t :: ScheduleLock.t | Interval.t | Day.t | HourOfDay.t | MinuteOfHour.t | SecondOfMinute.t | TimeOfDay.t
 
   @spec build_validations(Cocktail.rule_options) :: validations_map
   def build_validations(options) do
@@ -88,6 +89,14 @@ defmodule Cocktail.Validation do
     map
     |> Map.delete(:base_sec)
     |> Map.put(:second_of_minute, SecondOfMinute.new(seconds))
+    |> apply_options(rest)
+  end
+  defp apply_options(map, [{:times, times} | rest]) do
+    map
+    |> Map.delete(:base_sec)
+    |> Map.delete(:base_min)
+    |> Map.delete(:base_hour)
+    |> Map.put(:time_of_day, TimeOfDay.new(times))
     |> apply_options(rest)
   end
   # unhandled option, just discard and continue

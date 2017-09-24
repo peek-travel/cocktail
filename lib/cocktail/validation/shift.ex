@@ -1,9 +1,7 @@
 defmodule Cocktail.Validation.Shift do
   @moduledoc false
 
-  @type change_type :: :no_change | :updated
-
-  @type result :: {change_type, Cocktail.time}
+  @type result :: {:change, Cocktail.time} | {:no_change, Cocktail.time}
 
   @typep shift_type :: :days | :hours | :minutes | :seconds
 
@@ -20,7 +18,7 @@ defmodule Cocktail.Validation.Shift do
       |> shift("#{type}": amount)
       |> apply_option(option)
 
-    {:updated, new_time}
+    {:change, new_time}
   end
 
   @spec apply_option(Cocktail.time, option) :: Cocktail.time

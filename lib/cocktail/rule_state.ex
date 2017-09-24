@@ -16,7 +16,8 @@ defmodule Cocktail.RuleState do
             current_time: nil
 
   @validation_order [:base_sec, :second_of_minute, :base_min, :minute_of_hour,
-                     :base_hour, :hour_of_day, :base_wday, :day, :interval]
+                     :base_hour, :hour_of_day, :time_of_day, :base_wday, :day,
+                     :interval]
 
   @spec new(Rule.t) :: t
   def new(%Rule{} = rule) do
@@ -38,8 +39,8 @@ defmodule Cocktail.RuleState do
   end
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: t
-  def next_time(%__MODULE__{} = rule_state, current_time, start_time) do
-    time = do_next_time(rule_state.validations, current_time, start_time)
+  def next_time(%__MODULE__{validations: validations} = rule_state, current_time, start_time) do
+    time = do_next_time(validations, current_time, start_time)
     new_state(rule_state, time)
   end
 
@@ -48,7 +49,7 @@ defmodule Cocktail.RuleState do
     case Enum.reduce(validations, {:no_change, time}, &next_time_for_validation(&1, &2, start_time)) do
       {:no_change, new_time} ->
         new_time
-      {:updated, new_time} ->
+      {:change, new_time} ->
         do_next_time(validations, new_time, start_time)
     end
   end
@@ -72,7 +73,7 @@ defmodule Cocktail.RuleState do
 
   @spec mark_change(Shift.result, Shift.change_type) :: Shift.result
   defp mark_change({:no_change, time}, :no_change), do: {:no_change, time}
-  defp mark_change({:no_change, time}, :updated), do: {:updated, time}
-  defp mark_change({:updated, time}, :no_change), do: {:updated, time}
-  defp mark_change({:updated, time}, :updated), do: {:updated, time}
+  defp mark_change({:no_change, time}, :change), do: {:change, time}
+  defp mark_change({:change, time}, :no_change), do: {:change, time}
+  defp mark_change({:change, time}, :change), do: {:change, time}
 end
