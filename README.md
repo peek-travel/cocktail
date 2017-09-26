@@ -38,7 +38,6 @@ Detailed documentation with all available options can be found at [https://hexdo
 
 ## Roadmap
 
-*   [ ] 100% test coverage
 *   [ ] investigate and fix DST bugs
 *   [ ] add the rest of the iCalendar RRULE options
 *   [ ] more / better docs and more examples (getting started guide)
