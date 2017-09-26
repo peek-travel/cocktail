@@ -4,8 +4,6 @@ defmodule Cocktail.Validation.ScheduleLock do
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
 
-  require Logger
-
   @type lock :: :second |
                 :minute |
                 :hour   |
@@ -21,35 +19,19 @@ defmodule Cocktail.Validation.ScheduleLock do
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
   def next_time(%__MODULE__{type: :second}, time, start_time) do
-    result = shift_by(mod(start_time.second - time.second, 60), :seconds, time)
-    Logger.debug(fn ->
-      "    schedule_lock(second): #{inspect result}"
-    end)
-    result
+    shift_by(mod(start_time.second - time.second, 60), :seconds, time)
   end
   def next_time(%__MODULE__{type: :minute}, time, start_time) do
-    result = shift_by(mod(start_time.minute - time.minute, 60), :minutes, time)
-    Logger.debug(fn ->
-      "    schedule_lock(minute): #{inspect result}"
-    end)
-    result
+    shift_by(mod(start_time.minute - time.minute, 60), :minutes, time)
   end
   def next_time(%__MODULE__{type: :hour}, time, start_time) do
-    result = shift_by(mod(start_time.hour - time.hour, 24), :hours, time)
-    Logger.debug(fn ->
-      "    schedule_lock(hour): #{inspect result}"
-    end)
-    result
+    shift_by(mod(start_time.hour - time.hour, 24), :hours, time)
   end
   def next_time(%__MODULE__{type: :wday}, time, start_time) do
     start_time_day = Timex.weekday(start_time)
     time_day = Timex.weekday(time)
     diff = mod(start_time_day - time_day, 7)
 
-    result = shift_by(diff, :days, time)
-    Logger.debug(fn ->
-      "    schedule_lock(wday): #{inspect result}"
-    end)
-    result
+    shift_by(diff, :days, time)
   end
 end

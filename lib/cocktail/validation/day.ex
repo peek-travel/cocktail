@@ -5,8 +5,6 @@ defmodule Cocktail.Validation.Day do
   import Cocktail.Validation.Shift
   import Cocktail.Util, only: [next_gte: 2]
 
-  require Logger
-
   @type t :: %__MODULE__{days: [Cocktail.day_number]}
 
   @enforce_keys [:days]
@@ -21,11 +19,7 @@ defmodule Cocktail.Validation.Day do
     day = next_gte(days, current_day) || hd(days)
     diff = day - current_day |> mod(7)
 
-    result = shift_by(diff, :days, time, :beginning_of_day)
-    Logger.debug(fn ->
-      "    day(#{days |> Enum.join(", ")}): #{inspect result}"
-    end)
-    result
+    shift_by(diff, :days, time, :beginning_of_day)
   end
 
   @spec day_number(Cocktail.day) :: Cocktail.day_number

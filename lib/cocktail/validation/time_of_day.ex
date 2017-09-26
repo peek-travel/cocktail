@@ -4,8 +4,6 @@ defmodule Cocktail.Validation.TimeOfDay do
   import Cocktail.Validation.Shift
   import Cocktail.Util, only: [next_gte: 2]
 
-  require Logger
-
   @type time :: {Cocktail.hour_number, Cocktail.minute_number, Cocktail.second_number}
 
   @type t :: %__MODULE__{times: [time]}
@@ -24,16 +22,7 @@ defmodule Cocktail.Validation.TimeOfDay do
     diff = Time.diff(target_time, current_time)
     diff = if diff < 0, do: diff + 86_400, else: diff
 
-    result = shift_by(diff, :seconds, time)
-    Logger.debug(fn ->
-      formatted_times =
-        times
-        |> Enum.map(&Time.from_erl!/1)
-        |> Enum.map(&inspect/1)
-        |> Enum.join(",")
-      "    time_of_day(#{formatted_times}): #{inspect result}"
-    end)
-    result
+    shift_by(diff, :seconds, time)
   end
 
   @spec to_time(Cocktail.time) :: Time.t

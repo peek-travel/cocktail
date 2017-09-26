@@ -5,8 +5,6 @@ defmodule Cocktail.Validation.SecondOfMinute do
   import Cocktail.Validation.Shift
   import Cocktail.Util, only: [next_gte: 2]
 
-  require Logger
-
   @type t :: %__MODULE__{seconds: [Cocktail.second_number]}
 
   @enforce_keys [:seconds]
@@ -21,10 +19,6 @@ defmodule Cocktail.Validation.SecondOfMinute do
     second = next_gte(seconds, current_second) || hd(seconds)
     diff = second - current_second |> mod(60)
 
-    result = shift_by(diff, :seconds, time)
-    Logger.debug(fn ->
-      "    second_of_minute(#{seconds |> Enum.join(", ")}): #{inspect result}"
-    end)
-    result
+    shift_by(diff, :seconds, time)
   end
 end

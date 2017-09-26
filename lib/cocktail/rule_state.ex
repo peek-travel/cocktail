@@ -3,8 +3,6 @@ defmodule Cocktail.RuleState do
 
   alias Cocktail.{Rule, Validation, Validation.Shift}
 
-  require Logger
-
   @type t :: %__MODULE__{
               count:        pos_integer | nil,
               until:        Cocktail.time | nil,
@@ -43,15 +41,12 @@ defmodule Cocktail.RuleState do
   @spec next_time(t, Cocktail.time, Cocktail.time) :: t
   def next_time(%__MODULE__{validations: validations} = rule_state, current_time, start_time) do
     time = do_next_time(validations, current_time, start_time)
-    Logger.debug(fn -> "  -> rule result: #{time}" end)
 
     new_state(rule_state, time)
   end
 
   @spec do_next_time([Validation.t], Cocktail.time, Cocktail.time) :: Cocktail.time
   defp do_next_time(validations, time, start_time) do
-    Logger.debug(fn -> "  ---" end)
-
     case Enum.reduce(validations, {:no_change, time}, &next_time_for_validation(&1, &2, start_time)) do
       {:no_change, new_time} ->
         new_time

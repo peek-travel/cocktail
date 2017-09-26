@@ -5,8 +5,6 @@ defmodule Cocktail.Validation.MinuteOfHour do
   import Cocktail.Validation.Shift
   import Cocktail.Util, only: [next_gte: 2]
 
-  require Logger
-
   @type t :: %__MODULE__{minutes: [Cocktail.minute_number]}
 
   @enforce_keys [:minutes]
@@ -21,10 +19,6 @@ defmodule Cocktail.Validation.MinuteOfHour do
     minute = next_gte(minutes, current_minute) || hd(minutes)
     diff = minute - current_minute |> mod(60)
 
-    result = shift_by(diff, :minutes, time, :beginning_of_minute)
-    Logger.debug(fn ->
-      "    minute_of_hour(#{Enum.join(minutes, ", ")}): #{inspect result}"
-    end)
-    result
+    shift_by(diff, :minutes, time, :beginning_of_minute)
   end
 end
