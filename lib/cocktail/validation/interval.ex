@@ -4,8 +4,6 @@ defmodule Cocktail.Validation.Interval do
   import Integer, only: [mod: 2, floor_div: 2]
   import Cocktail.Validation.Shift
 
-  require Logger
-
   @typep iso_week :: {Timex.Types.year, Timex.Types.weeknum}
 
   @type t :: %__MODULE__{type: Cocktail.frequency, interval: pos_integer}
@@ -18,50 +16,32 @@ defmodule Cocktail.Validation.Interval do
   def new(type, interval), do: %__MODULE__{type: type, interval: interval}
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
-  def next_time(%__MODULE__{type: type, interval: 1}, time, _) do
-    result = {:no_change, time}
-    Logger.debug(fn ->
-      "    interval(#{type}, 1): #{inspect result}"
-    end)
-    result
+  def next_time(%__MODULE__{type: _, interval: 1}, time, _) do
+    {:no_change, time}
   end
   def next_time(%__MODULE__{type: :weekly, interval: interval}, time, start_time) do
     week = Timex.iso_week(time)
     start_week = Timex.iso_week(start_time)
     diff = weeks_diff(start_week, week)
     off_by = mod(diff * -1, interval)
-    result = shift_by(off_by * 7, :days, time)
-    Logger.debug(fn ->
-      "    interval(weekly, #{interval}): #{inspect result}"
-    end)
-    result
+    shift_by(off_by * 7, :days, time)
   end
   def next_time(%__MODULE__{type: :daily, interval: interval}, time, start_time) do
     date = Timex.to_date(time)
     start_date = Timex.to_date(start_time)
 
-    result =
-      start_date
-      |> Timex.diff(date, :days)
-      |> mod(interval)
-      |> shift_by(:days, time)
-    Logger.debug(fn ->
-      "    interval(daily, #{interval}): #{inspect result}"
-    end)
-    result
+    start_date
+    |> Timex.diff(date, :days)
+    |> mod(interval)
+    |> shift_by(:days, time)
   end
   def next_time(%__MODULE__{type: type, interval: interval}, time, start_time) do
     unit = unit_for_type(type)
 
-    result =
-      start_time
-      |> Timex.diff(time, unit)
-      |> mod(interval)
-      |> shift_by(unit, time)
-    Logger.debug(fn ->
-      "    interval(#{type}, #{interval}): #{inspect result}"
-    end)
-    result
+    start_time
+    |> Timex.diff(time, unit)
+    |> mod(interval)
+    |> shift_by(unit, time)
   end
 
   @spec weeks_diff(iso_week, iso_week) :: integer

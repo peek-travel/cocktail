@@ -3,8 +3,6 @@ defmodule Cocktail.ScheduleState do
 
   alias Cocktail.{Schedule, RuleState, Span}
 
-  require Logger
-
   @type t :: %__MODULE__{
               recurrence_rules: [RuleState.t],
               recurrence_times: [Cocktail.time],
@@ -37,8 +35,6 @@ defmodule Cocktail.ScheduleState do
 
   @spec next_time(t) :: {Cocktail.occurrence, t}
   def next_time(%__MODULE__{} = state) do
-    Logger.debug(fn -> "~> starting time: #{state.current_time}" end)
-
     {time, remaining_rules} = next_time_from_recurrence_rules(state)
     {time, remaining_times} = next_time_from_recurrence_times(state.recurrence_times, time)
     {is_exception, remaining_excpetions} = apply_exception_time(state.exception_times, time)
@@ -48,8 +44,6 @@ defmodule Cocktail.ScheduleState do
         if is_exception do
           next_time(state)
         else
-          Logger.debug(fn -> "=> occurrence: #{occurrence}" end)
-
           {occurrence, state}
         end
       nil ->
