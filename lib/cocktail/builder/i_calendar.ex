@@ -6,7 +6,7 @@ defmodule Cocktail.Builder.ICalendar do
   """
 
   alias Cocktail.{Rule, Schedule, Validation}
-  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute, TimeOfDay}
 
   @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
 
@@ -89,11 +89,11 @@ defmodule Cocktail.Builder.ICalendar do
   @spec build_rule(Rule.t) :: String.t
   defp build_rule(%Rule{validations: validations_map, until: until, count: count}) do
     parts =
-      for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute],
-          validations = validations_map[key],
-          is_list(validations)
+      for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute, :time_of_day],
+          validation = validations_map[key],
+          !is_nil(validation)
       do
-        build_validation_part(key, validations)
+        build_validation_part(key, validation)
       end
 
     parts = parts ++ build_until(until) ++ build_count(count)
@@ -101,12 +101,13 @@ defmodule Cocktail.Builder.ICalendar do
     "RRULE:" <> (parts |> Enum.join(";"))
   end
 
-  @spec build_validation_part(Validation.validation_key, [Validation.t]) :: String.t
-  defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
-  defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
-  defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
-  defp build_validation_part(:minute_of_hour, minutes), do: minutes |> Enum.map(fn(%MinuteOfHour{minute: minute}) -> minute end) |> build_minutes()
-  defp build_validation_part(:second_of_minute, seconds), do: seconds |> Enum.map(fn(%SecondOfMinute{second: second}) -> second end) |> build_seconds()
+  @spec build_validation_part(Validation.validation_key, Validation.t) :: String.t
+  defp build_validation_part(:interval, %Interval{interval: interval, type: type}), do: build_interval(type, interval)
+  defp build_validation_part(:day, %Day{days: days}), do: days |> build_days()
+  defp build_validation_part(:hour_of_day, %HourOfDay{hours: hours}), do: hours |> build_hours()
+  defp build_validation_part(:minute_of_hour, %MinuteOfHour{minutes: minutes}), do: minutes |> build_minutes()
+  defp build_validation_part(:second_of_minute, %SecondOfMinute{seconds: seconds}), do: seconds |> build_seconds()
+  defp build_validation_part(:time_of_day, %TimeOfDay{times: times}), do: times |> build_times()
 
   @spec build_until(Cocktail.time | nil) :: [String.t]
   defp build_until(nil), do: []
@@ -181,5 +182,23 @@ defmodule Cocktail.Builder.ICalendar do
       |> Enum.join(",")
 
     "BYSECOND=#{seconds_list}"
+  end
+
+  # "time of day" validation
+
+  @spec build_times([TimeOfDay.time]) :: String.t
+  defp build_times(times) do
+    times_list =
+      times
+      |> Enum.sort
+      |> Enum.map(fn({hour, min, sec}) ->
+        hours = String.pad_leading("#{hour}", 2, "0")
+        mins = String.pad_leading("#{min}", 2, "0")
+        secs = String.pad_leading("#{sec}", 2, "0")
+        "#{hours}#{mins}#{secs}"
+      end)
+      |> Enum.join(",")
+
+    "BYTIME=#{times_list}"
   end
 end

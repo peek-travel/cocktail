@@ -3,19 +3,29 @@ defmodule Cocktail.Validation.Day do
 
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util, only: [next_gte: 2]
 
-  @type t :: %__MODULE__{day: Cocktail.day_number}
+  require Logger
 
-  @enforce_keys [:day]
-  defstruct day: nil
+  @type t :: %__MODULE__{days: [Cocktail.day_number]}
 
-  @spec new(Cocktail.day) :: t
-  def new(day), do: %__MODULE__{day: day_number(day)}
+  @enforce_keys [:days]
+  defstruct days: []
+
+  @spec new([Cocktail.day]) :: t
+  def new(days), do: %__MODULE__{days: days |> Enum.map(&day_number/1) |> Enum.sort}
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
-  def next_time(%__MODULE__{day: day}, time, _) do
-    diff = day - Timex.weekday(time) |> mod(7)
-    shift_by(diff, :days, time, :beginning_of_day)
+  def next_time(%__MODULE__{days: days}, time, _) do
+    current_day = Timex.weekday(time)
+    day = next_gte(days, current_day) || hd(days)
+    diff = day - current_day |> mod(7)
+
+    result = shift_by(diff, :days, time, :beginning_of_day)
+    Logger.debug(fn ->
+      "    day(#{days |> Enum.join(", ")}): #{inspect result}"
+    end)
+    result
   end
 
   @spec day_number(Cocktail.day) :: Cocktail.day_number

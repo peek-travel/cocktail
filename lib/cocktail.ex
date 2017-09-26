@@ -8,9 +8,7 @@ defmodule Cocktail do
 
   alias Cocktail.{Schedule, Span}
 
-  @type frequency :: :yearly   |
-                     :monthly  |
-                     :weekly   |
+  @type frequency :: :weekly   |
                      :daily    |
                      :hourly   |
                      :minutely |

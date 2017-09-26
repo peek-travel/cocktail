@@ -20,7 +20,7 @@ defmodule Cocktail.Validation.Shift do
       |> shift("#{type}": amount)
       |> apply_option(option)
 
-    {:updated, new_time}
+    {:change, new_time}
   end
 
   @spec apply_option(Cocktail.time, option) :: Cocktail.time

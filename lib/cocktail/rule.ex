@@ -1,8 +1,7 @@
 defmodule Cocktail.Rule do
   @moduledoc false
 
-  alias Cocktail.{Rule, Validation}
-  alias Cocktail.Builder.String, as: StringBuilder
+  alias Cocktail.{Rule, Validation, Builder}
 
   @type t :: %__MODULE__{
               count:       pos_integer | nil,
@@ -32,7 +31,7 @@ defmodule Cocktail.Rule do
     import Inspect.Algebra
 
     def inspect(rule, _) do
-      concat ["#Cocktail.Rule<", StringBuilder.build_rule(rule), ">"]
+      concat ["#Cocktail.Rule<", Builder.String.build_rule(rule), ">"]
     end
   end
 end

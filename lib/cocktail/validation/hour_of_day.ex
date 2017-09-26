@@ -3,18 +3,28 @@ defmodule Cocktail.Validation.HourOfDay do
 
   import Integer, only: [mod: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util, only: [next_gte: 2]
 
-  @type t :: %__MODULE__{hour: Cocktail.hour_number}
+  require Logger
 
-  @enforce_keys [:hour]
-  defstruct hour: nil
+  @type t :: %__MODULE__{hours: [Cocktail.hour_number]}
 
-  @spec new(Cocktail.hour_number) :: t
-  def new(hour), do: %__MODULE__{hour: hour}
+  @enforce_keys [:hours]
+  defstruct hours: []
+
+  @spec new([Cocktail.hour_number]) :: t
+  def new(hours), do: %__MODULE__{hours: Enum.sort(hours)}
 
   @spec next_time(t, Cocktail.time, Cocktail.time) :: Cocktail.Validation.Shift.result
-  def next_time(%__MODULE__{hour: hour}, time, _) do
-    diff = hour - time.hour |> mod(24)
-    shift_by(diff, :hours, time, :beginning_of_hour)
+  def next_time(%__MODULE__{hours: hours}, time, _) do
+    current_hour = time.hour
+    hour = next_gte(hours, current_hour) || hd(hours)
+    diff = hour - current_hour |> mod(24)
+
+    result = shift_by(diff, :hours, time, :beginning_of_hour)
+    Logger.debug(fn ->
+      "    hour_of_day(#{Enum.join(hours, ", ")}): #{inspect result}"
+    end)
+    result
   end
 end

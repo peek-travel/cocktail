@@ -120,8 +120,6 @@ defmodule Cocktail.Parser.JSON do
   defp parse_frequency(%{"frequency" => "hourly"}), do: {:ok, :hourly}
   defp parse_frequency(%{"frequency" => "daily"}), do: {:ok, :daily}
   defp parse_frequency(%{"frequency" => "weekly"}), do: {:ok, :weekly}
-  defp parse_frequency(%{"frequency" => "monthly"}), do: {:ok, :monthly}
-  defp parse_frequency(%{"frequency" => "yearly"}), do: {:ok, :yearly}
   defp parse_frequency(%{"frequency" => _}), do: {:error, :invalid_frequency}
   defp parse_frequency(_), do: {:error, :missing_frequency}
 

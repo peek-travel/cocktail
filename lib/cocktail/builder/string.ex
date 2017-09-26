@@ -35,20 +35,20 @@ defmodule Cocktail.Builder.String do
   @spec build_rule(Rule.t) :: String.t
   def build_rule(%Rule{validations: validations_map}) do
     for key <- [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute],
-        validations = validations_map[key],
-        is_list(validations)
+        validation = validations_map[key],
+        !is_nil(validation)
     do
-      build_validation_part(key, validations)
+      build_validation_part(key, validation)
     end
     |> Enum.join(" ")
   end
 
-  @spec build_validation_part(:interval | :day | :hour_of_day, [Cocktail.Validation.t]) :: String.t
-  defp build_validation_part(:interval, [%Interval{interval: interval, type: type}]), do: build_interval(type, interval)
-  defp build_validation_part(:day, days), do: days |> Enum.map(fn(%Day{day: day}) -> day end) |> build_days()
-  defp build_validation_part(:hour_of_day, hours), do: hours |> Enum.map(fn(%HourOfDay{hour: hour}) -> hour end) |> build_hours()
-  defp build_validation_part(:minute_of_hour, minutes), do: minutes |> Enum.map(fn(%MinuteOfHour{minute: minute}) -> minute end) |> build_minutes()
-  defp build_validation_part(:second_of_minute, seconds), do: seconds |> Enum.map(fn(%SecondOfMinute{second: second}) -> second end) |> build_seconds()
+  @spec build_validation_part(:interval | :day | :hour_of_day, Cocktail.Validation.t) :: String.t
+  defp build_validation_part(:interval, %Interval{interval: interval, type: type}), do: build_interval(type, interval)
+  defp build_validation_part(:day, %Day{days: days}), do: days |> build_days()
+  defp build_validation_part(:hour_of_day, %HourOfDay{hours: hours}), do: hours |> build_hours()
+  defp build_validation_part(:minute_of_hour, %MinuteOfHour{minutes: minutes}), do: minutes |> build_minutes()
+  defp build_validation_part(:second_of_minute, %SecondOfMinute{seconds: seconds}), do: seconds |> build_seconds()
 
   # intervals
 
@@ -63,10 +63,6 @@ defmodule Cocktail.Builder.String do
   defp build_interval(:daily, n), do: "Every #{n} days"
   defp build_interval(:weekly, 1), do: "Weekly"
   defp build_interval(:weekly, n), do: "Every #{n} weeks"
-  defp build_interval(:monthly, 1), do: "Monthly"
-  defp build_interval(:monthly, n), do: "Every #{n} months"
-  defp build_interval(:yearly, 1), do: "Yearly"
-  defp build_interval(:yearly, n), do: "Every #{n} years"
 
   # "day" validation
 
@@ -133,8 +129,6 @@ defmodule Cocktail.Builder.String do
   # utils
 
   @spec sentence([String.t]) :: String.t
-  defp sentence([]), do: ""
-  defp sentence([word]), do: word
   defp sentence([first, second]), do: "#{first} and #{second}"
   defp sentence(words) do
     {words, [last]} = Enum.split(words, -1)
@@ -143,7 +137,6 @@ defmodule Cocktail.Builder.String do
   end
 
   @spec ordinalize(integer) :: String.t
-  defp ordinalize(n) when n < 0, do: n |> abs() |> ordinalize()
   defp ordinalize(n) when rem(n, 100) in 4..20, do: "#{n}th"
   defp ordinalize(n) do
     case rem(n, 10) do

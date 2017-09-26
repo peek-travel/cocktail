@@ -82,4 +82,9 @@ defmodule Cocktail.ReversibilityTest do
     |> Schedule.add_exception_time(~N[2017-09-10 09:00:00])
     |> assert_reversible()
   end
+
+  test "time of day option" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, times: [~T[09:00:00], ~T[11:30:00]])
+    |> assert_reversible()
+  end
 end
