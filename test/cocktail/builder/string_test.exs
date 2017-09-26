@@ -48,4 +48,103 @@ defmodule Cocktail.Builder.StringTest do
 
     assert string == "Daily on the 0th and 30th seconds of the minute"
   end
+
+  test "every second" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Secondly"
+  end
+
+  test "every 2 seconds" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:secondly, interval: 2)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Every 2 seconds"
+  end
+
+  test "every minute" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Minutely"
+  end
+
+  test "every 2 minutes" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:minutely, interval: 2)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Every 2 minutes"
+  end
+
+  test "every hour" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:hourly)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Hourly"
+  end
+
+  test "every 2 hours" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:hourly, interval: 2)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Every 2 hours"
+  end
+
+  test "on the 1st hour of the day" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:daily, hours: [1])
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Daily on the 1st hour of the day"
+  end
+
+  test "on the 2nd minute of the hour" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:daily, minutes: [2])
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Daily on the 2nd minute of the hour"
+  end
+
+  test "on the 3rd second of the minute" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule
+      |> Schedule.add_recurrence_rule(:daily, seconds: [3])
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Daily on the 3rd second of the minute"
+  end
 end

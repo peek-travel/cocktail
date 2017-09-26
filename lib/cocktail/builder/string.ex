@@ -63,10 +63,6 @@ defmodule Cocktail.Builder.String do
   defp build_interval(:daily, n), do: "Every #{n} days"
   defp build_interval(:weekly, 1), do: "Weekly"
   defp build_interval(:weekly, n), do: "Every #{n} weeks"
-  defp build_interval(:monthly, 1), do: "Monthly"
-  defp build_interval(:monthly, n), do: "Every #{n} months"
-  defp build_interval(:yearly, 1), do: "Yearly"
-  defp build_interval(:yearly, n), do: "Every #{n} years"
 
   # "day" validation
 
@@ -133,8 +129,6 @@ defmodule Cocktail.Builder.String do
   # utils
 
   @spec sentence([String.t]) :: String.t
-  defp sentence([]), do: ""
-  defp sentence([word]), do: word
   defp sentence([first, second]), do: "#{first} and #{second}"
   defp sentence(words) do
     {words, [last]} = Enum.split(words, -1)
@@ -143,7 +137,6 @@ defmodule Cocktail.Builder.String do
   end
 
   @spec ordinalize(integer) :: String.t
-  defp ordinalize(n) when n < 0, do: n |> abs() |> ordinalize()
   defp ordinalize(n) when rem(n, 100) in 4..20, do: "#{n}th"
   defp ordinalize(n) do
     case rem(n, 10) do
