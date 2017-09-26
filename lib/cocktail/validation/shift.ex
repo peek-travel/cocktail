@@ -1,7 +1,9 @@
 defmodule Cocktail.Validation.Shift do
   @moduledoc false
 
-  @type result :: {:change, Cocktail.time} | {:no_change, Cocktail.time}
+  @type change_type :: :no_change | :updated
+
+  @type result :: {change_type, Cocktail.time}
 
   @typep shift_type :: :days | :hours | :minutes | :seconds
 
