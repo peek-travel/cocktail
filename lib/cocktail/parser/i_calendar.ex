@@ -8,7 +8,8 @@ defmodule Cocktail.Parser.ICalendar do
   alias Cocktail.{Schedule, Rule}
 
   @time_regex ~r/^:?;?(?:TZID=(.+?):)?(.*?)(Z)?$/
-  @time_format "{YYYY}{0M}{0D}T{h24}{m}{s}"
+  @datetime_format "{YYYY}{0M}{0D}T{h24}{m}{s}"
+  @time_format "{h24}{m}{s}"
 
   @doc ~S"""
   Parses a string in iCalendar format into a `t:Cocktail.Schedule.t/0`.
@@ -100,14 +101,14 @@ defmodule Cocktail.Parser.ICalendar do
   end
 
   @spec parse_naive_datetime(String.t) :: {:ok, NaiveDateTime.t} | {:error, term}
-  defp parse_naive_datetime(time_string), do: Timex.parse(time_string, @time_format)
+  defp parse_naive_datetime(time_string), do: Timex.parse(time_string, @datetime_format)
 
   @spec parse_utc_datetime(String.t) :: {:ok, DateTime.t} | {:error, term}
   defp parse_utc_datetime(time_string), do: parse_zoned_datetime(time_string, "UTC")
 
   @spec parse_zoned_datetime(String.t, String.t) :: {:ok, DateTime.t} | {:error, term}
   defp parse_zoned_datetime(time_string, zone) do
-    with {:ok, naive_datetime}  <- Timex.parse(time_string, @time_format),
+    with {:ok, naive_datetime}  <- Timex.parse(time_string, @datetime_format),
          %DateTime{} = datetime <- Timex.to_datetime(naive_datetime, zone)
     do
       {:ok, datetime}
@@ -168,6 +169,11 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_rrule_option("BYSECOND=" <> seconds_string) do
     with {:ok, seconds} <- parse_seconds_string(seconds_string) do
       {:ok, {:seconds, seconds |> Enum.reverse}}
+    end
+  end
+  defp parse_rrule_option("BYTIME=" <> times_string) do
+    with {:ok, times} <- parse_times_string(times_string) do
+      {:ok, {:times, times |> Enum.reverse}}
     end
   end
   defp parse_rrule_option(_), do: {:error, :unknown_rrulparam}
@@ -330,6 +336,25 @@ defmodule Cocktail.Parser.ICalendar do
   @spec validate_second(integer) :: {:ok, Cocktail.second_number} | :error
   defp validate_second(n) when n >= 0 and n < 60, do: {:ok, n}
   defp validate_second(_), do: :error
+
+  # time of day
+
+  @spec parse_times_string(String.t) :: {:ok, [Time.t]} | {:error, :invalid_times}
+  defp parse_times_string(""), do: {:error, :invalid_times}
+  defp parse_times_string(times_string) do
+    times_string
+    |> String.split(",")
+    |> parse_times([])
+  end
+
+  @spec parse_times([String.t], [Time.t]) :: {:ok, [Time.t]}
+  defp parse_times([], times), do: {:ok, times}
+  defp parse_times([time_string | rest], times) do
+    with {:ok, datetime} <- Timex.parse(time_string, @time_format) do
+      time = NaiveDateTime.to_time(datetime)
+      parse_times(rest, [time | times])
+    end
+  end
 
   # rdates and exdates
 

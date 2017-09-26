@@ -6,7 +6,9 @@ defmodule Cocktail.Validation.TimeOfDay do
 
   require Logger
 
-  @type t :: %__MODULE__{times: [{Cocktail.hour_number, Cocktail.minute_number, Cocktail.second_number}]}
+  @type time :: {Cocktail.hour_number, Cocktail.minute_number, Cocktail.second_number}
+
+  @type t :: %__MODULE__{times: [time]}
 
   @enforce_keys [:times]
   defstruct times: []
