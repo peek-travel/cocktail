@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.5.0][] - 2017-09-26
+### Added
+-   "time of day" option (e.g. `Schedule.add_recurrence_rules(:daily, times: [~T[10:00:00], ~T[12:30:00]])`; this serializes to `BYTIME` in iCalendar format, which doesn't actually exist, so don't use this if you need to be iCalendar compatible)
+
+### Fixed
+-   Improved performance (up to 80x for certain types of schedules)
+
 ## [0.4.0][] - 2017-09-19
 ### Added
 -   Added `Schedule.end_all_recurrence_rules/2` which adds an `:until` option to
@@ -29,7 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.1 - 2017-09-08
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/peek-travel/cocktail/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/peek-travel/cocktail/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/peek-travel/cocktail/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/peek-travel/cocktail/compare/0.2.0...0.2.1
