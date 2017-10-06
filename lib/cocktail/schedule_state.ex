@@ -22,6 +22,9 @@ defmodule Cocktail.ScheduleState do
   # @spec new(Schedule.t, Cocktail.time | nil) :: t # FIXME: why doesn't this spec work?
   def new(%Schedule{} = schedule, nil), do: new(schedule, schedule.start_time)
   def new(%Schedule{} = schedule, current_time) do
+    current_time = if Timex.compare(current_time, schedule.start_time) < 0,
+      do: schedule.start_time,
+      else: current_time
     %__MODULE__{
       recurrence_rules: schedule.recurrence_rules |> Enum.map(&RuleState.new/1),
       recurrence_times: schedule.recurrence_times |> Enum.sort(&(Timex.compare(&1, &2) <= 0)),
