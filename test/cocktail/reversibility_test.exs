@@ -84,7 +84,26 @@ defmodule Cocktail.ReversibilityTest do
   end
 
   test "time of day option" do
-    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, times: [~T[09:00:00], ~T[11:30:00]])
-    |> assert_reversible()
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, times: [~T[09:00:00], ~T[11:30:00]]) |> assert_reversible()
+  end
+
+  test "empty days" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, days: []) |> assert_reversible()
+  end
+
+  test "empty hours" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, hours: []) |> assert_reversible()
+  end
+
+  test "empty minutes" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, minutes: []) |> assert_reversible()
+  end
+
+  test "empty seconds" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, seconds: []) |> assert_reversible()
+  end
+
+  test "empty times" do
+    ~N[2017-09-09 09:00:00] |> Schedule.new |> Schedule.add_recurrence_rule(:daily, times: []) |> assert_reversible()
   end
 end
