@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.5.3][] - 2017-10-19
+### Fixed
+-   Giving empty lists for the :days, :hours, :minutes, :seconds, and :times options would produce invalid iCalendar strings
+
 ## [0.5.2][] - 2017-10-06
 ### Fixed
 -   Overriding the start time to before the schedule's start time would cause invalid occurrences to be emitted
@@ -44,7 +48,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.1 - 2017-09-08
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.5.2...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.5.3...HEAD
+[0.5.3]: https://github.com/peek-travel/cocktail/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/peek-travel/cocktail/compare/0.5.1...0.5.2
 [0.5.1]: https://github.com/peek-travel/cocktail/compare/0.5.0...0.5.1
 [0.5.0]: https://github.com/peek-travel/cocktail/compare/0.4.0...0.5.0
