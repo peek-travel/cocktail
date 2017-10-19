@@ -67,31 +67,31 @@ defmodule Cocktail.Validation do
 
   @spec apply_options(validations_map, Cocktail.rule_options) :: validations_map
   defp apply_options(map, []), do: map
-  defp apply_options(map, [{:days, days} | rest]) do
+  defp apply_options(map, [{:days, days} | rest]) when length(days) > 0 do
     map
     |> Map.delete(:base_wday)
     |> Map.put(:day, Day.new(days))
     |> apply_options(rest)
   end
-  defp apply_options(map, [{:hours, hours} | rest]) do
+  defp apply_options(map, [{:hours, hours} | rest]) when length(hours) > 0 do
     map
     |> Map.delete(:base_hour)
     |> Map.put(:hour_of_day, HourOfDay.new(hours))
     |> apply_options(rest)
   end
-  defp apply_options(map, [{:minutes, minutes} | rest]) do
+  defp apply_options(map, [{:minutes, minutes} | rest]) when length(minutes) > 0 do
     map
     |> Map.delete(:base_min)
     |> Map.put(:minute_of_hour, MinuteOfHour.new(minutes))
     |> apply_options(rest)
   end
-  defp apply_options(map, [{:seconds, seconds} | rest]) do
+  defp apply_options(map, [{:seconds, seconds} | rest]) when length(seconds) > 0 do
     map
     |> Map.delete(:base_sec)
     |> Map.put(:second_of_minute, SecondOfMinute.new(seconds))
     |> apply_options(rest)
   end
-  defp apply_options(map, [{:times, times} | rest]) do
+  defp apply_options(map, [{:times, times} | rest]) when length(times) > 0 do
     map
     |> Map.delete(:base_sec)
     |> Map.delete(:base_min)
