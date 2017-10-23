@@ -36,11 +36,113 @@ end
 
 Detailed documentation with all available options can be found at [https://hexdocs.pm/cocktail](https://hexdocs.pm/cocktail).
 
+## Quick-start Guide
+
+### Schedules
+
+Everything starts with a [Cocktail.Schedule](https://hexdocs.pm/cocktail/Cocktail.Schedule.html); create one like this:
+
+```elixir
+iex> schedule = Cocktail.schedule(start_time, opts)
+#Cocktail.Schedule<>
+
+# or
+...> schedule = Cocktail.Schedule.new(start_time, opts)
+#Cocktail.Schedule<>
+```
+
+*   `start_time` - Either a `DateTime` or a `NaiveDateTime` representing the beginning of your schedule.
+*   `opts`:
+    *   `duration` - (optional) How long each occurrence is, in seconds.
+
+### Recurrence Rules
+
+Schedules are pretty useless on their own. To have them do something useful, you add recurrence rules to them. Currently, Cocktail supports:
+
+*   Weekly
+*   Daily
+*   Hourly
+*   Minutely
+*   Secondly
+
+On top of these basic recurrence frequencies, you can add various options. Let's see some examples:
+
+```elixir
+iex> every_other_day = Cocktail.Schedule.add_recurrence_rule(schedule, :daily, interval: 2)
+#Cocktail.Schedule<Every 2 days>
+
+...> weekly_on_mo_we_fr = Cocktail.Schedule.add_recurrence_rule(schedule, :weekly, days: [:monday, :wednesday, :friday])
+#Cocktail.Schedule<Weekly on Mondays, Wednesdays and Fridays>
+
+...> daily_at_9am_and_5pm = Cocktail.Schedule.add_recurrence_rule(schedule, :daily, hours: [9, 17])
+#Cocktail.Schedule<Daily on the 9th and 17th hours of the day>
+```
+
+For more details about frequencies and options, see [Cocktail.Schedule.add_recurrence_rule/3](https://hexdocs.pm/cocktail/Cocktail.Schedule.html#add_recurrence_rule/3)
+
+### Occurrences
+
+Once you've got a schedule set up the way you want, you can generate a stream of occurrences that match the schedule like so:
+
+```elixir
+iex> occurrences = Cocktail.Schedule.occurrences(schedule)
+#Function<60.51599720/2 in Stream.unfold/2>
+...> Enum.take(occurrences, 3)
+[~N[2017-01-01 00:00:00], ~N[2017-01-02 00:00:00], ~N[2017-01-03 00:00:00]]
+```
+
+The type of each occurrence depends on what start time type you used, and wether or not you supplied a duration when creating the schedule.
+
+### Duration
+
+If you add the `duration` option when creating a schedule, you'll get `Cocktail.Span` structs as occurrences, with `:from` and `:until` fields of the same type as your start time.
+
+```elixir
+iex> schedule = Cocktail.schedule(~N[2017-01-01 00:00:00], duration: 3600) |> Cocktail.Schedule.add_recurrence_rule(:daily)
+#Cocktail.Schedule<Daily>
+...> occurrences = Cocktail.Schedule.occurrences(schedule)
+#Function<60.51599720/2 in Stream.unfold/2>
+...> Enum.take(occurrences, 3)
+[%Cocktail.Span{from: ~N[2017-01-01 00:00:00], until: ~N[2017-01-01 01:00:00]},
+ %Cocktail.Span{from: ~N[2017-01-02 00:00:00], until: ~N[2017-01-02 01:00:00]},
+ %Cocktail.Span{from: ~N[2017-01-03 00:00:00], until: ~N[2017-01-03 01:00:00]}]
+```
+
+### Recurrence Times and Exception Times
+
+You can also add one-off recurrence times that don't fit into a normal recurrence pattern, and exception times if you want to exclude a time that would normally be included because of a recurrence rule:
+
+```elixir
+iex> schedule = Cocktail.schedule(~N[2017-01-01 08:00:00]) |> Cocktail.Schedule.add_recurrence_rule(:daily)
+#Cocktail.Schedule<Daily>
+...> schedule = [~N[2017-01-01 09:00:00], ~N[2017-01-02 11:00:00], ~N[2017-01-03 17:00:00]] |> Enum.reduce(schedule, &Cocktail.Schedule.add_recurrence_time(&2, &1))
+#Cocktail.Schedule<Daily>
+...> schedule = Cocktail.Schedule.add_exception_time(schedule, ~N[2017-01-02 08:00:00])
+#Cocktail.Schedule<Daily>
+...> Cocktail.Schedule.occurrences(schedule) |> Enum.take(6)
+[~N[2017-01-01 08:00:00], ~N[2017-01-01 09:00:00], ~N[2017-01-02 11:00:00],
+ ~N[2017-01-03 08:00:00], ~N[2017-01-03 17:00:00], ~N[2017-01-04 08:00:00]]
+```
+
+### iCalendar
+
+You can convert schedules to and from the iCalendar format like this:
+
+```elixir
+iex> i_calendar = Cocktail.Schedule.to_i_calendar(schedule)
+"DTSTART:20170101T000000\nRRULE:FREQ=DAILY"
+
+...> Cocktail.Schedule.from_i_calendar(i_calendar)
+{:ok, #Cocktail.Schedule<Daily>}
+```
+
 ## Roadmap
 
-*   [ ] investigate and fix DST bugs
-*   [ ] add the rest of the iCalendar RRULE options
-*   [ ] more / better docs and more examples (getting started guide)
+*   [ ] investigate and fix DST bugs when using zoned DateTime
+*   [ ] support all iCalendar RRULE options
+*   [ ] support week-start option
+*   [ ] support iCalendar EXRULE
+*   [ ] convert to/from JSON representation
 
 ## Credits
 

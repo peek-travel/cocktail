@@ -66,7 +66,7 @@ defmodule Cocktail.Schedule do
   @spec new(Cocktail.time, Cocktail.schedule_options) :: t
   def new(start_time, options \\ []) do
     %__MODULE__{
-      start_time: start_time,
+      start_time: no_ms(start_time),
       duration: options[:duration]
     }
   end
@@ -74,7 +74,7 @@ defmodule Cocktail.Schedule do
   @doc false
   @spec set_start_time(t, Cocktail.time) :: t
   def set_start_time(schedule, start_time) do
-    %{schedule | start_time: start_time}
+    %{schedule | start_time: no_ms(start_time)}
   end
 
   @doc false
@@ -140,7 +140,7 @@ defmodule Cocktail.Schedule do
   """
   @spec add_recurrence_time(t, Cocktail.time) :: t
   def add_recurrence_time(%__MODULE__{} = schedule, time) do
-    %{schedule | recurrence_times: [time | schedule.recurrence_times]}
+    %{schedule | recurrence_times: [no_ms(time) | schedule.recurrence_times]}
   end
 
   @doc """
@@ -151,7 +151,7 @@ defmodule Cocktail.Schedule do
   """
   @spec add_exception_time(t, Cocktail.time) :: t
   def add_exception_time(%__MODULE__{} = schedule, time) do
-    %{schedule | exception_times: [time | schedule.exception_times]}
+    %{schedule | exception_times: [no_ms(time) | schedule.exception_times]}
   end
 
   @doc """
@@ -205,7 +205,7 @@ defmodule Cocktail.Schedule do
   @spec occurrences(t, Cocktail.time | nil) :: Enumerable.t
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
     schedule
-    |> ScheduleState.new(start_time)
+    |> ScheduleState.new(no_ms(start_time))
     |> Stream.unfold(&ScheduleState.next_time/1)
   end
 
@@ -259,6 +259,10 @@ defmodule Cocktail.Schedule do
   """
   @spec to_string(t) :: String.t
   def to_string(%__MODULE__{} = schedule), do: Builder.String.build(schedule)
+
+  @spec no_ms(Cocktail.time | nil) :: Cocktail.time | nil
+  defp no_ms(nil), do: nil
+  defp no_ms(time), do: %{time | microsecond: {0, 0}}
 
   defimpl Inspect, for: __MODULE__ do
     import Inspect.Algebra
