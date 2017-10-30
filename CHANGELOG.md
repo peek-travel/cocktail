@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.6.0][] - 2017-10-30
+### Added
+-   Quick Start guide and logo to the README
+
+### Fixed
+-   Some recurrence rules would keep the microsecond component of the start time when generating occurrences. Cocktail now always strips microseconds out, it only supports second precision.
+
 ## [0.5.3][] - 2017-10-19
 ### Fixed
 -   Giving empty lists for the :days, :hours, :minutes, :seconds, and :times options would produce invalid iCalendar strings
@@ -48,7 +55,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.1 - 2017-09-08
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.5.3...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/peek-travel/cocktail/compare/0.5.3...0.6.0
 [0.5.3]: https://github.com/peek-travel/cocktail/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/peek-travel/cocktail/compare/0.5.1...0.5.2
 [0.5.1]: https://github.com/peek-travel/cocktail/compare/0.5.0...0.5.1
