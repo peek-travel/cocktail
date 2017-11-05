@@ -14,6 +14,8 @@ defmodule Cocktail.Span do
               from:  Cocktail.time,
               until: Cocktail.time}
 
+  @type span_compat :: %{from:  Cocktail.time, until: Cocktail.time}
+
   @type overlap_mode :: :contains              |
                         :is_inside             |
                         :is_before             |
@@ -58,9 +60,9 @@ defmodule Cocktail.Span do
       ...> compare(span1, span2)
       1
   """
-  @spec compare(t, t) :: Timex.Comparable.compare_result
-  def compare(%__MODULE__{from: t, until: until1}, %__MODULE__{from: t, until: until2}), do: Timex.compare(until1, until2)
-  def compare(%__MODULE__{from: from1}, %__MODULE__{from: from2}), do: Timex.compare(from1, from2)
+  @spec compare(span_compat, t) :: Timex.Comparable.compare_result
+  def compare(%{from: t, until: until1}, %{from: t, until: until2}), do: Timex.compare(until1, until2)
+  def compare(%{from: from1}, %{from: from2}), do: Timex.compare(from1, from2)
 
   @doc """
   Returns an `t:overlap_mode/0` to describe how the first span overlaps the second.
@@ -87,9 +89,9 @@ defmodule Cocktail.Span do
       ...> overlap_mode(span1, span2)
       :is_before
   """
-  @spec overlap_mode(t, t) :: overlap_mode
-  def overlap_mode(%__MODULE__{from: from, until: until}, %__MODULE__{from: from, until: until}), do: :is_equal_to
-  def overlap_mode(%__MODULE__{from: from1, until: until1}, %__MODULE__{from: from2, until: until2}) do
+  @spec overlap_mode(span_compat, t) :: overlap_mode
+  def overlap_mode(%{from: from, until: until}, %{from: from, until: until}), do: :is_equal_to
+  def overlap_mode(%{from: from1, until: until1}, %{from: from2, until: until2}) do
     cond do
       Timex.compare(from1, from2) <= 0 && Timex.compare(until1, until2) >= 0 ->
         :contains
