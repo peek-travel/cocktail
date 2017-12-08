@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.7.0][] - 2017-12-07
+### Added
+-   The ability to pass anything responding to `from` and `until` to `overlap_mode` and `compare`
+
 ## [0.6.0][] - 2017-10-30
 ### Added
 -   Quick Start guide and logo to the README
