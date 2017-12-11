@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.7.0][] - 2017-12-07
+### Added
+-   The ability to pass anything responding to `from` and `until` to `overlap_mode` and `compare`
+
 ## [0.6.0][] - 2017-10-30
 ### Added
 -   Quick Start guide and logo to the README
@@ -55,7 +59,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.1 - 2017-09-08
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/peek-travel/cocktail/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/peek-travel/cocktail/compare/0.5.3...0.6.0
 [0.5.3]: https://github.com/peek-travel/cocktail/compare/0.5.2...0.5.3
 [0.5.2]: https://github.com/peek-travel/cocktail/compare/0.5.1...0.5.2
