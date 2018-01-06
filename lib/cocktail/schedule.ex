@@ -26,27 +26,29 @@ defmodule Cocktail.Schedule do
   @typedoc """
   Struct used to represent a schedule of recurring events.
 
-  This type is opaque, so its fields shouldn't be modified directly. Instead,
-  use the functions provided in this module to create and manipulate schedules.
+  This type should be considered opaque, so its fields shouldn't be modified
+  directly. Instead, use the functions provided in this module to create and
+  manipulate schedules.
 
   ## Fields:
 
     * `:start_time` - The schedule's start time
     * `:duration` - The duration of each occurrence (in seconds)
   """
-  @opaque t :: %__MODULE__{
-                recurrence_rules: [Rule.t],
-                recurrence_times: [Cocktail.time],
-                exception_times:  [Cocktail.time],
-                start_time:       Cocktail.time,
-                duration:         pos_integer | nil}
+  @type t :: %__MODULE__{
+          recurrence_rules: [Rule.t()],
+          recurrence_times: [Cocktail.time()],
+          exception_times: [Cocktail.time()],
+          start_time: Cocktail.time(),
+          duration: pos_integer | nil
+        }
 
   @enforce_keys [:start_time]
   defstruct recurrence_rules: [],
             recurrence_times: [],
-            exception_times:  [],
-            start_time:       nil,
-            duration:         nil
+            exception_times: [],
+            start_time: nil,
+            duration: nil
 
   @doc """
   Creates a new schedule using the given start time and options.
@@ -63,7 +65,7 @@ defmodule Cocktail.Schedule do
       iex> new(~N[2017-01-01 06:00:00], duration: 3_600)
       #Cocktail.Schedule<>
   """
-  @spec new(Cocktail.time, Cocktail.schedule_options) :: t
+  @spec new(Cocktail.time(), Cocktail.schedule_options()) :: t
   def new(start_time, options \\ []) do
     %__MODULE__{
       start_time: no_ms(start_time),
@@ -72,29 +74,24 @@ defmodule Cocktail.Schedule do
   end
 
   @doc false
-  @spec set_start_time(t, Cocktail.time) :: t
-  def set_start_time(schedule, start_time) do
-    %{schedule | start_time: no_ms(start_time)}
-  end
+  @spec set_start_time(t, Cocktail.time()) :: t
+  def set_start_time(schedule, start_time), do: %{schedule | start_time: no_ms(start_time)}
 
   @doc false
   @spec set_duration(t, pos_integer) :: t
-  def set_duration(schedule, duration) do
-    %{schedule | duration: duration}
-  end
+  def set_duration(schedule, duration), do: %{schedule | duration: duration}
 
   @doc false
-  @spec set_end_time(t, Cocktail.time) :: t
+  @spec set_end_time(t, Cocktail.time()) :: t
   def set_end_time(%__MODULE__{start_time: start_time} = schedule, end_time) do
     duration = Timex.diff(end_time, start_time, :seconds)
     %{schedule | duration: duration}
   end
 
   @doc false
-  @spec add_recurrence_rule(t, Rule.t) :: t
-  def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
-    %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
-  end
+  @spec add_recurrence_rule(t, Rule.t()) :: t
+  def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule),
+    do: %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
 
   @doc """
   Adds a recurrence rule of the given frequency to a schedule.
@@ -121,12 +118,12 @@ defmodule Cocktail.Schedule do
       ...> start_time |> new() |> add_recurrence_rule(:daily, interval: 2, hours: [10, 14])
       #Cocktail.Schedule<Every 2 days on the 10th and 14th hours of the day>
   """
-  @spec add_recurrence_rule(t, Cocktail.frequency, Cocktail.rule_options) :: t
+  @spec add_recurrence_rule(t, Cocktail.frequency(), Cocktail.rule_options()) :: t
   def add_recurrence_rule(%__MODULE__{} = schedule, frequency, options \\ []) do
     rule =
       options
       |> Keyword.put(:frequency, frequency)
-      |> Rule.new
+      |> Rule.new()
 
     add_recurrence_rule(schedule, rule)
   end
@@ -138,10 +135,9 @@ defmodule Cocktail.Schedule do
   time. When generating occurrences from this schedule, the given time will be
   included in the set of occurrences alongside any recurrence rules.
   """
-  @spec add_recurrence_time(t, Cocktail.time) :: t
-  def add_recurrence_time(%__MODULE__{} = schedule, time) do
-    %{schedule | recurrence_times: [no_ms(time) | schedule.recurrence_times]}
-  end
+  @spec add_recurrence_time(t, Cocktail.time()) :: t
+  def add_recurrence_time(%__MODULE__{} = schedule, time),
+    do: %{schedule | recurrence_times: [no_ms(time) | schedule.recurrence_times]}
 
   @doc """
   Adds an exception time to the schedule.
@@ -149,10 +145,9 @@ defmodule Cocktail.Schedule do
   This exception time will cancel out any occurrence generated from the
   schedule's recurrence rules or recurrence times.
   """
-  @spec add_exception_time(t, Cocktail.time) :: t
-  def add_exception_time(%__MODULE__{} = schedule, time) do
-    %{schedule | exception_times: [no_ms(time) | schedule.exception_times]}
-  end
+  @spec add_exception_time(t, Cocktail.time()) :: t
+  def add_exception_time(%__MODULE__{} = schedule, time),
+    do: %{schedule | exception_times: [no_ms(time) | schedule.exception_times]}
 
   @doc """
   Creates a stream of occurrences from the given schedule.
@@ -202,7 +197,7 @@ defmodule Cocktail.Schedule do
        %Cocktail.Span{from: ~N[2017-02-08 12:00:00], until: ~N[2017-02-08 13:00:00]},
        %Cocktail.Span{from: ~N[2017-02-15 12:00:00], until: ~N[2017-02-15 13:00:00]}]
   """
-  @spec occurrences(t, Cocktail.time | nil) :: Enumerable.t
+  @spec occurrences(t, Cocktail.time() | nil) :: Enumerable.t()
   def occurrences(%__MODULE__{} = schedule, start_time \\ nil) do
     schedule
     |> ScheduleState.new(no_ms(start_time))
@@ -215,41 +210,24 @@ defmodule Cocktail.Schedule do
   This has the same effect as if you'd passed the `:until` option when adding
   all recurrence rules to the schedule.
   """
-  @spec end_all_recurrence_rules(t, Cocktail.time) :: t
-  def end_all_recurrence_rules(%__MODULE__{recurrence_rules: rules} = schedule, end_time) do
-    %{schedule | recurrence_rules: Enum.map(rules, &Rule.set_until(&1, end_time))}
-  end
+  @spec end_all_recurrence_rules(t, Cocktail.time()) :: t
+  def end_all_recurrence_rules(%__MODULE__{recurrence_rules: rules} = schedule, end_time),
+    do: %{schedule | recurrence_rules: Enum.map(rules, &Rule.set_until(&1, end_time))}
 
   @doc """
   Parses a string in iCalendar format into a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Parser.ICalendar.parse/1` for details.
   """
-  @spec from_i_calendar(String.t) :: {:ok, t} | {:error, term}
+  @spec from_i_calendar(String.t()) :: {:ok, t} | {:error, term}
   def from_i_calendar(i_calendar_string), do: Parser.ICalendar.parse(i_calendar_string)
-
-  @doc """
-  Parses a string of JSON into a `t:Cocktail.Schedule.t/0`.
-
-  see `Cocktail.Parser.JSON.parse/1` for details.
-  """
-  @spec from_json(String.t) :: {:ok, t} | {:error, term}
-  def from_json(json_string), do: Parser.JSON.parse(json_string)
-
-  @doc """
-  Parses JSON-like map into a `t:Cocktail.Schedule.t/0`.
-
-  see `Cocktail.Parser.JSON.parse_map/1` for details.
-  """
-  @spec from_map(map) :: {:ok, t} | {:error, term}
-  def from_map(map), do: Parser.JSON.parse_map(map)
 
   @doc """
   Builds an iCalendar format string represenation of a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Builder.ICalendar.build/1` for details.
   """
-  @spec to_i_calendar(t) :: String.t
+  @spec to_i_calendar(t) :: String.t()
   def to_i_calendar(%__MODULE__{} = schedule), do: Builder.ICalendar.build(schedule)
 
   @doc """
@@ -257,10 +235,10 @@ defmodule Cocktail.Schedule do
 
   see `Cocktail.Builder.String.build/1` for details.
   """
-  @spec to_string(t) :: String.t
+  @spec to_string(t) :: String.t()
   def to_string(%__MODULE__{} = schedule), do: Builder.String.build(schedule)
 
-  @spec no_ms(Cocktail.time | nil) :: Cocktail.time | nil
+  @spec no_ms(Cocktail.time() | nil) :: Cocktail.time() | nil
   defp no_ms(nil), do: nil
   defp no_ms(time), do: %{time | microsecond: {0, 0}}
 
@@ -268,7 +246,7 @@ defmodule Cocktail.Schedule do
     import Inspect.Algebra
 
     def inspect(schedule, _) do
-      concat ["#Cocktail.Schedule<", Builder.String.build(schedule), ">"]
+      concat(["#Cocktail.Schedule<", Builder.String.build(schedule), ">"])
     end
   end
 end

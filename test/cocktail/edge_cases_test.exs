@@ -9,9 +9,9 @@ defmodule Cocktail.EdgeCasesTest do
     times = Schedule.occurrences(schedule, ~N[2017-09-01 00:00:00]) |> Enum.take(3)
 
     assert times == [
-      ~N[2017-10-01 09:00:00],
-      ~N[2017-10-02 09:00:00],
-      ~N[2017-10-03 09:00:00]
-    ]
+             ~N[2017-10-01 09:00:00],
+             ~N[2017-10-02 09:00:00],
+             ~N[2017-10-03 09:00:00]
+           ]
   end
 end
