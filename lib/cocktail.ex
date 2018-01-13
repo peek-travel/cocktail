@@ -8,21 +8,11 @@ defmodule Cocktail do
 
   alias Cocktail.{Schedule, Span}
 
-  @type frequency :: :weekly   |
-                     :daily    |
-                     :hourly   |
-                     :minutely |
-                     :secondly
+  @type frequency :: :weekly | :daily | :hourly | :minutely | :secondly
 
   @type day_number :: 0..6
 
-  @type day_atom :: :monday    |
-                    :tuesday   |
-                    :wednesday |
-                    :thursday  |
-                    :friday    |
-                    :saturday  |
-                    :sunday
+  @type day_atom :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
 
   @type day :: day_number | day_atom
 
@@ -36,26 +26,27 @@ defmodule Cocktail do
 
   @type schedule_options :: [schedule_option]
 
-  @type rule_option :: {:frequency, frequency}     |
-                       {:interval, pos_integer}    |
-                       {:count, pos_integer}       |
-                       {:until, time}              |
-                       {:days, [day]}              |
-                       {:hours, [hour_number]}     |
-                       {:minutes, [minute_number]} |
-                       {:seconds, [second_number]}
+  @type rule_option ::
+          {:frequency, frequency}
+          | {:interval, pos_integer}
+          | {:count, pos_integer}
+          | {:until, time}
+          | {:days, [day]}
+          | {:hours, [hour_number]}
+          | {:minutes, [minute_number]}
+          | {:seconds, [second_number]}
 
   @type rule_options :: [rule_option]
 
-  @type time :: DateTime.t | NaiveDateTime.t
+  @type time :: DateTime.t() | NaiveDateTime.t()
 
-  @type occurrence :: time | Span.t
+  @type occurrence :: time | Span.t()
 
   @doc """
   Creates a new schedule using the given start time and options.
 
   see `Cocktail.Schedule.new/1` for details.
   """
-  @spec schedule(time, schedule_options) :: Schedule.t
+  @spec schedule(time, schedule_options) :: Schedule.t()
   def schedule(start_time, options \\ []), do: Schedule.new(start_time, options)
 end

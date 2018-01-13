@@ -10,41 +10,37 @@ defmodule Cocktail.Parser.ICalendarTest do
   doctest Cocktail.Parser.ICalendar, import: true
 
   test "parse a schedule with a naive time" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
     assert schedule.start_time == ~N[2017-08-10 16:00:00]
   end
 
   test "parse a schedule with a UTC time" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000Z
-      """
+    schedule_string = """
+    DTSTART:20170810T160000Z
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
     assert schedule.start_time == ~Y[2017-08-10 16:00:00 UTC]
   end
 
   test "parse a schedule with a zoned time" do
-    schedule_string =
-      """
-      DTSTART;TZID=America/Los_Angeles:20170810T160000
-      """
+    schedule_string = """
+    DTSTART;TZID=America/Los_Angeles:20170810T160000
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
     assert schedule.start_time == ~Y[2017-08-10 16:00:00 America/Los_Angeles]
   end
 
   test "parse a schedule with an end time" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      DTEND:20170810T170000
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    DTEND:20170810T170000
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
     assert schedule.start_time == ~N[2017-08-10 16:00:00]
@@ -53,53 +49,49 @@ defmodule Cocktail.Parser.ICalendarTest do
 
   for frequency <- [:weekly, :daily, :hourly, :minutely, :secondly] do
     test "parse a schedule with a single #{frequency} repeat rule" do
-      schedule_string =
-        ~s"""
-        DTSTART:20170810T160000
-        DTEND:20170810T170000
-        RRULE:FREQ=#{unquote(frequency |> Atom.to_string |> String.upcase)}
-        """
+      schedule_string = ~s"""
+      DTSTART:20170810T160000
+      DTEND:20170810T170000
+      RRULE:FREQ=#{unquote(frequency |> Atom.to_string() |> String.upcase())}
+      """
 
       assert {:ok, schedule} = parse(schedule_string)
-      assert [ %Rule{} = rule ] = schedule.recurrence_rules
+      assert [%Rule{} = rule] = schedule.recurrence_rules
       assert rule.validations[:interval] == %Interval{type: unquote(frequency), interval: 1}
     end
   end
 
   test "parse a schedule with a weekly rrule with days and hours" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
-    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert [%Rule{} = rule] = schedule.recurrence_rules
     assert rule.validations[:hour_of_day] == %HourOfDay{hours: [10, 12, 14]}
     assert rule.validations[:day] == %Day{days: [1, 3, 5]}
   end
 
   test "parse a schedule with a daily rrule with minutes" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=DAILY;BYMINUTE=0,15,30,45
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=DAILY;BYMINUTE=0,15,30,45
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
-    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert [%Rule{} = rule] = schedule.recurrence_rules
     assert rule.validations[:minute_of_hour] == %MinuteOfHour{minutes: [0, 15, 30, 45]}
   end
 
   test "parse a schedule with a daily rrule with seconds" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=DAILY;BYSECOND=0,30
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=DAILY;BYSECOND=0,30
+    """
 
     assert {:ok, schedule} = parse(schedule_string)
-    assert [ %Rule{} = rule ] = schedule.recurrence_rules
+    assert [%Rule{} = rule] = schedule.recurrence_rules
     assert rule.validations[:second_of_minute] == %SecondOfMinute{seconds: [0, 30]}
   end
 
@@ -128,140 +120,126 @@ defmodule Cocktail.Parser.ICalendarTest do
   end
 
   test "parse a schedule with an invalid timezone" do
-    schedule_string =
-      """
-      DTSTART;TZID=invalid:20170810T160000
-      """
+    schedule_string = """
+    DTSTART;TZID=invalid:20170810T160000
+    """
 
-      assert {:error, {{:invalid_timezone, "invalid"}, 0}} = parse(schedule_string)
+    assert {:error, {{:invalid_timezone, "invalid"}, 0}} = parse(schedule_string)
   end
 
   test "parse a schedule with an invalid DTEND" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      DTEND:invalid
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    DTEND:invalid
+    """
 
     assert {:error, {"Expected `1-4 digit year` at line 1, column 1.", 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid frequency" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=invalid
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=invalid
+    """
 
     assert {:error, {:invalid_frequency, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid interval" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=DAILY;INTERVAL=invalid
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=DAILY;INTERVAL=invalid
+    """
 
     assert {:error, {:invalid_interval, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid count" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=DAILY;INTERVAL=2;COUNT=invalid
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=DAILY;INTERVAL=2;COUNT=invalid
+    """
 
     assert {:error, {:invalid_count, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid until" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=DAILY;INTERVAL=2;UNTIL=invalid
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=DAILY;INTERVAL=2;UNTIL=invalid
+    """
 
     assert {:error, {"Expected `1-4 digit year` at line 1, column 1.", 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid day" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,INVALID
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,INVALID
+    """
 
     assert {:error, {:invalid_day, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with empty days" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=
+    """
 
     assert {:error, {:invalid_days, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid hour" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,INVALID
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,INVALID
+    """
 
     assert {:error, {:invalid_hour, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with empty hours" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=
+    """
 
     assert {:error, {:invalid_hours, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid minute" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,INVALID
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,INVALID
+    """
 
     assert {:error, {:invalid_minute, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with empty minutes" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=
+    """
 
     assert {:error, {:invalid_minutes, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid second" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=0,INVALID
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=0,INVALID
+    """
 
     assert {:error, {:invalid_second, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with empty seconds" do
-    schedule_string =
-      """
-      DTSTART:20170810T160000
-      RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=
-      """
+    schedule_string = """
+    DTSTART:20170810T160000
+    RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR;BYHOUR=10,12,14;BYMINUTE=0,30;BYSECOND=
+    """
 
     assert {:error, {:invalid_seconds, 1}} = parse(schedule_string)
   end

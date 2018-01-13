@@ -14,10 +14,10 @@ defmodule Cocktail.Mixfile do
       package: package(),
       deps: deps(),
       docs: docs(),
-      dialyzer: [ flags: [:unmatched_returns, :error_handling, :underspecs]],
+      dialyzer: [flags: [:unmatched_returns, :error_handling, :underspecs]],
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
-        "coveralls": :test,
+        coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
@@ -42,7 +42,7 @@ defmodule Cocktail.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
       maintainers: ["Chris Dosé"],
       licenses: ["MIT"],
-      links: %{"GitHub": "https://github.com/peek-travel/cocktail"}
+      links: %{GitHub: "https://github.com/peek-travel/cocktail"}
     ]
   end
 
@@ -58,20 +58,15 @@ defmodule Cocktail.Mixfile do
 
   defp deps do
     [
-      {:timex, "~> 3.1"},
-      {:poison, ">= 2.0.0"},
-
-      {:excoveralls, "~> 0.7", only: :test},
-
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
-      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
-
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
-
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
-
-      {:inch_ex, ">= 0.0.0", only: :docs}
+      {:excoveralls, "~> 0.7", only: :test},
+      {:inch_ex, ">= 0.0.0", only: :docs},
+      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
+      {:poison, ">= 2.0.0"},
+      {:timex, "~> 3.1"}
     ]
   end
 end

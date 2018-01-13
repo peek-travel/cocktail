@@ -3,7 +3,7 @@ defmodule Cocktail.TestSupport.DateTimeSigil do
     [date, time, zone] = String.split(string, " ")
 
     "#{date} #{time}"
-    |> NaiveDateTime.from_iso8601!
+    |> NaiveDateTime.from_iso8601!()
     |> Timex.to_datetime(zone)
   end
 end

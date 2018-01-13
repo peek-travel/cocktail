@@ -10,21 +10,20 @@ defmodule Cocktail.Span do
   produce a list of `t:t/0` instead of a list of `t:Cocktail.time/0`.
   """
 
-  @type t :: %__MODULE__{
-              from:  Cocktail.time,
-              until: Cocktail.time}
+  @type t :: %__MODULE__{from: Cocktail.time(), until: Cocktail.time()}
 
-  @type span_compat :: %{from:  Cocktail.time, until: Cocktail.time}
+  @type span_compat :: %{from: Cocktail.time(), until: Cocktail.time()}
 
-  @type overlap_mode :: :contains              |
-                        :is_inside             |
-                        :is_before             |
-                        :is_after              |
-                        :overlaps_the_start_of |
-                        :overlaps_the_end_of
+  @type overlap_mode ::
+          :contains
+          | :is_inside
+          | :is_before
+          | :is_after
+          | :overlaps_the_start_of
+          | :overlaps_the_end_of
 
   @enforce_keys [:from, :until]
-  defstruct from:  nil,
+  defstruct from: nil,
             until: nil
 
   @doc """
@@ -35,7 +34,7 @@ defmodule Cocktail.Span do
       iex> new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       %Cocktail.Span{from: ~N[2017-01-01 06:00:00], until: ~N[2017-01-01 10:00:00]}
   """
-  @spec new(Cocktail.time, Cocktail.time) :: t
+  @spec new(Cocktail.time(), Cocktail.time()) :: t
   def new(from, until), do: %__MODULE__{from: from, until: until}
 
   @doc """
@@ -60,7 +59,7 @@ defmodule Cocktail.Span do
       ...> compare(span1, span2)
       1
   """
-  @spec compare(span_compat, t) :: Timex.Comparable.compare_result
+  @spec compare(span_compat, t) :: Timex.Comparable.compare_result()
   def compare(%{from: t, until: until1}, %{from: t, until: until2}), do: Timex.compare(until1, until2)
   def compare(%{from: from1}, %{from: from2}), do: Timex.compare(from1, from2)
 
@@ -91,20 +90,19 @@ defmodule Cocktail.Span do
   """
   @spec overlap_mode(span_compat, t) :: overlap_mode
   def overlap_mode(%{from: from, until: until}, %{from: from, until: until}), do: :is_equal_to
+
+  # credo:disable-for-next-line
   def overlap_mode(%{from: from1, until: until1}, %{from: from2, until: until2}) do
+    from_comp = Timex.compare(from1, from2)
+    until_comp = Timex.compare(until1, until2)
+
     cond do
-      Timex.compare(from1, from2) <= 0 && Timex.compare(until1, until2) >= 0 ->
-        :contains
-      Timex.compare(from1, from2) >= 0 && Timex.compare(until1, until2) <= 0 ->
-        :is_inside
-      Timex.compare(until1, from2) <= 0 ->
-        :is_before
-      Timex.compare(from1, until2) >= 0 ->
-        :is_after
-      Timex.compare(from1, from2) < 0 && Timex.compare(until1, until2) < 0 ->
-        :overlaps_the_start_of
-      Timex.compare(from1, from2) > 0 && Timex.compare(until1, until2) > 0 ->
-        :overlaps_the_end_of
+      from_comp <= 0 && until_comp >= 0 -> :contains
+      from_comp >= 0 && until_comp <= 0 -> :is_inside
+      Timex.compare(until1, from2) <= 0 -> :is_before
+      Timex.compare(from1, until2) >= 0 -> :is_after
+      from_comp < 0 && until_comp < 0 -> :overlaps_the_start_of
+      from_comp > 0 && until_comp > 0 -> :overlaps_the_end_of
     end
   end
 end

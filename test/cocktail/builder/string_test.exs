@@ -8,7 +8,7 @@ defmodule Cocktail.Builder.StringTest do
   test "build a schedule with a BYDAY option" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:weekly, days: [:monday, :wednesday, :friday])
 
     string = Schedule.to_string(schedule)
@@ -19,7 +19,7 @@ defmodule Cocktail.Builder.StringTest do
   test "build a schedule with a BYHOUR option" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, hours: [10, 12, 14])
 
     string = Schedule.to_string(schedule)
@@ -30,7 +30,7 @@ defmodule Cocktail.Builder.StringTest do
   test "build a schedule with a BYMINUTE option" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, minutes: [0, 15, 30, 45])
 
     string = Schedule.to_string(schedule)
@@ -41,7 +41,7 @@ defmodule Cocktail.Builder.StringTest do
   test "build a schedule with a BYSECOND option" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, seconds: [0, 30])
 
     string = Schedule.to_string(schedule)
@@ -52,7 +52,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every second" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:secondly)
 
     string = Schedule.to_string(schedule)
@@ -63,7 +63,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every 2 seconds" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:secondly, interval: 2)
 
     string = Schedule.to_string(schedule)
@@ -74,7 +74,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every minute" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:minutely)
 
     string = Schedule.to_string(schedule)
@@ -85,7 +85,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every 2 minutes" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:minutely, interval: 2)
 
     string = Schedule.to_string(schedule)
@@ -96,7 +96,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every hour" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:hourly)
 
     string = Schedule.to_string(schedule)
@@ -107,7 +107,7 @@ defmodule Cocktail.Builder.StringTest do
   test "every 2 hours" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:hourly, interval: 2)
 
     string = Schedule.to_string(schedule)
@@ -118,7 +118,7 @@ defmodule Cocktail.Builder.StringTest do
   test "on the 1st hour of the day" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, hours: [1])
 
     string = Schedule.to_string(schedule)
@@ -129,7 +129,7 @@ defmodule Cocktail.Builder.StringTest do
   test "on the 2nd minute of the hour" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, minutes: [2])
 
     string = Schedule.to_string(schedule)
@@ -140,7 +140,7 @@ defmodule Cocktail.Builder.StringTest do
   test "on the 3rd second of the minute" do
     schedule =
       ~N[2017-01-01 09:00:00]
-      |> Cocktail.schedule
+      |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:daily, seconds: [3])
 
     string = Schedule.to_string(schedule)
