@@ -5,5 +5,5 @@ config :mix_test_watch,
   tasks: [
     "coveralls",
     "dialyzer",
-    "credo"
+    "credo --strict"
   ]
