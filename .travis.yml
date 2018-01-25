@@ -3,7 +3,8 @@ elixir:
   - 1.5
   - 1.6
 script:
-  - mix do credo, format --check-formatted
+  - if [ "$ELIXIR_VERSION" != "1.5" ]; then mix format --check-formatted; fi
+  - mix credo
   - mix coveralls.json
 after_script:
   - mix deps.get --only docs
