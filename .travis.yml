@@ -2,6 +2,10 @@ language: elixir
 elixir:
   - 1.5
   - 1.6
+before_script:
+  - mix compile
+  - MIX_ENV=test mix compile
+  - MIX_ENV=docs mix compile
 script:
   - if [ "$ELIXIR_VERSION" != "1.5" ]; then mix format --check-formatted; fi
   - mix credo
