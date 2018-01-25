@@ -52,7 +52,7 @@ defmodule Cocktail.Mixfile do
       logo: "logo.png",
       source_ref: @version,
       source_url: "https://github.com/peek-travel/cocktail",
-      extras: ["README.md"]
+      extras: ["README.md", "LICENSE.md"]
     ]
   end
 
