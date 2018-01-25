@@ -1,12 +1,5 @@
+# Used by "mix format"
 [
-  inputs: [
-    "lib/*.ex",
-    "lib/**/*.ex",
-    "config/*.exs",
-    "test/*.exs",
-    "test/**/*.exs",
-    "*.exs",
-    ".*.exs"
-  ],
+  inputs: ["mix.exs", "{config,lib,test}/**/*.{ex,exs}"],
   line_length: 120
 ]
