@@ -42,7 +42,11 @@ defmodule Cocktail.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
       maintainers: ["Chris Dosé"],
       licenses: ["MIT"],
-      links: %{GitHub: "https://github.com/peek-travel/cocktail"}
+      links: %{
+        "GitHub" => "https://github.com/peek-travel/cocktail",
+        "Readme" => "https://github.com/peek-travel/cocktail/blob/#{@version}/README.md",
+        "Changelog" => "https://github.com/peek-travel/cocktail/blob/#{@version}/CHANGELOG.md"
+      }
     ]
   end
 
