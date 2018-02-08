@@ -35,6 +35,7 @@ defmodule Cocktail do
           | {:hours, [hour_number]}
           | {:minutes, [minute_number]}
           | {:seconds, [second_number]}
+          | {:times, [Time.t()]}
 
   @type rule_options :: [rule_option]
 
