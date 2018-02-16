@@ -183,7 +183,7 @@ defmodule Cocktail.Parser.ICalendar do
     end
   end
 
-  defp parse_rrule_option("BYTIME=" <> times_string) do
+  defp parse_rrule_option("X-BYTIME=" <> times_string) do
     with {:ok, times} <- parse_times_string(times_string) do
       {:ok, {:times, times |> Enum.reverse()}}
     end

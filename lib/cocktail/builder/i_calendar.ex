@@ -201,6 +201,6 @@ defmodule Cocktail.Builder.ICalendar do
       end)
       |> Enum.join(",")
 
-    "BYTIME=#{times_list}"
+    "X-BYTIME=#{times_list}"
   end
 end
