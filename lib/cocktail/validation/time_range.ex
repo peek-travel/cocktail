@@ -33,7 +33,7 @@ defmodule Cocktail.Validation.TimeRange do
           nil
 
         _ ->
-          {time, Time.add(time, time_range.interval_seconds)}
+          {time, time_add(time, time_range.interval_seconds)}
       end
     end)
     |> Enum.to_list()
@@ -42,4 +42,38 @@ defmodule Cocktail.Validation.TimeRange do
   @spec next_time(t(), Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{time_of_day: time_of_day}, time, start_time),
     do: TimeOfDay.next_time(time_of_day, time, start_time)
+
+  if Version.compare(System.version(), "1.6.0") == :lt do
+    # Yanked from Elixir 1.6.1 source code.  Remove once we drop support for Elixir < 1.6.
+    @spec time_add(Calendar.time(), integer, System.time_unit()) :: t
+    def time_add(%{calendar: calendar} = time, number, unit \\ :second) when is_integer(number) do
+      number = System.convert_time_unit(number, unit, :microsecond)
+      iso_days = {0, to_day_fraction(time)}
+      total = Calendar.ISO.iso_days_to_unit(iso_days, :microsecond) + number
+      iso_ppd = 86_400_000_000
+      parts = Integer.mod(total, iso_ppd)
+
+      {hour, minute, second, microsecond} = calendar.time_from_day_fraction({parts, iso_ppd})
+
+      %Time{
+        hour: hour,
+        minute: minute,
+        second: second,
+        microsecond: microsecond,
+        calendar: calendar
+      }
+    end
+
+    defp to_day_fraction(%{
+           hour: hour,
+           minute: minute,
+           second: second,
+           microsecond: {_, _} = microsecond,
+           calendar: calendar
+         }) do
+      calendar.time_to_day_fraction(hour, minute, second, microsecond)
+    end
+  else
+    def time_add(time, amount, unit \\ :second), do: Time.add(time, amount, unit)
+  end
 end
