@@ -69,7 +69,6 @@ defmodule Cocktail.Mixfile do
       {:excoveralls, "~> 0.7", only: :test},
       {:inch_ex, ">= 0.0.0", only: :docs},
       {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
-      {:poison, ">= 2.0.0"},
       {:timex, "~> 3.1"}
     ]
   end
