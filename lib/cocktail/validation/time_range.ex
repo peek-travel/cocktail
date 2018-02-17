@@ -46,7 +46,7 @@ defmodule Cocktail.Validation.TimeRange do
   if Version.compare(System.version(), "1.6.0") == :lt do
     # Yanked from Elixir 1.6.1 source code.  Remove once we drop support for Elixir < 1.6.
     @spec time_add(Calendar.time(), integer, System.time_unit()) :: t
-    def time_add(%{calendar: calendar} = time, number, unit \\ :second) when is_integer(number) do
+    defp time_add(%{calendar: calendar} = time, number, unit \\ :second) when is_integer(number) do
       number = System.convert_time_unit(number, unit, :microsecond)
       iso_days = {0, to_day_fraction(time)}
       total = Calendar.ISO.iso_days_to_unit(iso_days, :microsecond) + number
@@ -74,6 +74,6 @@ defmodule Cocktail.Validation.TimeRange do
       calendar.time_to_day_fraction(hour, minute, second, microsecond)
     end
   else
-    def time_add(time, amount, unit \\ :second), do: Time.add(time, amount, unit)
+    defp time_add(time, amount, unit \\ :second), do: Time.add(time, amount, unit)
   end
 end
