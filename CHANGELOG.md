@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][]
+### Breaking
+-   The `BYTIME` option of `RRULE`s in the iCalendar output is now `X-BYTIME` to better follow the standard's extensions policy
+
+### Added
+-   "time range" option (e.g. `Schedule.add_recurrence_rules(:daily, time_range: %{start_time: ~T[09:00:00], end_time: ~T[11:00:00], interval_seconds: 1_800})`; this serializes to `X-BYRANGE` in iCalendar format, using the extension prefix to signal that it's a proprietary extension)
+
 ### Changed
 -   Formatted code-base with the new Elixir 1.6 code formatter
 -   Changed `Schedule.t()` to not be an opaque type, which fixed the few missing typespecs

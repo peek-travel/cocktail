@@ -1,7 +1,7 @@
 defmodule Cocktail.Mixfile do
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.8.0"
 
   def project do
     [
@@ -69,7 +69,6 @@ defmodule Cocktail.Mixfile do
       {:excoveralls, "~> 0.7", only: :test},
       {:inch_ex, ">= 0.0.0", only: :docs},
       {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
-      {:poison, ">= 2.0.0"},
       {:timex, "~> 3.1"}
     ]
   end

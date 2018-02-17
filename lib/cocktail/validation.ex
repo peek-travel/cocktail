@@ -8,7 +8,8 @@ defmodule Cocktail.Validation do
     HourOfDay,
     MinuteOfHour,
     SecondOfMinute,
-    TimeOfDay
+    TimeOfDay,
+    TimeRange
   }
 
   @type validation_key ::
@@ -21,6 +22,7 @@ defmodule Cocktail.Validation do
           | :minute_of_hour
           | :second_of_minute
           | :time_of_day
+          | :time_range
           | :interval
 
   @type validations_map :: %{validation_key => t}
@@ -33,6 +35,7 @@ defmodule Cocktail.Validation do
           | MinuteOfHour.t()
           | SecondOfMinute.t()
           | TimeOfDay.t()
+          | TimeRange.t()
 
   @spec build_validations(Cocktail.rule_options()) :: validations_map
   def build_validations(options) do
@@ -122,6 +125,15 @@ defmodule Cocktail.Validation do
     |> Map.delete(:base_min)
     |> Map.delete(:base_hour)
     |> Map.put(:time_of_day, TimeOfDay.new(times))
+    |> apply_options(rest)
+  end
+
+  defp apply_options(map, [{:time_range, time_range} | rest]) do
+    map
+    |> Map.delete(:base_sec)
+    |> Map.delete(:base_min)
+    |> Map.delete(:base_hour)
+    |> Map.put(:time_range, TimeRange.new(time_range))
     |> apply_options(rest)
   end
 
