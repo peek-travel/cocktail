@@ -24,6 +24,7 @@ defmodule Cocktail.RuleState do
     :base_hour,
     :hour_of_day,
     :time_of_day,
+    :time_range,
     :base_wday,
     :day,
     :interval

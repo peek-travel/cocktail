@@ -189,6 +189,12 @@ defmodule Cocktail.Parser.ICalendar do
     end
   end
 
+  defp parse_rrule_option("X-BYRANGE=" <> range_string) do
+    with {:ok, time_range} <- parse_range_string(range_string) do
+      {:ok, {:time_range, time_range}}
+    end
+  end
+
   defp parse_rrule_option(_), do: {:error, :unknown_rrulparam}
 
   @spec parse_frequency(String.t()) :: {:ok, Cocktail.frequency()} | {:error, :invalid_frequency}
@@ -364,15 +370,55 @@ defmodule Cocktail.Parser.ICalendar do
     |> parse_times([])
   end
 
-  @spec parse_times([String.t()], [Time.t()]) :: {:ok, [Time.t()]}
+  @spec parse_times([String.t()], [Time.t()]) :: {:ok, [Time.t()]} | {:error, :invalid_time_format}
   defp parse_times([], times), do: {:ok, times}
 
   defp parse_times([time_string | rest], times) do
-    with {:ok, datetime} <- Timex.parse(time_string, @time_format) do
-      time = NaiveDateTime.to_time(datetime)
+    with {:ok, time} <- parse_time(time_string) do
       parse_times(rest, [time | times])
     end
   end
+
+  @spec parse_time(String.t()) :: {:ok, Time.t()} | {:error, :invalid_time_format}
+  defp parse_time(time_string) do
+    with {:ok, datetime} <- Timex.parse(time_string, @time_format) do
+      {:ok, NaiveDateTime.to_time(datetime)}
+    else
+      _ ->
+        {:error, :invalid_time_format}
+    end
+  end
+
+  # time range
+
+  @spec parse_range_string(String.t()) :: {:ok, Cocktail.time_range()} | {:error, :invalid_time_range}
+  defp parse_range_string(""), do: {:error, :invalid_time_range}
+
+  defp parse_range_string(range_string) do
+    range_string
+    |> String.split(",")
+    |> parse_range()
+  end
+
+  @spec parse_range([String.t()]) :: {:ok, Cocktail.time_range()}
+  defp parse_range([start_time_string, end_time_string, interval_seconds_string]) do
+    with {:ok, start_time} <- parse_time(start_time_string),
+         {:ok, end_time} <- parse_time(end_time_string),
+         {interval_seconds, _} <- Integer.parse(interval_seconds_string) do
+      time_range = %{
+        start_time: start_time,
+        end_time: end_time,
+        interval_seconds: interval_seconds
+      }
+
+      {:ok, time_range}
+    else
+      _ ->
+        {:error, :invalid_time_range}
+    end
+  end
+
+  defp parse_range(_), do: {:error, :invalid_time_range}
 
   # rdates and exdates
 

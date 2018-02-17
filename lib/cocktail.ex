@@ -22,6 +22,12 @@ defmodule Cocktail do
 
   @type second_number :: 0..59
 
+  @type time_range :: %{
+          start_time: Time.t(),
+          end_time: Time.t(),
+          interval_seconds: second_number()
+        }
+
   @type schedule_option :: {:duration, pos_integer}
 
   @type schedule_options :: [schedule_option]
@@ -36,6 +42,7 @@ defmodule Cocktail do
           | {:minutes, [minute_number]}
           | {:seconds, [second_number]}
           | {:times, [Time.t()]}
+          | {:time_range, time_range}
 
   @type rule_options :: [rule_option]
 
