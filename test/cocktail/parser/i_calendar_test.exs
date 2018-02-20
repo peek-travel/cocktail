@@ -2,7 +2,7 @@ defmodule Cocktail.Parser.ICalendarTest do
   use ExUnit.Case
 
   alias Cocktail.Rule
-  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
+  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute, TimeOfDay}
 
   import Cocktail.Parser.ICalendar
   import Cocktail.TestSupport.DateTimeSigil
@@ -93,6 +93,17 @@ defmodule Cocktail.Parser.ICalendarTest do
     assert {:ok, schedule} = parse(schedule_string)
     assert [%Rule{} = rule] = schedule.recurrence_rules
     assert rule.validations[:second_of_minute] == %SecondOfMinute{seconds: [0, 30]}
+  end
+
+  test "parse a pre-0.8 schedule with a BYTIME option to an rrule" do
+    schedule_string = """
+    DTSTART:20170810T090000
+    RRULE:FREQ=DAILY;BYTIME=090000,100000,110000
+    """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [%Rule{} = rule] = schedule.recurrence_rules
+    assert rule.validations[:time_of_day] == %TimeOfDay{times: [{9, 0, 0}, {10, 0, 0}, {11, 0, 0}]}
   end
 
   ##########
