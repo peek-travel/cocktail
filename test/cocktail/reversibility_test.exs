@@ -109,12 +109,16 @@ defmodule Cocktail.ReversibilityTest do
   end
 
   test "empty minutes" do
-    ~N[2017-09-09 09:00:00] |> Schedule.new() |> Schedule.add_recurrence_rule(:daily, minutes: [])
+    ~N[2017-09-09 09:00:00]
+    |> Schedule.new()
+    |> Schedule.add_recurrence_rule(:daily, minutes: [])
     |> assert_reversible()
   end
 
   test "empty seconds" do
-    ~N[2017-09-09 09:00:00] |> Schedule.new() |> Schedule.add_recurrence_rule(:daily, seconds: [])
+    ~N[2017-09-09 09:00:00]
+    |> Schedule.new()
+    |> Schedule.add_recurrence_rule(:daily, seconds: [])
     |> assert_reversible()
   end
 
