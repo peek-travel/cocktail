@@ -4,9 +4,9 @@ defmodule Cocktail.EdgeCasesTest do
   alias Cocktail.Schedule
 
   test "override start time to before the schedule's start time" do
-    schedule = Schedule.new(~N[2017-10-01 09:00:00]) |> Schedule.add_recurrence_rule(:daily)
+    schedule = ~N[2017-10-01 09:00:00] |> Schedule.new() |> Schedule.add_recurrence_rule(:daily)
 
-    times = Schedule.occurrences(schedule, ~N[2017-09-01 00:00:00]) |> Enum.take(3)
+    times = schedule |> Schedule.occurrences(~N[2017-09-01 00:00:00]) |> Enum.take(3)
 
     assert times == [
              ~N[2017-10-01 09:00:00],
