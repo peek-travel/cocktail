@@ -1,14 +1,22 @@
 language: elixir
+
+otp_release:
+  - 20.3
+  - 21.0
+
 elixir:
-  - 1.5
   - 1.6
+  - 1.7
+
 script:
   - mix compile --warnings-as-errors
-  - if [ "$ELIXIR_VERSION" != "1.5" ]; then mix format --check-formatted; fi
+  - mix format --check-formatted
   - mix credo
   - mix coveralls.json
+
 after_script:
   - mix deps.get --only docs
   - MIX_ENV=docs mix inch.report
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)

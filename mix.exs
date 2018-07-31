@@ -9,7 +9,7 @@ defmodule Cocktail.Mixfile do
       name: "Cocktail",
       source_url: "https://github.com/peek-travel/cocktail",
       version: @version,
-      elixir: "~> 1.5",
+      elixir: "~> 1.6",
       description: description(),
       package: package(),
       deps: deps(),
