@@ -53,7 +53,7 @@ defmodule Cocktail.Schedule do
   @doc """
   Creates a new schedule using the given start time and options.
 
-  This schdule will be empty and needs recurrence rules added to it before it is useful.
+  This schedule will be empty and needs recurrence rules added to it before it is useful.
   Use `add_recurrence_rule/3` to add rules to a schedule.
 
   ## Options
@@ -223,7 +223,7 @@ defmodule Cocktail.Schedule do
   def from_i_calendar(i_calendar_string), do: Parser.ICalendar.parse(i_calendar_string)
 
   @doc """
-  Builds an iCalendar format string represenation of a `t:Cocktail.Schedule.t/0`.
+  Builds an iCalendar format string representation of a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Builder.ICalendar.build/1` for details.
   """
@@ -231,7 +231,7 @@ defmodule Cocktail.Schedule do
   def to_i_calendar(%__MODULE__{} = schedule), do: Builder.ICalendar.build(schedule)
 
   @doc """
-  Builds a human readable string represenation of a `t:Cocktail.Schedule.t/0`.
+  Builds a human readable string representation of a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Builder.String.build/1` for details.
   """

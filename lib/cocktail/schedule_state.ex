@@ -44,8 +44,8 @@ defmodule Cocktail.ScheduleState do
   def next_time(%__MODULE__{} = state) do
     {time, remaining_rules} = next_time_from_recurrence_rules(state)
     {time, remaining_times} = next_time_from_recurrence_times(state.recurrence_times, time)
-    {is_exception, remaining_excpetions} = apply_exception_time(state.exception_times, time)
-    result = next_occurence_and_state(time, remaining_rules, remaining_times, remaining_excpetions, state)
+    {is_exception, remaining_exceptions} = apply_exception_time(state.exception_times, time)
+    result = next_occurrence_and_state(time, remaining_rules, remaining_times, remaining_exceptions, state)
 
     case result do
       {occurrence, state} ->
@@ -97,12 +97,12 @@ defmodule Cocktail.ScheduleState do
     end
   end
 
-  @spec next_occurence_and_state(Cocktail.time(), [RuleState.t()], [Cocktail.time()], [Cocktail.time()], t) ::
+  @spec next_occurrence_and_state(Cocktail.time(), [RuleState.t()], [Cocktail.time()], [Cocktail.time()], t) ::
           {Cocktail.occurrence(), t} | nil
-  defp next_occurence_and_state(nil, _, _, _, _), do: nil
+  defp next_occurrence_and_state(nil, _, _, _, _), do: nil
 
-  defp next_occurence_and_state(time, rules, times, exceptions, state) do
-    occurence = span_or_time(time, state.duration)
+  defp next_occurrence_and_state(time, rules, times, exceptions, state) do
+    occurrence = span_or_time(time, state.duration)
 
     new_state = %{
       state
@@ -112,7 +112,7 @@ defmodule Cocktail.ScheduleState do
         current_time: Timex.shift(time, seconds: 1)
     }
 
-    {occurence, new_state}
+    {occurrence, new_state}
   end
 
   @spec span_or_time(Cocktail.time() | nil, pos_integer | nil) :: Cocktail.occurrence()

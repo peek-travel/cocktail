@@ -11,7 +11,7 @@ defmodule Cocktail.Builder.ICalendar do
   @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
 
   @doc ~S"""
-  Builds an iCalendar format string represenation of a `t:Cocktail.Schedule.t/0`.
+  Builds an iCalendar format string representation of a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 

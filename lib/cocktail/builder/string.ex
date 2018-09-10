@@ -3,7 +3,7 @@ defmodule Cocktail.Builder.String do
   Build human readable strings from schedules.
 
   This module exposes functions for building human readable string
-  represenations of schedules. It currently only represents the recurrence rules
+  representations of schedules. It currently only represents the recurrence rules
   of a schedule, and doesn't indicate the start time, duration, nor any
   recurrence times or exception times. This is mainly useful for quick glances
   at schedules in IEx sessions (because it's used for the `inspect`
@@ -18,7 +18,7 @@ defmodule Cocktail.Builder.String do
   @typep represented_keys :: :interval | :day | :hour_of_day | :minute_of_hour | :second_of_minute
 
   @doc """
-  Builds a human readable string represenation of a `t:Cocktail.Schedule.t/0`.
+  Builds a human readable string representation of a `t:Cocktail.Schedule.t/0`.
 
   ## Examples
 
