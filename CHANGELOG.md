@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.8.2][] - 2018-11-08
+### Fixed
+-   Fix a couple typespecs in Cocktail.Span ([#66](https://github.com/peek-travel/cocktail/pull/66))
+
 ## [0.8.1][] - 2018-02-17
 ### Fixed
 -   Allow backwards compatible parsing of BYTIME rule for existing schedules generated using cocktail pre-0.8.
@@ -77,7 +81,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.1 - 2017-09-08
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.8.1...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.8.2...HEAD
+[0.8.2]: https://github.com/peek-travel/cocktail/compare/0.8.1...0.8.2
 [0.8.1]: https://github.com/peek-travel/cocktail/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/peek-travel/cocktail/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/peek-travel/cocktail/compare/0.6.0...0.7.0
