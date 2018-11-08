@@ -19,6 +19,7 @@ defmodule Cocktail.Span do
           | :is_inside
           | :is_before
           | :is_after
+          | :is_equal_to
           | :overlaps_the_start_of
           | :overlaps_the_end_of
 
@@ -59,7 +60,7 @@ defmodule Cocktail.Span do
       ...> compare(span1, span2)
       1
   """
-  @spec compare(span_compat, t) :: Timex.Comparable.compare_result()
+  @spec compare(span_compat, span_compat) :: Timex.Comparable.compare_result()
   def compare(%{from: t, until: until1}, %{from: t, until: until2}), do: Timex.compare(until1, until2)
   def compare(%{from: from1}, %{from: from2}), do: Timex.compare(from1, from2)
 
@@ -88,7 +89,7 @@ defmodule Cocktail.Span do
       ...> overlap_mode(span1, span2)
       :is_before
   """
-  @spec overlap_mode(span_compat, t) :: overlap_mode
+  @spec overlap_mode(span_compat, span_compat) :: overlap_mode
   def overlap_mode(%{from: from, until: until}, %{from: from, until: until}), do: :is_equal_to
 
   # credo:disable-for-next-line
