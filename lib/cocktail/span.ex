@@ -12,7 +12,7 @@ defmodule Cocktail.Span do
 
   @type t :: %__MODULE__{from: Cocktail.time(), until: Cocktail.time()}
 
-  @type span_compat :: %{from: Cocktail.time(), until: Cocktail.time()}
+  @type span_compat :: %{:from => Cocktail.time(), :until => Cocktail.time(), optional(atom) => any}
 
   @type overlap_mode ::
           :contains
