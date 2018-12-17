@@ -17,7 +17,7 @@ defmodule Cocktail.Validation.TimeOfDay do
   @spec next_time(t, Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{times: times}, time, _) do
     current_time = to_time(time)
-    target_time = Time.from_erl!(next_gte(times, Time.to_erl(current_time)) || hd(times))
+    target_time = Time.from_erl!(next_gte(times, Time.to_erl(current_time)) || List.first(times))
 
     diff = Time.diff(target_time, current_time)
     diff = if diff < 0, do: diff + 86_400, else: diff
