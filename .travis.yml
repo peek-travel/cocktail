@@ -2,16 +2,16 @@ language: elixir
 
 otp_release:
   - 20.3
-  - 21.0
+  - 21.2
 
 elixir:
-  - 1.6
-  - 1.7
+  - "1.7"
+  - "1.8"
 
 script:
   - mix compile --warnings-as-errors
   - mix format --check-formatted
-  - mix credo
+  - mix credo --strict
   - mix coveralls.json
 
 after_script:

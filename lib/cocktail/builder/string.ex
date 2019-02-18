@@ -11,7 +11,7 @@ defmodule Cocktail.Builder.String do
   """
 
   alias Cocktail.{Rule, Schedule}
-  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute}
+  alias Cocktail.Validation.{Day, HourOfDay, Interval, MinuteOfHour, SecondOfMinute}
 
   # These are the keys represented in the string representation of a schedule.
   @represented_keys [:interval, :day, :hour_of_day, :minute_of_hour, :second_of_minute]

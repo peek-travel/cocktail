@@ -5,7 +5,7 @@ defmodule Cocktail.Parser.ICalendar do
   TODO: write long description
   """
 
-  alias Cocktail.{Schedule, Rule}
+  alias Cocktail.{Rule, Schedule}
 
   @time_regex ~r/^:?;?(?:TZID=(.+?):)?(.*?)(Z)?$/
   @datetime_format "{YYYY}{0M}{0D}T{h24}{m}{s}"

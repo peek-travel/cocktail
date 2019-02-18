@@ -6,7 +6,7 @@ defmodule Cocktail.Builder.ICalendar do
   """
 
   alias Cocktail.{Rule, Schedule, Validation}
-  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute, TimeOfDay, TimeRange}
+  alias Cocktail.Validation.{Day, HourOfDay, Interval, MinuteOfHour, SecondOfMinute, TimeOfDay, TimeRange}
 
   @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
 

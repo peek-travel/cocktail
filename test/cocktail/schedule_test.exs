@@ -1,7 +1,7 @@
 defmodule Cocktail.ScheduleTest do
   use ExUnit.Case
 
-  alias Cocktail.{Schedule, Rule, Span}
+  alias Cocktail.{Rule, Schedule, Span}
 
   doctest Cocktail.Schedule, import: true
 
