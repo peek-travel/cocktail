@@ -21,7 +21,7 @@ defmodule Cocktail.Schedule do
   behave. See `add_recurrence_rule/3` for details on them.
   """
 
-  alias Cocktail.{Rule, ScheduleState, Parser, Builder}
+  alias Cocktail.{Builder, Parser, Rule, ScheduleState}
 
   @typedoc """
   Struct used to represent a schedule of recurring events.

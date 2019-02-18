@@ -1,7 +1,7 @@
 defmodule Cocktail.Rule do
   @moduledoc false
 
-  alias Cocktail.{Rule, Validation, Builder}
+  alias Cocktail.{Builder, Rule, Validation}
 
   @type t :: %__MODULE__{
           count: pos_integer | nil,

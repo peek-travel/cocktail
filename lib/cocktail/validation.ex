@@ -2,11 +2,11 @@ defmodule Cocktail.Validation do
   @moduledoc false
 
   alias Cocktail.Validation.{
-    ScheduleLock,
-    Interval,
     Day,
     HourOfDay,
+    Interval,
     MinuteOfHour,
+    ScheduleLock,
     SecondOfMinute,
     TimeOfDay,
     TimeRange

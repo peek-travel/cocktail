@@ -11,7 +11,7 @@ elixir:
 script:
   - mix compile --warnings-as-errors
   - mix format --check-formatted
-  - mix credo
+  - mix credo --strict
   - mix coveralls.json
 
 after_script:

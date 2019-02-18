@@ -2,7 +2,7 @@ defmodule Cocktail.Parser.ICalendarTest do
   use ExUnit.Case
 
   alias Cocktail.Rule
-  alias Cocktail.Validation.{Interval, Day, HourOfDay, MinuteOfHour, SecondOfMinute, TimeOfDay}
+  alias Cocktail.Validation.{Day, HourOfDay, Interval, MinuteOfHour, SecondOfMinute, TimeOfDay}
 
   import Cocktail.Parser.ICalendar
   import Cocktail.TestSupport.DateTimeSigil

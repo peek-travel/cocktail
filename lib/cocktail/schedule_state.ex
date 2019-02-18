@@ -1,7 +1,7 @@
 defmodule Cocktail.ScheduleState do
   @moduledoc false
 
-  alias Cocktail.{Schedule, RuleState, Span}
+  alias Cocktail.{RuleState, Schedule, Span}
 
   @type t :: %__MODULE__{
           recurrence_rules: [RuleState.t()],
