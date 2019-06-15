@@ -60,30 +60,30 @@ defmodule Cocktail.Parser.ICalendar do
 
   @spec parse_dtstart(String.t(), Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
   defp parse_dtstart(time_string, schedule, index) do
-    with {:ok, datetime} <- parse_datetime(time_string) do
-      {:ok, Schedule.set_start_time(schedule, datetime)}
-    else
+    case parse_datetime(time_string) do
+      {:ok, datetime} -> {:ok, Schedule.set_start_time(schedule, datetime)}
       {:error, term} -> {:error, {term, index}}
     end
   end
 
   @spec parse_dtend(String.t(), Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
   defp parse_dtend(time_string, schedule, index) do
-    with {:ok, datetime} <- parse_datetime(time_string) do
-      {:ok, Schedule.set_end_time(schedule, datetime)}
-    else
+    case parse_datetime(time_string) do
+      {:ok, datetime} -> {:ok, Schedule.set_end_time(schedule, datetime)}
       {:error, term} -> {:error, {term, index}}
     end
   end
 
   @spec parse_rrule(String.t(), Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
   defp parse_rrule(options_string, schedule, index) do
-    with {:ok, options} <- parse_rrule_options_string(options_string) do
-      rule = Rule.new(options)
-      schedule = Schedule.add_recurrence_rule(schedule, rule)
-      {:ok, schedule}
-    else
-      {:error, term} -> {:error, {term, index}}
+    case parse_rrule_options_string(options_string) do
+      {:ok, options} ->
+        rule = Rule.new(options)
+        schedule = Schedule.add_recurrence_rule(schedule, rule)
+        {:ok, schedule}
+
+      {:error, term} ->
+        {:error, {term, index}}
     end
   end
 
@@ -384,11 +384,9 @@ defmodule Cocktail.Parser.ICalendar do
 
   @spec parse_time(String.t()) :: {:ok, Time.t()} | {:error, :invalid_time_format}
   defp parse_time(time_string) do
-    with {:ok, datetime} <- Timex.parse(time_string, @time_format) do
-      {:ok, NaiveDateTime.to_time(datetime)}
-    else
-      _ ->
-        {:error, :invalid_time_format}
+    case Timex.parse(time_string, @time_format) do
+      {:ok, datetime} -> {:ok, NaiveDateTime.to_time(datetime)}
+      _error -> {:error, :invalid_time_format}
     end
   end
 
@@ -427,18 +425,16 @@ defmodule Cocktail.Parser.ICalendar do
 
   @spec parse_rdate(String.t(), Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
   defp parse_rdate(time_string, schedule, index) do
-    with {:ok, datetime} <- parse_datetime(time_string) do
-      {:ok, Schedule.add_recurrence_time(schedule, datetime)}
-    else
+    case parse_datetime(time_string) do
+      {:ok, datetime} -> {:ok, Schedule.add_recurrence_time(schedule, datetime)}
       {:error, term} -> {:error, {term, index}}
     end
   end
 
   @spec parse_exdate(String.t(), Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
   defp parse_exdate(time_string, schedule, index) do
-    with {:ok, datetime} <- parse_datetime(time_string) do
-      {:ok, Schedule.add_exception_time(schedule, datetime)}
-    else
+    case parse_datetime(time_string) do
+      {:ok, datetime} -> {:ok, Schedule.add_exception_time(schedule, datetime)}
       {:error, term} -> {:error, {term, index}}
     end
   end
