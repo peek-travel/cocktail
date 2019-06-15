@@ -17,13 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Allow additional keys in Cocktail. Span.span_compat type
+- Allow additional keys in Cocktail.Span.span_compat type
 
 ## [0.8.2][] - 2018-11-08
 
 ### Fixed
 
-- Fix a couple typespecs in Cocktail. Span ([#66](https://github.com/peek-travel/cocktail/pull/66))
+- Fix a couple typespecs in Cocktail.Span ([#66](https://github.com/peek-travel/cocktail/pull/66))
 
 ## [0.8.1][] - 2018-02-17
 
@@ -35,11 +35,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking
 
-- The `BYTIME` option of `RRULE` s in the iCalendar output is now `X-BYTIME` to better follow the standard's extensions policy
+- The `BYTIME` option of `RRULE`s in the iCalendar output is now `X-BYTIME` to better follow the standard's extensions policy
 
 ### Added
 
-- "time range" option (e.g. `Schedule.add_recurrence_rules(:daily, time_range: %{start_time: ~T[09:00:00], end_time: ~T[11:00:00], interval_seconds: 1_800})` ; this serializes to `X-BYRANGE` in iCalendar format, using the extension prefix to signal that it's a proprietary extension)
+- "time range" option (e.g. `Schedule.add_recurrence_rules(:daily, time_range: %{start_time: ~T[09:00:00], end_time: ~T[11:00:00], interval_seconds: 1_800})`; this serializes to `X-BYRANGE` in iCalendar format, using the extension prefix to signal that it's a proprietary extension)
 
 ### Changed
 
@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- The ability to pass anything responding to `from` and `until` to `overlap_mode` and `compare` 
+- The ability to pass anything responding to `from` and `until` to `overlap_mode` and `compare`
 
 ## [0.6.0][] - 2017-10-30
 
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- "time of day" option (e.g. `Schedule.add_recurrence_rules(:daily, times: [~T[10:00:00], ~T[12:30:00]])` ; this serializes to `BYTIME` in iCalendar format, which doesn't actually exist, so don't use this if you need to be iCalendar compatible)
+- "time of day" option (e.g. `Schedule.add_recurrence_rules(:daily, times: [~T[10:00:00], ~T[12:30:00]])`; this serializes to `BYTIME` in iCalendar format, which doesn't actually exist, so don't use this if you need to be iCalendar compatible)
 
 ### Fixed
 
@@ -98,19 +98,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added `Schedule.end_all_recurrence_rules/2` which adds an `:until` option to
-
-  each recurrence rule in a schedule.
-
-- Added support for one-off recurrence times ( `RDATE` in iCalendar)
-- Added support for exception times ( `EXDATE` in iCalendar)
+- Added `Schedule.end_all_recurrence_rules/2` which adds an `:until` option to each recurrence rule in a schedule.
+- Added support for one-off recurrence times (`RDATE` in iCalendar)
+- Added support for exception times (`EXDATE` in iCalendar)
 
 ## [0.3.0][] - 2017-09-14
 
 ### Added
 
-- Added the "minute of hour" option ( `BYMINUTE` in iCalendar)
-- Added the "second of minute" option ( `BYSECOND` in iCalendar)
+- Added the "minute of hour" option (`BYMINUTE` in iCalendar)
+- Added the "second of minute" option (`BYSECOND` in iCalendar)
 
 ## [0.2.1][] - 2017-09-12
 
@@ -128,7 +125,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.8.4... HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.8.4...HEAD
 [0.8.4]: https://github.com/peek-travel/cocktail/compare/0.8.3...0.8.4
 [0.8.3]: https://github.com/peek-travel/cocktail/compare/0.8.2...0.8.3
 [0.8.2]: https://github.com/peek-travel/cocktail/compare/0.8.1...0.8.2
