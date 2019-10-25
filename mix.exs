@@ -68,7 +68,7 @@ defmodule Cocktail.Mixfile do
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
       {:inch_ex, ">= 0.0.0", only: :docs},
-      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:timex, "~> 3.1"}
     ]
   end
