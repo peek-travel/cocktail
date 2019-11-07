@@ -17,6 +17,7 @@ defmodule Cocktail.Validation do
           | :base_min
           | :base_hour
           | :base_wday
+          | :base_mday
           | :day
           | :hour_of_day
           | :minute_of_hour
@@ -48,6 +49,16 @@ defmodule Cocktail.Validation do
   end
 
   @spec build_basic_interval_validations(Cocktail.frequency(), pos_integer) :: validations_map
+  defp build_basic_interval_validations(:monthly, interval) do
+    %{
+      base_sec: ScheduleLock.new(:second),
+      base_min: ScheduleLock.new(:minute),
+      base_hour: ScheduleLock.new(:hour),
+      base_mday: ScheduleLock.new(:mday),
+      interval: Interval.new(:monthly, interval)
+    }
+  end
+
   defp build_basic_interval_validations(:weekly, interval) do
     %{
       base_sec: ScheduleLock.new(:second),
