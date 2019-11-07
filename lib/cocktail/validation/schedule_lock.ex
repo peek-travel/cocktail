@@ -32,12 +32,6 @@ defmodule Cocktail.Validation.ScheduleLock do
     shift_by(diff, :days, time)
   end
 
-  defp get_total_days_of_month(datetime) do
-    datetime
-    |> Timex.end_of_month()
-    |> Map.get(:day)
-  end
-
   def next_time(%__MODULE__{type: :mday}, time, start_time) do
     start_time_day_of_month = start_time.day
     time_day_of_month = time.day
@@ -51,10 +45,12 @@ defmodule Cocktail.Validation.ScheduleLock do
         if time_day_of_month > start_time_day_of_month do
           next_month_date = Timex.shift(time, months: 1)
           # Timex.set already handle the marginal case like setting a day of month more than the month contains
-          Timex.set(next_month_date, day: start_time_day_of_month)
+          next_month_date
+          |> Timex.set(day: start_time_day_of_month)
           |> Timex.diff(time, :days)
         else
-          Timex.set(time, day: start_time_day_of_month)
+          time
+          |> Timex.set(day: start_time_day_of_month)
           |> Timex.diff(time, :days)
         end
       end

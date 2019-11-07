@@ -125,4 +125,21 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-07-01 06:00:00 UTC]
            ]
   end
+
+  test "Monthly on the 10th and 14th hours of the day" do
+    times =
+      ~Y[2017-01-01 06:00:00 PST]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, hours: [10, 14])
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(5)
+
+    assert times == [
+             ~Y[2017-01-01 10:00:00 PST],
+             ~Y[2017-01-01 14:00:00 PST],
+             ~Y[2017-02-01 10:00:00 PST],
+             ~Y[2017-02-01 14:00:00 PST],
+             ~Y[2017-03-01 10:00:00 PST]
+           ]
+  end
 end
