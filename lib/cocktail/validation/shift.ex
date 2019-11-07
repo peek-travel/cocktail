@@ -29,5 +29,4 @@ defmodule Cocktail.Validation.Shift do
   defp apply_option(time, :beginning_of_day), do: time |> beginning_of_day()
   defp apply_option(time, :beginning_of_hour), do: %{time | minute: 0, second: 0, microsecond: {0, 0}}
   defp apply_option(time, :beginning_of_minute), do: %{time | second: 0, microsecond: {0, 0}}
-  # defp apply_option(time, {:day_of_month, dom}), do: %{time | day: dom}
 end
