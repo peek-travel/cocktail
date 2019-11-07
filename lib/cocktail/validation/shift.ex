@@ -5,7 +5,7 @@ defmodule Cocktail.Validation.Shift do
 
   @type result :: {change_type, Cocktail.time()}
 
-  @typep shift_type :: :days | :hours | :minutes | :seconds
+  @typep shift_type :: :months | :days | :hours | :minutes | :seconds
 
   @typep option :: nil | :beginning_of_day | :beginning_of_hour | :beginning_of_minute
 
@@ -29,4 +29,5 @@ defmodule Cocktail.Validation.Shift do
   defp apply_option(time, :beginning_of_day), do: time |> beginning_of_day()
   defp apply_option(time, :beginning_of_hour), do: %{time | minute: 0, second: 0, microsecond: {0, 0}}
   defp apply_option(time, :beginning_of_minute), do: %{time | second: 0, microsecond: {0, 0}}
+  # defp apply_option(time, {:day_of_month, dom}), do: %{time | day: dom}
 end
