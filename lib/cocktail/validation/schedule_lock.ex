@@ -33,26 +33,26 @@ defmodule Cocktail.Validation.ScheduleLock do
   end
 
   def next_time(%__MODULE__{type: :mday}, time, start_time) do
-    start_time_day_of_month = start_time.day
     time_day_of_month = time.day
 
-    # no day shift when there is day of month difference
     day_diff =
-      if start_time_day_of_month == time_day_of_month do
-        0
-      else
-        # We have to shift to the same day of month of start_time in next month
-        if time_day_of_month > start_time_day_of_month do
+      case start_time.day do
+        # no day shift when there is day of month difference
+        ^time_day_of_month ->
+          0
+
+        # We to the same day of month of start_time in next month if the days of month are not equal
+        start_time_day_of_month when start_time_day_of_month > time_day_of_month ->
+          time
+          |> Timex.set(day: start_time_day_of_month)
+          |> Timex.diff(time, :days)
+
+        start_time_day_of_month ->
           next_month_date = Timex.shift(time, months: 1)
           # Timex.set already handle the marginal case like setting a day of month more than the month contains
           next_month_date
           |> Timex.set(day: start_time_day_of_month)
           |> Timex.diff(time, :days)
-        else
-          time
-          |> Timex.set(day: start_time_day_of_month)
-          |> Timex.diff(time, :days)
-        end
       end
 
     shift_by(day_diff, :days, time)
