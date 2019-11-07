@@ -102,18 +102,6 @@ defmodule Cocktail.Validation do
   @spec apply_options(validations_map, Cocktail.rule_options()) :: validations_map
   defp apply_options(map, []), do: map
 
-  # ignore days options if interval is monthly
-  # TODO should we change it to explicitly return error to avoid confusion?
-  defp apply_options(
-         %{
-           interval: %Interval{type: :monthly}
-         } = map,
-         [{:days, days} | _]
-       )
-       when length(days) > 0 do
-    map
-  end
-
   defp apply_options(map, [{:days, days} | rest]) when length(days) > 0 do
     map
     |> Map.delete(:base_wday)
