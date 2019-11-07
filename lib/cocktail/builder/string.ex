@@ -65,7 +65,7 @@ defmodule Cocktail.Builder.String do
   defp build_interval(:weekly, 1), do: "Weekly"
   defp build_interval(:weekly, n), do: "Every #{n} weeks"
   defp build_interval(:monthly, 1), do: "Monthly"
-  defp build_interval(:monthly, n), do: "Every #{n} month"
+  defp build_interval(:monthly, n), do: "Every #{n} months"
 
   # "day" validation
 
