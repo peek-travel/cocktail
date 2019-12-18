@@ -16,6 +16,17 @@ defmodule Cocktail.Builder.StringTest do
     assert string == "Weekly on Mondays, Wednesdays and Fridays"
   end
 
+  test "build a schedule with a BYDAY option, with only a single day" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:weekly, days: [:monday])
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Weekly on Mondays"
+  end
+
   test "build a schedule with a BYHOUR option" do
     schedule =
       ~N[2017-01-01 09:00:00]
