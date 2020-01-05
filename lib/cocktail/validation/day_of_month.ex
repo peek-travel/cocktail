@@ -21,9 +21,14 @@ defmodule Cocktail.Validation.DayOfMonth do
       case next_gte(normailized_days, current_day_of_month) do
         # go to next month
         nil ->
-          time
-          |> Timex.shift(months: 1)
-          |> Timex.set(day: hd(Enum.sort(normailized_days)))
+          next_month_time =
+            time
+            |> Timex.shift(months: 1)
+
+          next_month_normailized_days = Enum.map(days, &normalize_day_of_month(&1, next_month_time))
+
+          next_month_time
+          |> Timex.set(day: hd(Enum.sort(next_month_normailized_days)))
           |> Timex.diff(time, :days)
 
         next_earliest_day_of_month ->
@@ -45,11 +50,11 @@ defmodule Cocktail.Validation.DayOfMonth do
     day_of_month
   end
 
-  defp do_normalize_day_of_month(day_of_month, days_in_month) when day_of_month < -days_in_month do
+  defp do_normalize_day_of_month(day_of_month, days_in_month) when -day_of_month > days_in_month do
     1
   end
 
   defp do_normalize_day_of_month(day_of_month, days_in_month) when day_of_month < 0 do
-    days_in_month - day_of_month
+    days_in_month + day_of_month
   end
 end

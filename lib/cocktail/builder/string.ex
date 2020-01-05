@@ -141,7 +141,6 @@ defmodule Cocktail.Builder.String do
   @spec sentence([String.t()]) :: String.t()
   defp sentence([single]), do: single
 
-  @spec sentence([String.t()]) :: String.t()
   defp sentence([first, second]), do: "#{first} and #{second}"
 
   defp sentence(words) do
