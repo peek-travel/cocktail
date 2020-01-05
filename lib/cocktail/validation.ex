@@ -2,8 +2,8 @@ defmodule Cocktail.Validation do
   @moduledoc false
 
   alias Cocktail.Validation.{
-    DayOfMonth,
     Day,
+    DayOfMonth,
     HourOfDay,
     Interval,
     MinuteOfHour,
