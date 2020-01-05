@@ -132,6 +132,23 @@ defmodule Cocktail.MonthlyTest do
       |> Cocktail.schedule()
       |> Schedule.add_recurrence_rule(:monthly, days: [:monday, :friday])
       |> Cocktail.Schedule.occurrences()
+      |> Enum.take(5)
+
+    assert times == [
+             ~Y[2017-01-02 06:00:00 UTC],
+             ~Y[2017-01-06 06:00:00 UTC],
+             ~Y[2017-01-09 06:00:00 UTC],
+             ~Y[2017-01-13 06:00:00 UTC],
+             ~Y[2017-01-16 06:00:00 UTC]
+           ]
+  end
+
+  test "Monthly on Mondays and Fridays and day of month" do
+    times =
+      ~Y[2017-01-01 06:00:00 UTC]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, days: [:monday, :friday], days_of_month: [1])
+      |> Cocktail.Schedule.occurrences()
       |> Enum.take(8)
 
     assert times == [
@@ -143,6 +160,21 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2018-10-01 06:00:00 UTC],
              ~Y[2019-02-01 06:00:00 UTC],
              ~Y[2019-03-01 06:00:00 UTC]
+           ]
+  end
+
+  test "Every other month 10th of the month and sunday:" do
+    times =
+      ~Y[2017-01-02 06:00:00 UTC]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, interval: 2, days_of_month: [10, 12], days: [:sunday, :saturday])
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(3)
+
+    assert times == [
+             ~Y[2017-03-12 06:00:00 UTC],
+             ~Y[2017-09-10 06:00:00 UTC],
+             ~Y[2017-11-12 06:00:00 UTC]
            ]
   end
 

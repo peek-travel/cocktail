@@ -97,9 +97,7 @@ defmodule Cocktail.Schedule do
   @doc """
   Adds a recurrence rule of the given frequency to a schedule.
 
-  The frequency can be one of `:weekly`, `:daily`, `:hourly`, `:minutely` or `:secondly`.
-
-  > NOTE: more frequencies are planned to be supported in the future. (e.g. `:monthly`)
+  The frequency can be one of `:monthly`, `:weekly`, `:daily`, `:hourly`, `:minutely` or `:secondly`
 
   ## Options
 
