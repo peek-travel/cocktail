@@ -11,6 +11,7 @@ defmodule Cocktail do
   @type frequency :: :monthly | :weekly | :daily | :hourly | :minutely | :secondly
 
   @type day_number :: 0..6
+  @type day_of_month :: -31..-1 | 1..31
 
   @type day_atom :: :monday | :tuesday | :wednesday | :thursday | :friday | :saturday | :sunday
 
@@ -38,6 +39,7 @@ defmodule Cocktail do
           | {:count, pos_integer}
           | {:until, time}
           | {:days, [day]}
+          | {:days_of_month, [day_of_month]}
           | {:hours, [hour_number]}
           | {:minutes, [minute_number]}
           | {:seconds, [second_number]}

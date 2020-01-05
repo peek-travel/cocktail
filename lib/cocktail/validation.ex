@@ -2,6 +2,7 @@ defmodule Cocktail.Validation do
   @moduledoc false
 
   alias Cocktail.Validation.{
+    DayOfMonth,
     Day,
     HourOfDay,
     Interval,
@@ -19,6 +20,7 @@ defmodule Cocktail.Validation do
           | :base_wday
           | :base_mday
           | :day
+          | :day_of_month
           | :hour_of_day
           | :minute_of_hour
           | :second_of_minute
@@ -32,6 +34,7 @@ defmodule Cocktail.Validation do
           ScheduleLock.t()
           | Interval.t()
           | Day.t()
+          | DayOfMonth.t()
           | HourOfDay.t()
           | MinuteOfHour.t()
           | SecondOfMinute.t()
@@ -102,9 +105,17 @@ defmodule Cocktail.Validation do
   @spec apply_options(validations_map, Cocktail.rule_options()) :: validations_map
   defp apply_options(map, []), do: map
 
+  defp apply_options(map, [{:days_of_month, days_of_month} | rest]) when length(days_of_month) > 0 do
+    map
+    |> Map.delete(:base_mday)
+    |> Map.put(:day_of_month, DayOfMonth.new(days_of_month))
+    |> apply_options(rest)
+  end
+
   defp apply_options(map, [{:days, days} | rest]) when length(days) > 0 do
     map
     |> Map.delete(:base_wday)
+    |> Map.delete(:base_mday)
     |> Map.put(:day, Day.new(days))
     |> apply_options(rest)
   end
