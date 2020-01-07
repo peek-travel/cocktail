@@ -178,6 +178,22 @@ defmodule Cocktail.MonthlyTest do
            ]
   end
 
+  test "Every month 31day of the month" do
+    times =
+      ~Y[2017-01-01 06:00:00 UTC]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, days_of_month: [31])
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(4)
+
+    assert times == [
+             ~Y[2017-01-31 06:00:00 UTC],
+             ~Y[2017-02-28 06:00:00 UTC],
+             ~Y[2017-03-31 06:00:00 UTC],
+             ~Y[2017-04-30 06:00:00 UTC]
+           ]
+  end
+
   test "support negative for day of the month" do
     times =
       ~Y[2017-01-01 06:00:00 UTC]
