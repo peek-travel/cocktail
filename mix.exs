@@ -63,7 +63,7 @@ defmodule Cocktail.Mixfile do
   defp deps do
     [
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 0.1", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
