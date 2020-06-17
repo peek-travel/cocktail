@@ -18,6 +18,14 @@ defmodule Cocktail.Validation.Interval do
   @spec next_time(t, Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{type: _, interval: 1}, time, _), do: {:no_change, time}
 
+  def next_time(%__MODULE__{type: :monthly, interval: interval}, time, start_time) do
+    start_time
+    |> Timex.beginning_of_month()
+    |> Timex.diff(Timex.beginning_of_month(time), :months)
+    |> mod(interval)
+    |> shift_by(:months, time)
+  end
+
   def next_time(%__MODULE__{type: :weekly, interval: interval}, time, start_time) do
     week = Timex.iso_week(time)
     start_week = Timex.iso_week(start_time)

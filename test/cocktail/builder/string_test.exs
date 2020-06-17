@@ -158,4 +158,26 @@ defmodule Cocktail.Builder.StringTest do
 
     assert string == "Daily on the 3rd second of the minute"
   end
+
+  test "every month" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Monthly"
+  end
+
+  test "every 2 month" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, interval: 2)
+
+    string = Schedule.to_string(schedule)
+
+    assert string == "Every 2 months"
+  end
 end

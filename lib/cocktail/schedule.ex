@@ -90,15 +90,14 @@ defmodule Cocktail.Schedule do
 
   @doc false
   @spec add_recurrence_rule(t, Rule.t()) :: t
-  def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule),
-    do: %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
+  def add_recurrence_rule(%__MODULE__{} = schedule, %Rule{} = rule) do
+    %{schedule | recurrence_rules: [rule | schedule.recurrence_rules]}
+  end
 
   @doc """
   Adds a recurrence rule of the given frequency to a schedule.
 
-  The frequency can be one of `:weekly`, `:daily`, `:hourly`, `:minutely` or `:secondly`.
-
-  > NOTE: more frequencies are planned to be supported in the future. (e.g. `:monthly`)
+  The frequency can be one of `:monthly`, `:weekly`, `:daily`, `:hourly`, `:minutely` or `:secondly`
 
   ## Options
 

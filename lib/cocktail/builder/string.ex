@@ -64,6 +64,8 @@ defmodule Cocktail.Builder.String do
   defp build_interval(:daily, n), do: "Every #{n} days"
   defp build_interval(:weekly, 1), do: "Weekly"
   defp build_interval(:weekly, n), do: "Every #{n} weeks"
+  defp build_interval(:monthly, 1), do: "Monthly"
+  defp build_interval(:monthly, n), do: "Every #{n} months"
 
   # "day" validation
 
@@ -139,7 +141,6 @@ defmodule Cocktail.Builder.String do
   @spec sentence([String.t()]) :: String.t()
   defp sentence([single]), do: single
 
-  @spec sentence([String.t()]) :: String.t()
   defp sentence([first, second]), do: "#{first} and #{second}"
 
   defp sentence(words) do
