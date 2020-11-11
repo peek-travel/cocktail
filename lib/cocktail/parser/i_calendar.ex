@@ -159,6 +159,12 @@ defmodule Cocktail.Parser.ICalendar do
     end
   end
 
+  defp parse_rrule_option("BYMONTHDAY=" <> mday_string) do
+    with {:ok, mday} <- parse_mday_string(mday_string) do
+      {:ok, {:days_of_month, [mday]}}
+    end
+  end
+
   defp parse_rrule_option("BYDAY=" <> days_string) do
     with {:ok, days} <- parse_days_string(days_string) do
       {:ok, {:days, days |> Enum.reverse()}}
@@ -201,6 +207,7 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_rrule_option(_), do: {:error, :unknown_rrulparam}
 
   @spec parse_frequency(String.t()) :: {:ok, Cocktail.frequency()} | {:error, :invalid_frequency}
+  defp parse_frequency("MONTHLY"), do: {:ok, :monthly}
   defp parse_frequency("WEEKLY"), do: {:ok, :weekly}
   defp parse_frequency("DAILY"), do: {:ok, :daily}
   defp parse_frequency("HOURLY"), do: {:ok, :hourly}
@@ -231,6 +238,20 @@ defmodule Cocktail.Parser.ICalendar do
   @spec validate_positive(integer) :: {:ok, pos_integer} | :error
   defp validate_positive(n) when n > 0, do: {:ok, n}
   defp validate_positive(_), do: :error
+
+  @spec parse_mday_string(String.t()) :: {:ok, [Cocktail.day_of_month()]} | {:error, :invalid_mday}
+  defp parse_mday_string(mday_string) do
+    case Integer.parse(mday_string) do
+      {mday, ""} ->
+        if mday in -31..31, do: {:ok, mday}, else: {:error, :invalid_mday}
+
+      {_mday, _remainder} ->
+        {:error, :invalid_mday}
+
+      :error ->
+        {:error, :invalid_mday}
+    end
+  end
 
   @spec parse_days_string(String.t()) :: {:ok, [Cocktail.day_atom()]} | {:error, :invalid_days}
   defp parse_days_string(""), do: {:error, :invalid_days}
