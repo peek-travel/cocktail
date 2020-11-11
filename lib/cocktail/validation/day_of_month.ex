@@ -55,6 +55,6 @@ defmodule Cocktail.Validation.DayOfMonth do
   end
 
   defp do_normalize_day_of_month(day_of_month, days_in_month) when day_of_month < 0 do
-    days_in_month + day_of_month
+    days_in_month + day_of_month + 1
   end
 end

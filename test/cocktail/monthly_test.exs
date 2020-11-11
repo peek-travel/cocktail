@@ -225,9 +225,9 @@ defmodule Cocktail.MonthlyTest do
       |> Enum.take(3)
 
     assert times == [
-             ~Y[2017-01-20 06:00:00 UTC],
-             ~Y[2017-02-17 06:00:00 UTC],
-             ~Y[2017-03-20 06:00:00 UTC]
+             ~Y[2017-01-21 06:00:00 UTC],
+             ~Y[2017-02-18 06:00:00 UTC],
+             ~Y[2017-03-21 06:00:00 UTC]
            ]
   end
 
