@@ -20,6 +20,28 @@ defmodule Cocktail.MonthlyTest do
            ]
   end
 
+  test "Monthly starting on 31th January 2017" do
+    times =
+      ~N[2017-01-31 09:00:00]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly)
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(10)
+
+    assert times == [
+      ~N[2017-01-31 09:00:00],
+      ~N[2017-03-31 09:00:00],
+      ~N[2017-05-31 09:00:00],
+      ~N[2017-07-31 09:00:00],
+      ~N[2017-08-31 09:00:00],
+      ~N[2017-10-31 09:00:00],
+      ~N[2017-12-31 09:00:00],
+      ~N[2018-01-31 09:00:00],
+      ~N[2018-03-31 09:00:00],
+      ~N[2018-05-31 09:00:00]
+    ]
+  end
+
   test "Monthly starting on 31th March 2017" do
     times =
       ~Y[2017-03-31 06:00:00 UTC]
