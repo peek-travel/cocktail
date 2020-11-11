@@ -52,8 +52,8 @@ defmodule Cocktail.MonthlyTest do
 
     assert times == [
              ~Y[2017-03-31 06:00:00 UTC],
-             ~Y[2017-04-30 06:00:00 UTC],
-             ~Y[2017-05-31 06:00:00 UTC]
+             ~Y[2017-05-31 06:00:00 UTC],
+             ~Y[2017-07-31 06:00:00 UTC]
            ]
   end
 
@@ -82,8 +82,8 @@ defmodule Cocktail.MonthlyTest do
 
     assert times == [
              ~Y[2020-02-29 06:00:00 UTC],
-             ~Y[2021-02-28 06:00:00 UTC],
-             ~Y[2022-02-28 06:00:00 UTC]
+             ~Y[2024-02-29 06:00:00 UTC],
+             ~Y[2028-02-29 06:00:00 UTC]
            ]
   end
 
