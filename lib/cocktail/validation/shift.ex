@@ -5,7 +5,7 @@ defmodule Cocktail.Validation.Shift do
 
   @type result :: {change_type, Cocktail.time()}
 
-  @typep shift_type :: :days | :hours | :minutes | :seconds
+  @typep shift_type :: :months | :days | :hours | :minutes | :seconds
 
   @typep option :: nil | :beginning_of_day | :beginning_of_hour | :beginning_of_minute
 
