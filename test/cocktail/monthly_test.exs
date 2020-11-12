@@ -72,6 +72,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-05-31 06:00:00 UTC],
              ~Y[2017-07-31 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Monthly starting on 28th Feb 2017" do
@@ -85,6 +87,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-03-28 06:00:00 UTC],
              ~Y[2017-04-28 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "every 12 month starting on 29th Feb 2020" do
@@ -98,6 +102,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2024-02-29 06:00:00 UTC],
              ~Y[2028-02-29 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Monthly: starting on 7th Nov 2019 and should return 7 th Nov 2039 after 20 years " do
@@ -122,6 +128,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-04-28 06:00:00 UTC],
              ~Y[2017-06-28 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Every 2 / 3 months" do
@@ -140,6 +148,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-09-02 06:00:00 UTC],
              ~Y[2017-10-02 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Monthly; overridden start month" do
@@ -170,6 +180,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-01-13 06:00:00 UTC],
              ~Y[2017-01-16 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Monthly on Mondays and Fridays and day of month" do
@@ -188,6 +200,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2019-02-01 06:00:00 UTC],
              ~Y[2019-03-01 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Every month 11th day of the month" do
@@ -201,6 +215,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-02-11 06:00:00 UTC],
              ~Y[2017-03-11 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Every month 31day of the month" do
@@ -215,6 +231,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-03-31 06:00:00 UTC],
              ~Y[2017-04-30 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "support negative for day of the month" do
@@ -228,6 +246,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-02-18 06:00:00 UTC],
              ~Y[2017-03-21 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Every other month 10th of the month and sunday:" do
@@ -241,6 +261,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-09-10 06:00:00 UTC],
              ~Y[2017-11-12 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Monthly on the 10th and 14th hours of the day" do
@@ -256,6 +278,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-02-01 14:00:00 UTC],
              ~Y[2017-03-01 10:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Last Friday of every month" do
@@ -271,6 +295,8 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-02-24 06:00:00 UTC],
              ~Y[2017-03-31 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 
   test "Last Friday of every month reversed" do
@@ -286,5 +312,7 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-02-24 06:00:00 UTC],
              ~Y[2017-03-31 06:00:00 UTC]
            ]
+
+    assert_icalendar_preserved(schedule)
   end
 end
