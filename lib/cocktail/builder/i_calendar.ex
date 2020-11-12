@@ -92,7 +92,16 @@ defmodule Cocktail.Builder.ICalendar do
   @spec build_rule(Rule.t()) :: String.t()
   defp build_rule(%Rule{validations: validations_map, until: until, count: count}) do
     parts =
-      for key <- [:interval, :day, :day_of_month, :hour_of_day, :minute_of_hour, :second_of_minute, :time_of_day, :time_range],
+      for key <- [
+            :interval,
+            :day,
+            :day_of_month,
+            :hour_of_day,
+            :minute_of_hour,
+            :second_of_minute,
+            :time_of_day,
+            :time_range
+          ],
           validation = validations_map[key],
           !is_nil(validation) do
         build_validation_part(key, validation)
@@ -105,7 +114,7 @@ defmodule Cocktail.Builder.ICalendar do
 
   @spec build_validation_part(Validation.validation_key(), Validation.t()) :: String.t()
   defp build_validation_part(:interval, %Interval{interval: interval, type: type}), do: build_interval(type, interval)
-  defp build_validation_part(:day_of_month, %DayOfMonth{days: days}), do: days|> build_days_of_month()
+  defp build_validation_part(:day_of_month, %DayOfMonth{days: days}), do: days |> build_days_of_month()
   defp build_validation_part(:day, %Day{days: days}), do: days |> build_days()
   defp build_validation_part(:hour_of_day, %HourOfDay{hours: hours}), do: hours |> build_hours()
   defp build_validation_part(:minute_of_hour, %MinuteOfHour{minutes: minutes}), do: minutes |> build_minutes()

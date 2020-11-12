@@ -96,8 +96,8 @@ defmodule Cocktail.Builder.ICalendarTest do
     i_calendar_string = Schedule.to_i_calendar(schedule)
 
     assert i_calendar_string == """
-    DTSTART:20170101T090000
-    RRULE:FREQ=MONTHLY;BYMONTHDAY=1,10,30\
-    """
+           DTSTART:20170101T090000
+           RRULE:FREQ=MONTHLY;BYMONTHDAY=1,10,30\
+           """
   end
 end
