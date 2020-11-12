@@ -49,8 +49,8 @@ defmodule Cocktail.Validation.ScheduleLock do
         ^time_day_of_month ->
           0
 
-          # We to the same day of month of start_time in next month if the days of month are not equal
-          start_time_day_of_month when start_time_day_of_month > time_day_of_month ->
+        # We to the same day of month of start_time in next month if the days of month are not equal
+        start_time_day_of_month when start_time_day_of_month > time_day_of_month ->
           time
           |> Timex.set(day: start_time_day_of_month)
           |> Timex.diff(time, :days)
