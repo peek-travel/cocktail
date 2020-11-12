@@ -19,8 +19,6 @@ defmodule Cocktail.MonthlyTest do
       |> Cocktail.Schedule.to_i_calendar()
       |> Cocktail.Schedule.from_i_calendar()
 
-    assert schedule == preserved_schedule
-
     assert first_n_occurrences(schedule) == first_n_occurrences(preserved_schedule)
   end
 
