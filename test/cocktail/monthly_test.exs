@@ -262,4 +262,18 @@ defmodule Cocktail.MonthlyTest do
              ~Y[2017-03-01 10:00:00 UTC]
            ]
   end
+
+  test "Last Friday of every month" do
+    times =
+      ~Y[2017-01-01 06:00:00 UTC]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, days: [:friday], days_of_month: [-1, -2, -3, -4, -5, -6, -7])
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(3)
+      assert times == [
+        ~Y[2007-01-27 06:00:00 UTC],
+        ~Y[2007-02-24 06:00:00 UTC],
+        ~Y[2007-03-31 06:00:00 UTC]
+      ]
+  end
 end
