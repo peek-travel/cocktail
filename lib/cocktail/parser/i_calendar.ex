@@ -159,9 +159,9 @@ defmodule Cocktail.Parser.ICalendar do
     end
   end
 
-  defp parse_rrule_option("BYMONTHDAY=" <> mday_string) do
-    with {:ok, mday} <- parse_mday_string(mday_string) do
-      {:ok, {:days_of_month, [mday]}}
+  defp parse_rrule_option("BYMONTHDAY=" <> mdays_string) do
+    with {:ok, mdays} <- parse_mdays_string(mdays_string) do
+      {:ok, {:days_of_month, mdays}}
     end
   end
 
@@ -239,8 +239,24 @@ defmodule Cocktail.Parser.ICalendar do
   defp validate_positive(n) when n > 0, do: {:ok, n}
   defp validate_positive(_), do: :error
 
-  @spec parse_mday_string(String.t()) :: {:ok, [Cocktail.day_of_month()]} | {:error, :invalid_mday}
-  defp parse_mday_string(mday_string) do
+  @spec parse_mdays_string(String.t()) :: {:ok, [Cocktail.day_of_month()]} | {:error, :invalid_mday}
+  defp parse_mdays_string(mdays_string) do
+    mdays_string
+    |> String.split(",")
+    |> parse_mdays([])
+  end
+
+  @spec parse_mdays([String.t()], [Cocktail.day_of_month()]) :: {:ok, [Cocktail.day_of_month()]}
+  defp parse_mdays([], mdays), do: {:ok, mdays}
+
+  defp parse_mdays([mday_string | rest], mdays) do
+    with {:ok, mday} <- parse_mday(mday_string) do
+      parse_mdays(rest, [mday | mdays])
+    end
+  end
+
+  @spec parse_mday(String.t()) :: {:ok, Cocktail.day_of_month()} | {:error, :invalid_mday}
+  defp parse_mday(mday_string) do
     case Integer.parse(mday_string) do
       {mday, ""} ->
         if mday in -31..31, do: {:ok, mday}, else: {:error, :invalid_mday}

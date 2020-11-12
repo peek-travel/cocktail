@@ -86,4 +86,18 @@ defmodule Cocktail.Builder.ICalendarTest do
            RRULE:FREQ=DAILY;BYSECOND=0,30\
            """
   end
+
+  test "build a schedule with a BYMONTHDAY option" do
+    schedule =
+      ~N[2017-01-01 09:00:00]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:monthly, days_of_month: [1, 10, 30])
+
+    i_calendar_string = Schedule.to_i_calendar(schedule)
+
+    assert i_calendar_string == """
+    DTSTART:20170101T090000
+    RRULE:FREQ=MONTHLY;BYMONTHDAY=1,10,30\
+    """
+  end
 end
