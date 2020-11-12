@@ -15,22 +15,22 @@ defmodule Cocktail.Validation.DayOfMonth do
   @spec next_time(t, Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{days: days}, time, _) do
     current_day_of_month = time.day
-    normailized_days = days
+    normalized_days = days
     |> Enum.sort()
     |> Enum.map(&normalize_day_of_month(&1, time))
 
     diff =
-      case next_gte(normailized_days, current_day_of_month) do
+      case next_gte(normalized_days, current_day_of_month) do
         # go to next month
         nil ->
           next_month_time =
             time
             |> Timex.shift(months: 1)
 
-          next_month_normailized_days = Enum.map(days, &normalize_day_of_month(&1, next_month_time))
+          next_month_normalized_days = Enum.map(days, &normalize_day_of_month(&1, next_month_time))
 
           next_month_time
-          |> Timex.set(day: hd(Enum.sort(next_month_normailized_days)))
+          |> Timex.set(day: hd(Enum.sort(next_month_normalized_days)))
           |> Timex.diff(time, :days)
 
         next_earliest_day_of_month ->
