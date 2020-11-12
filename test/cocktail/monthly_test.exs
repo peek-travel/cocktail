@@ -264,10 +264,11 @@ defmodule Cocktail.MonthlyTest do
   end
 
   test "Last Friday of every month" do
+    days_of_month = [-1, -2, -3, -4, -5, -6, -7]
     times =
       ~Y[2017-01-01 06:00:00 UTC]
       |> Cocktail.schedule()
-      |> Schedule.add_recurrence_rule(:monthly, days: [:friday], days_of_month: [-1, -2, -3, -4, -5, -6, -7])
+      |> Schedule.add_recurrence_rule(:monthly, days: [:friday], days_of_month: days_of_month)
       |> Cocktail.Schedule.occurrences()
       |> Enum.take(3)
       assert times == [
@@ -278,10 +279,11 @@ defmodule Cocktail.MonthlyTest do
   end
 
   test "Last Friday of every month reversed" do
+    days_of_month = [-1, -2, -3, -4, -5, -6, -7] |> Enum.reverse()
     times =
       ~Y[2017-01-01 06:00:00 UTC]
       |> Cocktail.schedule()
-      |> Schedule.add_recurrence_rule(:monthly, days: [:friday], days_of_month: [-1, -2, -3, -4, -5, -6, -7] |> Enum.reverse())
+      |> Schedule.add_recurrence_rule(:monthly, days: [:friday], days_of_month: days_of_month)
       |> Cocktail.Schedule.occurrences()
       |> Enum.take(3)
     assert times == [
