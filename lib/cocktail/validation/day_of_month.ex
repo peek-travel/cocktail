@@ -15,7 +15,9 @@ defmodule Cocktail.Validation.DayOfMonth do
   @spec next_time(t, Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{days: days}, time, _) do
     current_day_of_month = time.day
-    normailized_days = Enum.map(days, &normalize_day_of_month(&1, time))
+    normailized_days = days
+    |> Enum.sort()
+    |> Enum.map(&normalize_day_of_month(&1, time))
 
     diff =
       case next_gte(normailized_days, current_day_of_month) do
