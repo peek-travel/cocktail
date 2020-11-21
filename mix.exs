@@ -14,15 +14,9 @@ defmodule Cocktail.Mixfile do
       package: package(),
       deps: deps(),
       docs: docs(),
-      dialyzer: [flags: [:unmatched_returns, :error_handling, :underspecs]],
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test,
-        "coveralls.json": :test
-      ]
+      dialyzer: dialyzer(),
+      preferred_cli_env: preferred_cli_env()
     ]
   end
 
@@ -60,16 +54,29 @@ defmodule Cocktail.Mixfile do
     ]
   end
 
+  defp dialyzer do
+    [
+      plt_core_path: "_build/#{Mix.env()}"
+    ]
+  end
+
+  defp preferred_cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
+      "coveralls.json": :test
+    ]
+  end
+
   defp deps do
     [
-      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
-      {:ex_unit_notifier, "~> 0.1", only: :test},
-      {:excoveralls, "~> 0.7", only: :test},
-      {:inch_ex, ">= 0.0.0", only: :docs},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:timex, "~> 3.1"}
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:timex, "~> 3.6"}
     ]
   end
 end

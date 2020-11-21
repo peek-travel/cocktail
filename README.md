@@ -1,5 +1,10 @@
 # Cocktail ![Cocktail](./logo_with_border.png)
-[![Build Status](https://travis-ci.org/peek-travel/cocktail.svg?branch=master)](https://travis-ci.org/peek-travel/cocktail) [![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/master/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail) [![Hex.pm Version](https://img.shields.io/hexpm/v/cocktail.svg?style=flat)](https://hex.pm/packages/cocktail) [![Inline docs](http://inch-ci.org/github/peek-travel/cocktail.svg)](http://inch-ci.org/github/peek-travel/cocktail) [![License](https://img.shields.io/hexpm/l/cocktail.svg)](LICENSE.md)
+
+[![CI
+Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https://github.com/peek-travel/cocktail/actions)
+[![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/master/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail)
+[![Hex.pm Version](https://img.shields.io/hexpm/v/cocktail.svg?style=flat)](https://hex.pm/packages/cocktail)
+[![License](https://img.shields.io/hexpm/l/cocktail.svg)](LICENSE.md)
 
 Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). Its primary use case currently is to expand schedules with recurrence rules into streams of ocurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
 
@@ -10,6 +15,7 @@ iex> schedule = Cocktail.Schedule.new(~N[2017-01-02 10:00:00])
 ```
 
 Then to get a list of the first 10 occurrences of this schedule, you would do:
+
 ```elixir
 ...> stream = Cocktail.Schedule.occurrences(schedule)
 ...> Enum.take(stream, 10)
@@ -34,7 +40,7 @@ end
 
 ## Documentation
 
-Detailed documentation with all available options can be found at [https://hexdocs.pm/cocktail](https://hexdocs.pm/cocktail).
+Detailed documentation with all available options can be found at <https://hexdocs.pm/cocktail>.
 
 ## Quick-start Guide
 
@@ -51,19 +57,20 @@ iex> schedule = Cocktail.schedule(start_time, opts)
 #Cocktail.Schedule<>
 ```
 
-*   `start_time` - Either a `DateTime` or a `NaiveDateTime` representing the beginning of your schedule.
-*   `opts`:
-    *   `duration` - (optional) How long each occurrence is, in seconds.
+-   `start_time` - Either a `DateTime` or a `NaiveDateTime` representing the beginning of your schedule.
+-   `opts`:
+    -   `duration` - (optional) How long each occurrence is, in seconds.
 
 ### Recurrence Rules
 
 Schedules are pretty useless on their own. To have them do something useful, you add recurrence rules to them. Currently, Cocktail supports:
 
-*   Weekly
-*   Daily
-*   Hourly
-*   Minutely
-*   Secondly
+-   Monthly
+-   Weekly
+-   Daily
+-   Hourly
+-   Minutely
+-   Secondly
 
 On top of these basic recurrence frequencies, you can add various options. Let's see some examples:
 
@@ -138,11 +145,11 @@ iex> i_calendar = Cocktail.Schedule.to_i_calendar(schedule)
 
 ## Roadmap
 
-*   [ ] investigate and fix DST bugs when using zoned DateTime
-*   [ ] support all iCalendar RRULE options
-*   [ ] support week-start option
-*   [ ] support iCalendar EXRULE
-*   [ ] convert to/from JSON representation
+-   [ ] investigate and fix DST bugs when using zoned DateTime
+-   [ ] support all iCalendar RRULE options
+-   [ ] support week-start option
+-   [ ] support iCalendar EXRULE
+-   [ ] convert to/from JSON representation
 
 ## Credits
 

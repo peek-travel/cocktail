@@ -1,0 +1,215 @@
+name: CI
+
+on: push
+
+env:
+  MIX_ENV: test
+  OTP_VERSION_SPEC: "23.x"
+  ELIXIR_VERSION_SPEC: "1.11.x"
+
+jobs:
+  format:
+    name: "Check Formatted"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.4.2
+        id: setup
+        with:
+          otp-version: ${{ env.OTP_VERSION_SPEC }}
+          elixir-version: ${{ env.ELIXIR_VERSION_SPEC }}
+      - name: Check formatted
+        run: mix format --check-formatted
+
+  compile:
+    name: Compile
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # shared steps
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.4.2
+        id: setup
+        with:
+          otp-version: ${{ env.OTP_VERSION_SPEC }}
+          elixir-version: ${{ env.ELIXIR_VERSION_SPEC }}
+      - name: Cache Keys
+        id: keys
+        run: |
+          echo ::set-output name=deps_key::deps-${{ runner.os }}
+          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
+          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
+          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
+          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+      - uses: actions/cache@v2.1.3
+        id: deps_cache
+        with:
+          path: deps
+          key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.deps_key }}-
+      - uses: actions/cache@v2.1.3
+        id: build_cache
+        with:
+          path: _build
+          key: ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-${{ steps.keys.outputs.files_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-
+            ${{ steps.keys.outputs.build_key }}-
+      - name: Install dependencies
+        if: steps.deps_cache.outputs['cache-hit'] != 'true'
+        run: mix deps.get
+      - name: Compile
+        if: steps.build_cache.outputs['cache-hit'] != 'true'
+        run: mix compile --warnings-as-errors
+
+  test:
+    name: Tests
+
+    needs: compile
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # shared steps
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.4.2
+        id: setup
+        with:
+          otp-version: ${{ env.OTP_VERSION_SPEC }}
+          elixir-version: ${{ env.ELIXIR_VERSION_SPEC }}
+      - name: Cache Keys
+        id: keys
+        run: |
+          echo ::set-output name=deps_key::deps-${{ runner.os }}
+          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
+          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
+          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
+          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+      - uses: actions/cache@v2.1.3
+        id: deps_cache
+        with:
+          path: deps
+          key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.deps_key }}-
+      - uses: actions/cache@v2.1.3
+        id: build_cache
+        with:
+          path: _build
+          key: ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-${{ steps.keys.outputs.files_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-
+            ${{ steps.keys.outputs.build_key }}-
+      - name: Install dependencies
+        if: steps.deps_cache.outputs['cache-hit'] != 'true'
+        run: mix deps.get
+      - name: Compile
+        if: steps.build_cache.outputs['cache-hit'] != 'true'
+        run: mix compile --warnings-as-errors
+      # job steps
+      - name: Run tests
+        run: mix coveralls.json
+      - uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
+
+  credo:
+    name: Credo
+
+    needs: compile
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # shared steps
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.4.2
+        id: setup
+        with:
+          otp-version: ${{ env.OTP_VERSION_SPEC }}
+          elixir-version: ${{ env.ELIXIR_VERSION_SPEC }}
+      - name: Cache Keys
+        id: keys
+        run: |
+          echo ::set-output name=deps_key::deps-${{ runner.os }}
+          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
+          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
+          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
+          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+      - uses: actions/cache@v2.1.3
+        id: deps_cache
+        with:
+          path: deps
+          key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.deps_key }}-
+      - uses: actions/cache@v2.1.3
+        id: build_cache
+        with:
+          path: _build
+          key: ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-${{ steps.keys.outputs.files_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-
+            ${{ steps.keys.outputs.build_key }}-
+      - name: Install dependencies
+        if: steps.deps_cache.outputs['cache-hit'] != 'true'
+        run: mix deps.get
+      - name: Compile
+        if: steps.build_cache.outputs['cache-hit'] != 'true'
+        run: mix compile --warnings-as-errors
+      # job steps
+      - name: Run credo
+        run: mix credo --strict
+
+  dialyzer:
+    name: Dialyzer
+
+    runs-on: ubuntu-latest
+
+    env:
+      MIX_ENV: dev
+
+    steps:
+      # shared steps
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.4.2
+        id: setup
+        with:
+          otp-version: ${{ env.OTP_VERSION_SPEC }}
+          elixir-version: ${{ env.ELIXIR_VERSION_SPEC }}
+      - name: Cache Keys
+        id: keys
+        run: |
+          echo ::set-output name=deps_key::deps-${{ runner.os }}
+          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
+          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
+          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
+          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+      - uses: actions/cache@v2.1.3
+        id: deps_cache
+        with:
+          path: deps
+          key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.deps_key }}-
+      - uses: actions/cache@v2.1.3
+        id: build_cache
+        with:
+          path: _build
+          key: ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-${{ steps.keys.outputs.files_key }}
+          restore-keys: |
+            ${{ steps.keys.outputs.build_key }}-${{ steps.keys.outputs.version_key }}-
+            ${{ steps.keys.outputs.build_key }}-
+      - name: Install dependencies
+        if: steps.deps_cache.outputs['cache-hit'] != 'true'
+        run: mix deps.get
+      - name: Compile
+        if: steps.build_cache.outputs['cache-hit'] != 'true'
+        run: mix compile --warnings-as-errors
+      # job steps
+      - name: Run dialyzer
+        run: mix dialyzer
