@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.4.2
+      - uses: actions/setup-elixir@v1.5
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -31,7 +31,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.4.2
+      - uses: actions/setup-elixir@v1.5
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -76,7 +76,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.4.2
+      - uses: actions/setup-elixir@v1.5
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -127,7 +127,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.4.2
+      - uses: actions/setup-elixir@v1.5
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -176,7 +176,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.4.2
+      - uses: actions/setup-elixir@v1.5
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
