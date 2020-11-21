@@ -1,7 +1,7 @@
 defmodule Cocktail.TimeRangeTest do
   use ExUnit.Case
 
-  alias Cocktail.{Schedule}
+  alias Cocktail.Schedule
 
   import Cocktail.TestSupport.DateTimeSigil
 
