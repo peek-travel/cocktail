@@ -40,7 +40,7 @@ end
 
 ## Documentation
 
-Detailed documentation with all available options can be found at [https://hexdocs.pm/cocktail](https://hexdocs.pm/cocktail).
+Detailed documentation with all available options can be found at <https://hexdocs.pm/cocktail>.
 
 ## Quick-start Guide
 
@@ -57,20 +57,20 @@ iex> schedule = Cocktail.schedule(start_time, opts)
 #Cocktail.Schedule<>
 ```
 
-* `start_time` - Either a `DateTime` or a `NaiveDateTime` representing the beginning of your schedule.
-* `opts`:
-  * `duration` - (optional) How long each occurrence is, in seconds.
+-   `start_time` - Either a `DateTime` or a `NaiveDateTime` representing the beginning of your schedule.
+-   `opts`:
+    -   `duration` - (optional) How long each occurrence is, in seconds.
 
 ### Recurrence Rules
 
 Schedules are pretty useless on their own. To have them do something useful, you add recurrence rules to them. Currently, Cocktail supports:
 
-* Monthly
-* Weekly
-* Daily
-* Hourly
-* Minutely
-* Secondly
+-   Monthly
+-   Weekly
+-   Daily
+-   Hourly
+-   Minutely
+-   Secondly
 
 On top of these basic recurrence frequencies, you can add various options. Let's see some examples:
 
@@ -145,11 +145,11 @@ iex> i_calendar = Cocktail.Schedule.to_i_calendar(schedule)
 
 ## Roadmap
 
-* [ ] investigate and fix DST bugs when using zoned DateTime
-* [ ] support all iCalendar RRULE options
-* [ ] support week-start option
-* [ ] support iCalendar EXRULE
-* [ ] convert to/from JSON representation
+-   [ ] investigate and fix DST bugs when using zoned DateTime
+-   [ ] support all iCalendar RRULE options
+-   [ ] support week-start option
+-   [ ] support iCalendar EXRULE
+-   [ ] convert to/from JSON representation
 
 ## Credits
 

@@ -14,15 +14,9 @@ defmodule Cocktail.Mixfile do
       package: package(),
       deps: deps(),
       docs: docs(),
-      dialyzer: [flags: [:unmatched_returns, :error_handling, :underspecs]],
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.post": :test,
-        "coveralls.html": :test,
-        "coveralls.json": :test
-      ]
+      dialyzer: dialyzer(),
+      preferred_cli_env: preferred_cli_env()
     ]
   end
 
@@ -57,6 +51,22 @@ defmodule Cocktail.Mixfile do
       source_ref: @version,
       source_url: "https://github.com/peek-travel/cocktail",
       extras: ["README.md", "LICENSE.md"]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_core_path: "_build/#{Mix.env()}"
+    ]
+  end
+
+  defp preferred_cli_env do
+    [
+      coveralls: :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
+      "coveralls.json": :test
     ]
   end
 
