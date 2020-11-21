@@ -2,7 +2,7 @@
 
 [![CI
 Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https://github.com/peek-travel/cocktail/actions)
-[![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/master/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail)
+[![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/main/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail)
 [![Hex.pm Version](https://img.shields.io/hexpm/v/cocktail.svg?style=flat)](https://hex.pm/packages/cocktail)
 [![License](https://img.shields.io/hexpm/l/cocktail.svg)](LICENSE.md)
 
@@ -33,7 +33,7 @@ by adding `cocktail` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cocktail, "~> 0.8"}
+    {:cocktail, "~> 0.9"}
   ]
 end
 ```
