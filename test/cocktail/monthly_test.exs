@@ -324,9 +324,9 @@ defmodule Cocktail.MonthlyTest do
     times = schedule |> Schedule.occurrences() |> Enum.take(2)
 
     assert times == [
-      ~Y[2021-03-01 06:00:00 UTC],
-      ~Y[2021-04-01 06:00:00 UTC]
-    ]
+             ~Y[2021-03-01 06:00:00 UTC],
+             ~Y[2021-04-01 06:00:00 UTC]
+           ]
   end
 
   test "a monthly schedule with a zoned datetime and a days of month option" do
@@ -339,8 +339,8 @@ defmodule Cocktail.MonthlyTest do
     times = schedule |> Schedule.occurrences() |> Enum.take(2)
 
     assert times == [
-      ~Y[2021-03-01 06:00:00 America/Vancouver],
-      ~Y[2021-04-01 06:00:00 America/Vancouver]
-    ]
+             ~Y[2021-03-01 06:00:00 America/Vancouver],
+             ~Y[2021-04-01 06:00:00 America/Vancouver]
+           ]
   end
 end
