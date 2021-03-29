@@ -313,4 +313,34 @@ defmodule Cocktail.MonthlyTest do
 
     assert_icalendar_preserved(schedule)
   end
+
+  test "a monthly schedule with a UTC datetime and a days of month option" do
+    schedule =
+      ~N[2021-02-28 06:00:00]
+      |> Timex.to_datetime("UTC")
+      |> Schedule.new()
+      |> Schedule.add_recurrence_rule(:monthly, days_of_month: [1])
+
+    times = schedule |> Schedule.occurrences() |> Enum.take(2)
+
+    assert times == [
+      ~Y[2021-03-01 06:00:00 UTC],
+      ~Y[2021-04-01 06:00:00 UTC]
+    ]
+  end
+
+  test "a monthly schedule with a zoned datetime and a days of month option" do
+    schedule =
+      ~N[2021-02-28 06:00:00]
+      |> Timex.to_datetime("America/Vancouver")
+      |> Schedule.new()
+      |> Schedule.add_recurrence_rule(:monthly, days_of_month: [1])
+
+    times = schedule |> Schedule.occurrences() |> Enum.take(2)
+
+    assert times == [
+      ~Y[2021-03-01 06:00:00 America/Vancouver],
+      ~Y[2021-04-01 06:00:00 America/Vancouver]
+    ]
+  end
 end
