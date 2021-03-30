@@ -6,7 +6,7 @@ Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https:/
 [![Hex.pm Version](https://img.shields.io/hexpm/v/cocktail.svg?style=flat)](https://hex.pm/packages/cocktail)
 [![License](https://img.shields.io/hexpm/l/cocktail.svg)](LICENSE.md)
 
-Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). Its primary use case currently is to expand schedules with recurrence rules into streams of ocurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
+Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). Its primary use case currently is to expand schedules with recurrence rules into streams of occurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
 
 ```elixir
 iex> schedule = Cocktail.Schedule.new(~N[2017-01-02 10:00:00])
