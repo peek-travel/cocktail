@@ -29,9 +29,14 @@ defmodule Cocktail.ScheduleState do
         do: schedule.start_time,
         else: current_time
 
+    recurrence_times_after_current_time =
+      schedule.recurrence_times
+      |> Enum.filter(&(Timex.compare(&1, current_time) >= 0))
+      |> Enum.sort(&(Timex.compare(&1, &2) <= 0))
+
     %__MODULE__{
       recurrence_rules: schedule.recurrence_rules |> Enum.map(&RuleState.new/1),
-      recurrence_times: schedule.recurrence_times |> Enum.sort(&(Timex.compare(&1, &2) <= 0)),
+      recurrence_times: recurrence_times_after_current_time,
       exception_times: schedule.exception_times |> Enum.sort(&(Timex.compare(&1, &2) <= 0)),
       start_time: schedule.start_time,
       current_time: current_time,
