@@ -1,6 +1,8 @@
 name: CI
 
-on: push
+on:
+  - push
+  - pull_request
 
 env:
   MIX_ENV: test
@@ -15,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.5
+      - uses: erlef/setup-elixir@v1
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -31,7 +33,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.5
+      - uses: erlef/setup-elixir@v1
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -76,7 +78,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.5
+      - uses: erlef/setup-elixir@v1
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -127,7 +129,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.5
+      - uses: erlef/setup-elixir@v1
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
@@ -176,7 +178,7 @@ jobs:
     steps:
       # shared steps
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.5
+      - uses: erlef/setup-elixir@v1
         id: setup
         with:
           otp-version: ${{ env.OTP_VERSION_SPEC }}
