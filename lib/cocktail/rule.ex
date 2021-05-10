@@ -1,6 +1,4 @@
 defmodule Cocktail.Rule do
-  @moduledoc false
-
   alias Cocktail.{Builder, Rule, Validation}
 
   @type t :: %__MODULE__{
