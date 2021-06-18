@@ -38,7 +38,7 @@ defmodule Cocktail.Builder.ICalendar do
   def build(schedule) do
     rules =
       schedule.recurrence_rules
-      |> Enum.map(&build_rule/1)
+      |> Enum.map(&do_build_rule/1)
 
     times =
       schedule.recurrence_times
@@ -54,6 +54,35 @@ defmodule Cocktail.Builder.ICalendar do
     ([start_time] ++ rules ++ times ++ exceptions ++ [end_time])
     |> Enum.reject(&is_nil/1)
     |> Enum.join("\n")
+  end
+
+  @doc ~S"""
+  Builds an iCalendar RRULE format string representation of a `t:Cocktail.Schedule.t/0`
+
+  ## Examples
+
+      iex> alias Cocktail.Schedule
+      ...> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> schedule = Schedule.new(start_time)
+      ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, interval: 2, hours: [10, 12])
+      ...> build_rule(schedule)
+      "RRULE:FREQ=DAILY;INTERVAL=2;BYHOUR=10,12"
+
+      iex> alias Cocktail.Schedule
+      ...> schedule = Schedule.new(~N[2017-01-01 06:00:00])
+      ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, until: ~N[2017-01-31 11:59:59])
+      ...> build_rule(schedule)
+      "RRULE:FREQ=DAILY;UNTIL=20170131T115959"
+
+      iex> alias Cocktail.Schedule
+      ...> schedule = Schedule.new(~N[2017-01-01 06:00:00])
+      ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, count: 3)
+      ...> build_rule(schedule)
+      "RRULE:FREQ=DAILY;COUNT=3"
+  """
+  @spec build_rule(Schedule.t()) :: String.t()
+  def build_rule(schedule) do
+    Enum.map(schedule.recurrence_rules, &do_build_rule/1) |> Enum.join()
   end
 
   @spec build_time(Cocktail.time(), String.t()) :: String.t()
@@ -89,8 +118,8 @@ defmodule Cocktail.Builder.ICalendar do
     |> Timex.format!(@time_format_string <> "Z")
   end
 
-  @spec build_rule(Rule.t()) :: String.t()
-  defp build_rule(%Rule{validations: validations_map, until: until, count: count}) do
+  @spec do_build_rule(Rule.t()) :: String.t()
+  defp do_build_rule(%Rule{validations: validations_map, until: until, count: count}) do
     parts =
       for key <- [
             :interval,

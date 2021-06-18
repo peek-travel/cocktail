@@ -17,6 +17,17 @@ defmodule Cocktail.Builder.ICalendarTest do
            """
   end
 
+  test "build rrule from schedule" do
+    schedule =
+      ~Y[2017-01-01 09:00:00 America/Los_Angeles]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:daily, until: ~Y[2017-01-31 09:00:00 America/Los_Angeles])
+
+    i_calendar_string = Schedule.to_i_calendar_rrule(schedule)
+
+    assert i_calendar_string == "RRULE:FREQ=DAILY;UNTIL=20170131T170000Z"
+  end
+
   test "build a schedule with timezone with until option" do
     schedule =
       ~Y[2017-01-01 09:00:00 America/Los_Angeles]

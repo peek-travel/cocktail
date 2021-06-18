@@ -229,6 +229,14 @@ defmodule Cocktail.Schedule do
   def to_i_calendar(%__MODULE__{} = schedule), do: Builder.ICalendar.build(schedule)
 
   @doc """
+  Builds an iCalendar RRULE format string representation of a `t:Cocktail.Schedule.t/0`.
+
+  see `Cocktail.Builder.ICalendar.build_rule/1` for details.
+  """
+  @spec to_i_calendar_rrule(t) :: String.t()
+  def to_i_calendar_rrule(%__MODULE__{} = schedule), do: Builder.ICalendar.build_rule(schedule)
+
+  @doc """
   Builds a human readable string representation of a `t:Cocktail.Schedule.t/0`.
 
   see `Cocktail.Builder.String.build/1` for details.
