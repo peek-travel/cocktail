@@ -10,6 +10,7 @@ defmodule Cocktail.Mixfile do
       source_url: "https://github.com/peek-travel/cocktail",
       version: @version,
       elixir: "~> 1.7",
+      elixirc_paths: elixirc_paths(Mix.env()),
       description: description(),
       package: package(),
       deps: deps(),
@@ -19,6 +20,10 @@ defmodule Cocktail.Mixfile do
       preferred_cli_env: preferred_cli_env()
     ]
   end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def application do
     [extra_applications: [:logger]]

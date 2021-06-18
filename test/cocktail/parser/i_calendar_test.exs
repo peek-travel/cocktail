@@ -146,7 +146,7 @@ defmodule Cocktail.Parser.ICalendarTest do
     DTSTART;TZID=invalid:20170810T160000
     """
 
-    assert {:error, {{:invalid_timezone, "invalid"}, 0}} = parse(schedule_string)
+    assert {:error, {:time_zone_not_found, 0}} = parse(schedule_string)
   end
 
   test "parse a schedule with an invalid DTEND" do
