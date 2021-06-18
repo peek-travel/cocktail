@@ -59,6 +59,17 @@ defmodule Cocktail.ScheduleTest do
     assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-11 09:00:00]]
   end
 
+  test "exception times with no schedule or recurrence time" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Schedule.new()
+      |> Schedule.add_exception_time(~N[2017-09-10 09:00:00])
+
+    times = schedule |> Schedule.occurrences() |> Enum.to_list()
+
+    assert times == [~N[2017-09-09 09:00:00]]
+  end
+
   test "add recurrence rule with bad options" do
     schedule =
       ~N[2017-09-09 09:00:00]

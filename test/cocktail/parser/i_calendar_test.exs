@@ -117,6 +117,28 @@ defmodule Cocktail.Parser.ICalendarTest do
     assert rule.validations[:time_of_day] == %TimeOfDay{times: [{9, 0, 0}, {10, 0, 0}, {11, 0, 0}]}
   end
 
+  test "parses a schedule with an RDATE" do
+    schedule_string = """
+    DTSTART:20170101T060000
+    RDATE:20170102T060000
+    """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [%NaiveDateTime{} = datetime] = schedule.recurrence_times
+    assert datetime == ~N[2017-01-02 06:00:00]
+  end
+
+  test "parses a schedule with an EXDATE" do
+    schedule_string = """
+    DTSTART:20170101T060000
+    EXDATE:20170101T060000
+    """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [%NaiveDateTime{} = datetime] = schedule.exception_times
+    assert datetime == ~N[2017-01-01 06:00:00]
+  end
+
   ##########
   # Errors #
   ##########
@@ -264,5 +286,23 @@ defmodule Cocktail.Parser.ICalendarTest do
     """
 
     assert {:error, {:invalid_seconds, 1}} = parse(schedule_string)
+  end
+
+  test "parses a schedule with an invalid RDATE" do
+    schedule_string = """
+    DTSTART:20170101T060000
+    RDATE:invalid
+    """
+
+    assert {:error, _reason} = parse(schedule_string)
+  end
+
+  test "parses a schedule with an invalid EXDATE" do
+    schedule_string = """
+    DTSTART:20170101T060000
+    EXDATE:invalid
+    """
+
+    assert {:error, _reason} = parse(schedule_string)
   end
 end
