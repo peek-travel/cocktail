@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.10.0][] - 2021-06-18
+
+### Added
+
+-   Ability to get RRULE string [#174](https://github.com/peek-travel/cocktail/pull/174) (thanks to @yordis)
+-   Expose Rule struct to docs
+    [#170](https://github.com/peek-travel/cocktail/pull/170) (thanks to @yordis)
+
+### Fixed
+
+-   Fixed a timezone / DST related bug [#160](https://github.com/peek-travel/cocktail/pull/160) (thanks to @peaceful-james)
+
+### Updated
+
+-   GitHub Actions update / refactor [#164](https://github.com/peek-travel/cocktail/pull/164) (thanks to @vanvoljg)
+
 ## [0.9.0][] - 2020-11-21
 
 ### Added
@@ -135,7 +151,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.9.0...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.10.0...HEAD
+
+[0.10.0]: https://github.com/peek-travel/cocktail/compare/0.9.0...0.10.0
 
 [0.9.0]: https://github.com/peek-travel/cocktail/compare/0.8.4...0.9.0
 
