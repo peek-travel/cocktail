@@ -150,4 +150,17 @@ defmodule Cocktail.DailyTest do
              ~Y[2017-01-06 10:15:00 PST]
            ]
   end
+
+  test "generating occurrences when when add_recurrence_time is used" do
+    assert Cocktail.Schedule.new(~N[2015-01-08 18:30:00])
+           |> Cocktail.Schedule.add_recurrence_rule(
+             :daily,
+             days: [:thursday, :friday, :wednesday],
+             until: ~N[2015-01-14 18:30:00]
+           )
+           |> Cocktail.Schedule.add_recurrence_time(~N[2015-01-23 18:30:00])
+           |> Cocktail.Schedule.add_recurrence_time(~N[2015-01-24 18:30:00])
+           |> Cocktail.Schedule.occurrences(~N[2015-01-24 18:30:00])
+           |> Enum.take(100) == [~N[2015-01-24 18:30:00]]
+  end
 end

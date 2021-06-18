@@ -1,5 +1,7 @@
 defmodule Cocktail.Rule do
-  @moduledoc false
+  @moduledoc """
+  Represent a recurrence rule (RRULE).
+  """
 
   alias Cocktail.{Builder, Rule, Validation}
 
