@@ -1,10 +1,12 @@
-# Cocktail ![Cocktail](./logo_with_border.png)
+# Cocktail ![Cocktail](./assets/logo_with_border.png)
 
-[![CI
-Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https://github.com/peek-travel/cocktail/actions)
+[![CI Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https://github.com/peek-travel/cocktail/actions)
 [![codecov](https://codecov.io/gh/peek-travel/cocktail/branch/main/graph/badge.svg)](https://codecov.io/gh/peek-travel/cocktail)
-[![Hex.pm Version](https://img.shields.io/hexpm/v/cocktail.svg?style=flat)](https://hex.pm/packages/cocktail)
-[![License](https://img.shields.io/hexpm/l/cocktail.svg)](LICENSE.md)
+[![Module Version](https://img.shields.io/hexpm/v/cocktail.svg)](https://hex.pm/packages/cocktail)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/cocktail/)
+[![Total Download](https://img.shields.io/hexpm/dt/cocktail.svg)](https://hex.pm/packages/cocktail)
+[![License](https://img.shields.io/hexpm/l/cocktail.svg)](https://github.com/peek-travel/cocktail/blob/master/LICENSE.md)
+[![Last Updated](https://img.shields.io/github/last-commit/peek-travel/cocktail.svg)](https://github.com/peek-travel/cocktail/commits/master)
 
 Cocktail is an Elixir date recurrence library based on [iCalendar events](https://tools.ietf.org/html/rfc5545#section-3.6.1). Its primary use case currently is to expand schedules with recurrence rules into streams of occurrences. For example: say you wanted to represent a repeating schedule of events that occurred every other week, on Mondays, Wednesdays and Fridays, at 10am and 4pm.
 
@@ -27,8 +29,7 @@ Then to get a list of the first 10 occurrences of this schedule, you would do:
 
 ## Installation
 
-Cocktail is [available in Hex](https://hex.pm/packages/cocktail) and can be installed
-by adding `cocktail` to your list of dependencies in `mix.exs`:
+Cocktail is [available in Hex](https://hex.pm/packages/cocktail) and can be installed by adding `:cocktail` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -98,7 +99,7 @@ iex> occurrences = Cocktail.Schedule.occurrences(schedule)
 [~N[2017-01-01 00:00:00], ~N[2017-01-02 00:00:00], ~N[2017-01-03 00:00:00]]
 ```
 
-The type of each occurrence depends on what start time type you used, and wether or not you supplied a duration when creating the schedule.
+The type of each occurrence depends on what start time type you used, and whether or not you supplied a duration when creating the schedule.
 
 ### Duration
 
@@ -155,6 +156,9 @@ iex> i_calendar = Cocktail.Schedule.to_i_calendar(schedule)
 
 Cocktail is heavily inspired by and based on a very similar Ruby library, [ice_cube](https://github.com/seejohnrun/ice_cube).
 
-## License
+## Copyright and License
 
-[MIT](LICENSE.md)
+Copyright (c)
+
+This work is free. You can redistribute it and/or modify it under the
+terms of the MIT License. See the [LICENSE.md](./LICENSE.md) file for more details.
