@@ -71,22 +71,20 @@ defmodule Cocktail.ScheduleTest do
   end
 
   test "occurrences at the end of the day won't cause an infinite loop" do
-    times =
-      ~N[2021-10-15 23:00:00]
-      |> Schedule.new(duration: 1800)
-      |> Schedule.add_recurrence_rule(
-        :daily,
-        time_range: %{
-          start_time: ~T[23:00:00],
-          end_time: ~T[23:55:00],
-          interval_seconds: 1800
-        },
-        until: ~N[2021-10-15 23:55:00]
-      )
-      |> Schedule.occurrences()
-      |> Enum.to_list()
-
-    assert times == [~N[2017-09-09 09:00:00]]
+    assert [%{from: ~N[2021-10-15 23:00:00], until: ~N[2021-10-15 23:30:00]}] =
+             ~N[2021-10-15 23:00:00]
+             |> Schedule.new(duration: 1800)
+             |> Schedule.add_recurrence_rule(
+               :daily,
+               time_range: %{
+                 start_time: ~T[23:00:00],
+                 end_time: ~T[23:55:00],
+                 interval_seconds: 1800
+               },
+               until: ~N[2021-10-15 23:55:00]
+             )
+             |> Schedule.occurrences()
+             |> Enum.to_list()
   end
 
   test "add recurrence rule with bad options" do

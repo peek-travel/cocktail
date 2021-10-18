@@ -28,12 +28,19 @@ defmodule Cocktail.Validation.TimeRange do
   defp generate_times(%__MODULE__{} = time_range) do
     time_range.start_time
     |> Stream.unfold(fn time ->
-      case Time.compare(time, time_range.end_time) do
-        :gt ->
+      current_gt_end = Time.compare(time, time_range.end_time)
+      next_time = Time.add(time, time_range.interval_seconds)
+      current_gt_next = Time.compare(time, next_time)
+
+      case {current_gt_end, current_gt_next} do
+        {:gt, _} ->
+          nil
+
+        {_, :gt} ->
           nil
 
         _ ->
-          {time, Time.add(time, time_range.interval_seconds)}
+          {time, next_time}
       end
     end)
     |> Enum.to_list()
