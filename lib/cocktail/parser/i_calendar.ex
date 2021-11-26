@@ -106,23 +106,18 @@ defmodule Cocktail.Parser.ICalendar do
 
   @spec parse_datetimes_list(String.t()) :: {:ok, [Cocktail.time()]} | {:error, term}
   defp parse_datetimes_list(time_string) do
-    case String.split(time_string, ":") do
-      [tzid, datetimes] ->
-        datetimes
-        |> String.split(",")
-        |> Enum.map(&("#{tzid}:#{&1}"))
-        |> parse_datetimes_values([])
-
-      [datetimes] ->
-        datetimes
-        |> String.split(",")
-        |> parse_datetimes_values([])
-
+    with [tzid, datetimes] <- String.split(time_string, ":") do
+      datetimes
+      |> String.split(",")
+      |> Enum.map(&("#{tzid}:#{&1}"))
+      |> parse_datetimes_values([])
+    else
       _ ->
-        {:error, :invalid_datetimes_list_format}
+        {:error, :invalid_time_format}
     end
   end
 
+  @spec parse_datetimes_values([String.t()], [Cocktail.time()]) :: {:ok, [Cocktail.time()]} | {:error, term}
   defp parse_datetimes_values([], datetimes_list), do: {:ok, datetimes_list}
 
   defp parse_datetimes_values([head | rest], datetimes_list) do
@@ -499,14 +494,7 @@ defmodule Cocktail.Parser.ICalendar do
   defp parse_exdate(time_string, schedule, index) do
     case parse_datetimes_list(time_string) do
       {:ok, datetimes} ->
-        schedule = Enum.reduce(
-          datetimes,
-          schedule,
-          fn datetime, acc ->
-            Schedule.add_exception_time(acc, datetime)
-          end
-        )
-        {:ok, schedule}
+        {:ok, Enum.reduce(datetimes, schedule, &(Schedule.add_exception_time(&2, &1)))}
 
       {:error, term} ->
         {:error, {term, index}}
