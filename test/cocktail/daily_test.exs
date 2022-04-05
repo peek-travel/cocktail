@@ -163,4 +163,34 @@ defmodule Cocktail.DailyTest do
            |> Cocktail.Schedule.occurrences(~N[2015-01-24 18:30:00])
            |> Enum.take(100) == [~N[2015-01-24 18:30:00]]
   end
+
+  test "generating occurrences with spring forward transition" do
+    schedule =
+      ~Y[2022-03-12 18:00:00 America/Los_Angeles]
+      |> Schedule.new()
+      |> Schedule.add_recurrence_rule(:daily)
+
+    times = schedule |> Schedule.occurrences() |> Enum.take(3)
+
+    assert times == [
+             ~Y[2022-03-12 18:00:00 America/Los_Angeles],
+             ~Y[2022-03-13 18:00:00 America/Los_Angeles],
+             ~Y[2022-03-14 18:00:00 America/Los_Angeles]
+           ]
+  end
+
+  test "generating occurrences with fall back transition" do
+    schedule =
+      ~Y[2022-11-05 18:00:00 America/Los_Angeles]
+      |> Schedule.new()
+      |> Schedule.add_recurrence_rule(:daily)
+
+    times = schedule |> Schedule.occurrences() |> Enum.take(3)
+
+    assert times == [
+             ~Y[2022-11-05 18:00:00 America/Los_Angeles],
+             ~Y[2022-11-06 18:00:00 America/Los_Angeles],
+             ~Y[2022-11-07 18:00:00 America/Los_Angeles]
+           ]
+  end
 end
