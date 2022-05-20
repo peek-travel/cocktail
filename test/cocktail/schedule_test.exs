@@ -59,6 +59,36 @@ defmodule Cocktail.ScheduleTest do
     assert times == [~N[2017-09-09 09:00:00], ~N[2017-09-11 09:00:00]]
   end
 
+  test "exception times outside of schedule" do
+    schedule =
+      ~N[2017-09-09 09:00:00]
+      |> Cocktail.Schedule.new(duration: 1800)
+      |> Cocktail.Schedule.add_recurrence_rule(:secondly,
+        interval: 1800,
+        hours: [9, 10, 11, 12, 13, 14, 15],
+        until: ~N[2017-09-10 23:59:00]
+      )
+      |> Schedule.add_exception_time(~N[2017-09-09 13:00:00])
+      |> Schedule.add_exception_time(~N[2017-09-09 13:00:00])
+      |> Schedule.add_exception_time(~N[2017-09-09 13:30:00])
+      |> Schedule.add_exception_time(~N[2017-09-09 17:00:00])
+      |> Schedule.add_exception_time(~N[2017-09-10 10:00:00])
+
+    times = schedule |> Schedule.occurrences() |> Enum.to_list()
+
+    refute times
+           |> Enum.member?(%Cocktail.Span{
+             from: ~N[2017-09-10 10:00:00],
+             until: ~N[2017-09-10 10:30:00]
+           })
+
+    refute times
+           |> Enum.member?(%Cocktail.Span{
+             from: ~N[2017-09-09 13:30:00],
+             until: ~N[2017-09-09 14:00:00]
+           })
+  end
+
   test "exception times with no schedule or recurrence time" do
     schedule =
       ~N[2017-09-09 09:00:00]
