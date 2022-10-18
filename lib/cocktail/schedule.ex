@@ -248,7 +248,7 @@ defmodule Cocktail.Schedule do
   defp no_ms(nil), do: nil
   defp no_ms(time), do: %{time | microsecond: {0, 0}}
 
-  defimpl Inspect, for: __MODULE__ do
+  defimpl Inspect, for: Cocktail.Schedule do
     import Inspect.Algebra
 
     def inspect(schedule, _) do
