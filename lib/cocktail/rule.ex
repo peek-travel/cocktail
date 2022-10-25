@@ -28,7 +28,7 @@ defmodule Cocktail.Rule do
   @spec set_until(t, Cocktail.time()) :: t
   def set_until(%__MODULE__{} = rule, end_time), do: %{rule | until: end_time}
 
-  defimpl Inspect, for: __MODULE__ do
+  defimpl Inspect do
     import Inspect.Algebra
 
     def inspect(rule, _) do
