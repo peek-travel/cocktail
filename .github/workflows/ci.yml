@@ -6,8 +6,8 @@ on:
 
 env:
   MIX_ENV: test
-  OTP_VERSION_SPEC: "24.x"
-  ELIXIR_VERSION_SPEC: "1.12.x"
+  OTP_VERSION_SPEC: "25.x"
+  ELIXIR_VERSION_SPEC: "1.14.x"
 
 jobs:
   format:
