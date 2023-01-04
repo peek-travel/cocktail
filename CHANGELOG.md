@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Updated GitHub Actions steps to latest versions:
 
-    -   `actions/checkout` 3.2.0, `erlef/setup-elixir` 1.15, `codecov/codecov-action` 3.1.1
+    -    `actions/cache` 3.2.2, `actions/checkout` 3.2.0, `erlef/setup-elixir` 1.15, `codecov/codecov-action` 3.1.1
 
 -   Updated Elixir dependencies:
 
