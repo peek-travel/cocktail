@@ -51,7 +51,7 @@ defmodule Cocktail.Mixfile do
 
   defp docs do
     [
-      main: "Cocktail.Schedule",
+      main: "readme",
       logo: "logo.png",
       source_ref: @version,
       source_url: "https://github.com/peek-travel/cocktail",
