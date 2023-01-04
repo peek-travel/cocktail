@@ -41,11 +41,11 @@ jobs:
       - name: Cache Keys
         id: keys
         run: |
-          echo ::set-output name=deps_key::deps-${{ runner.os }}
-          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
-          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
-          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
-          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+          echo "deps_key=deps-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "lockfile_key=${{ hashFiles('mix.lock') }}" >> $GITHUB_OUTPUT
+          echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
+          echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
+          echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3.2.2
         id: deps_cache
         with:
@@ -86,11 +86,11 @@ jobs:
       - name: Cache Keys
         id: keys
         run: |
-          echo ::set-output name=deps_key::deps-${{ runner.os }}
-          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
-          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
-          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
-          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+          echo "deps_key=deps-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "lockfile_key=${{ hashFiles('mix.lock') }}" >> $GITHUB_OUTPUT
+          echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
+          echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
+          echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3.2.2
         id: deps_cache
         with:
@@ -137,11 +137,11 @@ jobs:
       - name: Cache Keys
         id: keys
         run: |
-          echo ::set-output name=deps_key::deps-${{ runner.os }}
-          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
-          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
-          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
-          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+          echo "deps_key=deps-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "lockfile_key=${{ hashFiles('mix.lock') }}" >> $GITHUB_OUTPUT
+          echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
+          echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
+          echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3.2.2
         id: deps_cache
         with:
@@ -186,11 +186,11 @@ jobs:
       - name: Cache Keys
         id: keys
         run: |
-          echo ::set-output name=deps_key::deps-${{ runner.os }}
-          echo ::set-output name=lockfile_key::${{ hashFiles('mix.lock') }}
-          echo ::set-output name=build_key::build-${{ runner.os }}-${{ env.MIX_ENV }}
-          echo ::set-output name=version_key::${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}
-          echo ::set-output name=files_key::${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}
+          echo "deps_key=deps-${{ runner.os }}" >> $GITHUB_OUTPUT
+          echo "lockfile_key=${{ hashFiles('mix.lock') }}" >> $GITHUB_OUTPUT
+          echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
+          echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
+          echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3.2.2
         id: deps_cache
         with:
