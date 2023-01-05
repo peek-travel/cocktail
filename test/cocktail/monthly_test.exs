@@ -5,14 +5,14 @@ defmodule Cocktail.MonthlyTest do
 
   import Cocktail.TestSupport.DateTimeSigil
 
-  @spec first_n_occurrences(%Cocktail.Schedule{}, integer()) :: term
+  @spec first_n_occurrences(Cocktail.Schedule.t(), integer()) :: term
   def first_n_occurrences(schedule, n \\ 20) do
     schedule
     |> Cocktail.Schedule.occurrences()
     |> Enum.take(n)
   end
 
-  @spec assert_icalendar_preserved(%Cocktail.Schedule{}) :: %Cocktail.Schedule{}
+  @spec assert_icalendar_preserved(Cocktail.Schedule.t()) :: Cocktail.Schedule.t()
   defp assert_icalendar_preserved(schedule) do
     {:ok, preserved_schedule} =
       schedule

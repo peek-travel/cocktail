@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.10.2][] - 2023-01-04
+
+-   Updated GitHub Actions steps to latest versions:
+
+    -    `actions/cache` 3.2.2, `actions/checkout` 3.2.0, `erlef/setup-elixir` 1.15, `codecov/codecov-action` 3.1.1
+
+-   Updated Elixir dependencies:
+
+    -   `excoveralls` 0.15.1, `dialyxir` 1.2.0, `ex_doc` 0.29.1, `earmark_parser` 1.4.29,
+        `makeup` 1.1.0, `makeup_elixir` 0.16.0, `nimble_parsec` 1.2.3, `credo` 1.6.7,
+        `bunt` 0.2.1, `timex` 3.7.9, `gettext` 0.20.0, `tzdata` 1.1.1
+
 ## [0.10.0][] - 2021-06-18
 
 ### Added
@@ -151,7 +163,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.10.2...HEAD
+
+[0.10.2]: https://github.com/peek-travel/cocktail/compare/0.10.0...0.10.2
 
 [0.10.0]: https://github.com/peek-travel/cocktail/compare/0.9.0...0.10.0
 
