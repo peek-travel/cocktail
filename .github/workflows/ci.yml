@@ -46,14 +46,14 @@ jobs:
           echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
           echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
           echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: deps_cache
         with:
           path: deps
           key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
           restore-keys: |
             ${{ steps.keys.outputs.deps_key }}-
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: build_cache
         with:
           path: _build
@@ -91,14 +91,14 @@ jobs:
           echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
           echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
           echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: deps_cache
         with:
           path: deps
           key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
           restore-keys: |
             ${{ steps.keys.outputs.deps_key }}-
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: build_cache
         with:
           path: _build
@@ -142,14 +142,14 @@ jobs:
           echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
           echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
           echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: deps_cache
         with:
           path: deps
           key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
           restore-keys: |
             ${{ steps.keys.outputs.deps_key }}-
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: build_cache
         with:
           path: _build
@@ -191,14 +191,14 @@ jobs:
           echo "build_key=build-${{ runner.os }}-${{ env.MIX_ENV }}" >> $GITHUB_OUTPUT
           echo "version_key=${{ steps.setup.outputs['otp-version'] }}-${{ steps.setup.outputs['elixir-version'] }}" >> $GITHUB_OUTPUT
           echo "files_key=${{ hashFiles('lib/**/*.ex','test/**/*.ex','mix.lock') }}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: deps_cache
         with:
           path: deps
           key: ${{ steps.keys.outputs.deps_key }}-${{ steps.keys.outputs.lockfile_key }}
           restore-keys: |
             ${{ steps.keys.outputs.deps_key }}-
-      - uses: actions/cache@v3.2.2
+      - uses: actions/cache@v3.3.0
         id: build_cache
         with:
           path: _build
