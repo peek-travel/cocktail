@@ -57,7 +57,6 @@ defmodule Cocktail.Validation.ScheduleLock do
           |> Timex.diff(time, :days)
 
         start_time_day_of_month ->
-
           next_month_date = shift_time(time, months: 1)
           # Timex.set already handle the marginal case like setting a day of month more than the month contains
           next_month_date

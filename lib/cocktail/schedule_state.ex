@@ -3,6 +3,7 @@ defmodule Cocktail.ScheduleState do
 
   alias Cocktail.{RuleState, Schedule, Span}
   import Cocktail.Util
+
   @type t :: %__MODULE__{
           recurrence_rules: [RuleState.t()],
           recurrence_times: [Cocktail.time()],
