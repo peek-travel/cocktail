@@ -9,7 +9,7 @@ defmodule Cocktail.Validation.Shift do
 
   @typep option :: nil | :beginning_of_day | :beginning_of_hour | :beginning_of_minute
 
-  import Timex, only: [shift: 2, beginning_of_day: 1]
+  import Cocktail.Util
 
   @spec shift_by(integer, shift_type, Cocktail.time(), option) :: result
   def shift_by(amount, type, time, option \\ nil)
@@ -18,7 +18,7 @@ defmodule Cocktail.Validation.Shift do
   def shift_by(amount, type, time, option) do
     new_time =
       time
-      |> shift("#{type}": amount)
+      |> shift_time("#{type}": amount)
       |> apply_option(option)
 
     {:change, new_time}

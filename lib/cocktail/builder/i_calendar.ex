@@ -5,6 +5,8 @@ defmodule Cocktail.Builder.ICalendar do
   TODO: write long description
   """
 
+  import Cocktail.Util
+
   alias Cocktail.{Rule, Schedule, Validation}
   alias Cocktail.Validation.{Day, DayOfMonth, HourOfDay, Interval, MinuteOfHour, SecondOfMinute, TimeOfDay, TimeRange}
 
@@ -106,7 +108,7 @@ defmodule Cocktail.Builder.ICalendar do
 
   defp build_end_time(%Schedule{start_time: start_time, duration: duration}) do
     start_time
-    |> Timex.shift(seconds: duration)
+    |> shift_time(seconds: duration)
     |> build_time("DTEND")
   end
 

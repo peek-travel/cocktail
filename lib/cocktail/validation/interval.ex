@@ -3,6 +3,7 @@ defmodule Cocktail.Validation.Interval do
 
   import Integer, only: [mod: 2, floor_div: 2]
   import Cocktail.Validation.Shift
+  import Cocktail.Util
 
   @typep iso_week :: {Timex.Types.year(), Timex.Types.weeknum()}
 
@@ -20,8 +21,8 @@ defmodule Cocktail.Validation.Interval do
 
   def next_time(%__MODULE__{type: :monthly, interval: interval}, time, start_time) do
     start_time
-    |> Timex.beginning_of_month()
-    |> Timex.diff(Timex.beginning_of_month(time), :months)
+    |> beginning_of_month()
+    |> Timex.diff(beginning_of_month(time), :months)
     |> mod(interval)
     |> shift_by(:months, time)
   end
