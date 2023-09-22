@@ -2,7 +2,7 @@ defmodule Cocktail.Validation.DayOfMonth do
   @moduledoc false
 
   import Cocktail.Validation.Shift
-  import Cocktail.Util, only: [next_gte: 2]
+  import Cocktail.Util
 
   # assumed that DST can not "take" more than 4 hours between any 2 consecutive days
   @min_dst_resultant_hours 20
@@ -28,9 +28,7 @@ defmodule Cocktail.Validation.DayOfMonth do
       case next_gte(normalized_days, current_day_of_month) do
         # go to next month
         nil ->
-          next_month_time =
-            time
-            |> Timex.shift(months: 1)
+          next_month_time = shift_time(time, months: 1)
 
           next_month_normalized_days = Enum.map(days, &normalize_day_of_month(&1, next_month_time))
           next_month_earliest_day = Timex.set(next_month_time, day: hd(Enum.sort(next_month_normalized_days)))

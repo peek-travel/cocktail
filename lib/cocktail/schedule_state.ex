@@ -2,6 +2,7 @@ defmodule Cocktail.ScheduleState do
   @moduledoc false
 
   alias Cocktail.{RuleState, Schedule, Span}
+  import Cocktail.Util
 
   @type t :: %__MODULE__{
           recurrence_rules: [RuleState.t()],
@@ -114,7 +115,7 @@ defmodule Cocktail.ScheduleState do
       | recurrence_rules: rules,
         recurrence_times: times,
         exception_times: exceptions,
-        current_time: Timex.shift(time, seconds: 1)
+        current_time: shift_time(time, seconds: 1)
     }
 
     {occurrence, new_state}
@@ -122,7 +123,7 @@ defmodule Cocktail.ScheduleState do
 
   @spec span_or_time(Cocktail.time() | nil, pos_integer | nil) :: Cocktail.occurrence()
   defp span_or_time(time, nil), do: time
-  defp span_or_time(time, duration), do: Span.new(time, Timex.shift(time, seconds: duration))
+  defp span_or_time(time, duration), do: Span.new(time, shift_time(time, seconds: duration))
 
   @spec min_time_for_rules([RuleState.t()]) :: Cocktail.time() | nil
   defp min_time_for_rules([]), do: nil
