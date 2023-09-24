@@ -5,11 +5,9 @@ defmodule Cocktail.Validation.Shift do
 
   @type result :: {change_type, Cocktail.time()}
 
-  @typep shift_type :: :months | :days | :hours | :minutes | :seconds
+  @typep shift_type :: :month | :day | :hour | :minute | :second
 
   @typep option :: nil | :beginning_of_day | :beginning_of_hour | :beginning_of_minute
-
-  import Cocktail.Util
 
   @spec shift_by(integer, shift_type, Cocktail.time(), option) :: result
   def shift_by(amount, type, time, option \\ nil)
@@ -18,7 +16,7 @@ defmodule Cocktail.Validation.Shift do
   def shift_by(amount, type, time, option) do
     new_time =
       time
-      |> shift_time("#{type}": amount)
+      |> Cocktail.Time.shift(amount, type)
       |> apply_option(option)
 
     {:change, new_time}
@@ -26,7 +24,7 @@ defmodule Cocktail.Validation.Shift do
 
   @spec apply_option(Cocktail.time(), option) :: Cocktail.time()
   defp apply_option(time, nil), do: time
-  defp apply_option(time, :beginning_of_day), do: time |> beginning_of_day()
+  defp apply_option(time, :beginning_of_day), do: time |> Cocktail.Time.beginning_of_day()
   defp apply_option(time, :beginning_of_hour), do: %{time | minute: 0, second: 0, microsecond: {0, 0}}
   defp apply_option(time, :beginning_of_minute), do: %{time | second: 0, microsecond: {0, 0}}
 end

@@ -5,12 +5,10 @@ defmodule Cocktail.Builder.ICalendar do
   TODO: write long description
   """
 
-  import Cocktail.Util
-
   alias Cocktail.{Rule, Schedule, Validation}
   alias Cocktail.Validation.{Day, DayOfMonth, HourOfDay, Interval, MinuteOfHour, SecondOfMinute, TimeOfDay, TimeRange}
 
-  @time_format_string "{YYYY}{0M}{0D}T{h24}{m}{s}"
+  @time_format_string "%Y%m%dT%H%M%S"
 
   @doc ~S"""
   Builds an iCalendar format string representation of a `t:Cocktail.Schedule.t/0`.
@@ -18,7 +16,7 @@ defmodule Cocktail.Builder.ICalendar do
   ## Examples
 
       iex> alias Cocktail.Schedule
-      ...> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> start_time = Cocktail.Time.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
       ...> schedule = Schedule.new(start_time)
       ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, interval: 2, hours: [10, 12])
       ...> build(schedule)
@@ -64,7 +62,7 @@ defmodule Cocktail.Builder.ICalendar do
   ## Examples
 
       iex> alias Cocktail.Schedule
-      ...> start_time = Timex.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
+      ...> start_time = Cocktail.Time.to_datetime(~N[2017-01-01 06:00:00], "America/Los_Angeles")
       ...> schedule = Schedule.new(start_time)
       ...> schedule = Schedule.add_recurrence_rule(schedule, :daily, interval: 2, hours: [10, 12])
       ...> build_rule(schedule)
@@ -91,12 +89,12 @@ defmodule Cocktail.Builder.ICalendar do
   @spec build_time(Cocktail.time(), String.t()) :: String.t()
   defp build_time(%DateTime{} = time, prefix) do
     timezone = time.time_zone
-    time_string = Timex.format!(time, @time_format_string)
+    time_string = Calendar.strftime(time, @time_format_string)
     "#{prefix};TZID=#{timezone}:#{time_string}"
   end
 
   defp build_time(%NaiveDateTime{} = time, prefix) do
-    time_string = Timex.format!(time, @time_format_string)
+    time_string = Calendar.strftime(time, @time_format_string)
     "#{prefix}:#{time_string}"
   end
 
@@ -108,17 +106,17 @@ defmodule Cocktail.Builder.ICalendar do
 
   defp build_end_time(%Schedule{start_time: start_time, duration: duration}) do
     start_time
-    |> shift_time(seconds: duration)
+    |> Cocktail.Time.shift(duration, :second)
     |> build_time("DTEND")
   end
 
   @spec build_utc_time(Cocktail.time()) :: String.t()
-  defp build_utc_time(%NaiveDateTime{} = time), do: Timex.format!(time, @time_format_string)
+  defp build_utc_time(%NaiveDateTime{} = time), do: Calendar.strftime(time, @time_format_string)
 
   defp build_utc_time(%DateTime{} = time) do
     time
-    |> Timex.to_datetime("UTC")
-    |> Timex.format!(@time_format_string <> "Z")
+    |> Cocktail.Time.to_datetime("UTC")
+    |> Calendar.strftime(@time_format_string <> "Z")
   end
 
   @spec do_build_rule(Rule.t()) :: String.t()

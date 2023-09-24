@@ -2,7 +2,6 @@ defmodule Cocktail.ScheduleState do
   @moduledoc false
 
   alias Cocktail.{RuleState, Schedule, Span}
-  import Cocktail.Util
 
   @type t :: %__MODULE__{
           recurrence_rules: [RuleState.t()],
@@ -26,19 +25,19 @@ defmodule Cocktail.ScheduleState do
 
   def new(%Schedule{} = schedule, current_time) do
     current_time =
-      if Timex.compare(current_time, schedule.start_time) < 0,
+      if Cocktail.Time.compare(current_time, schedule.start_time) == :lt,
         do: schedule.start_time,
         else: current_time
 
     recurrence_times_after_current_time =
       schedule.recurrence_times
-      |> Enum.filter(&(Timex.compare(&1, current_time) >= 0))
-      |> Enum.sort(&(Timex.compare(&1, &2) <= 0))
+      |> Enum.filter(&(Cocktail.Time.compare(&1, current_time) in [:gt, :eq]))
+      |> Enum.sort(&(Cocktail.Time.compare(&1, &2) in [:lt, :eq]))
 
     %__MODULE__{
       recurrence_rules: schedule.recurrence_rules |> Enum.map(&RuleState.new/1),
       recurrence_times: recurrence_times_after_current_time,
-      exception_times: schedule.exception_times |> Enum.uniq() |> Enum.sort(&(Timex.compare(&1, &2) <= 0)),
+      exception_times: schedule.exception_times |> Enum.uniq() |> Enum.sort(&(Cocktail.Time.compare(&1, &2) in [:lt, :eq])),
       start_time: schedule.start_time,
       current_time: current_time,
       duration: schedule.duration
@@ -92,7 +91,7 @@ defmodule Cocktail.ScheduleState do
   defp next_time_from_recurrence_times([next_time | rest], nil), do: {next_time, rest}
 
   defp next_time_from_recurrence_times([next_time | rest] = times, current_time) do
-    if Timex.compare(next_time, current_time) <= 0 do
+    if Cocktail.Time.compare(next_time, current_time) in [:lt, :eq] do
       {next_time, rest}
     else
       {current_time, times}
@@ -105,15 +104,10 @@ defmodule Cocktail.ScheduleState do
   defp apply_exception_time(exceptions, nil), do: {false, exceptions}
 
   defp apply_exception_time([next_exception | rest] = exceptions, current_time) do
-    case Timex.compare(next_exception, current_time) do
-      0 ->
-        {true, rest}
-
-      -1 ->
-        apply_exception_time(rest, current_time)
-
-      _ ->
-        {false, exceptions}
+    case Cocktail.Time.compare(next_exception, current_time) do
+      :eq -> {true, rest}
+      :lt -> apply_exception_time(rest, current_time)
+      :gt -> {false, exceptions}
     end
   end
 
@@ -135,7 +129,7 @@ defmodule Cocktail.ScheduleState do
       | recurrence_rules: rules,
         recurrence_times: times,
         exception_times: exceptions,
-        current_time: shift_time(time, seconds: 1)
+        current_time: Cocktail.Time.shift(time, 1, :second)
     }
 
     {occurrence, new_state}
@@ -143,7 +137,7 @@ defmodule Cocktail.ScheduleState do
 
   @spec span_or_time(Cocktail.time() | nil, pos_integer | nil) :: Cocktail.occurrence()
   defp span_or_time(time, nil), do: time
-  defp span_or_time(time, duration), do: Span.new(time, shift_time(time, seconds: duration))
+  defp span_or_time(time, duration), do: Span.new(time, Cocktail.Time.shift(time, duration, :second))
 
   @spec min_time_for_rules([RuleState.t()]) :: Cocktail.time() | nil
   defp min_time_for_rules([]), do: nil
@@ -151,7 +145,7 @@ defmodule Cocktail.ScheduleState do
 
   defp min_time_for_rules(rules) do
     rules
-    |> Enum.min_by(&Timex.to_erl(&1.current_time))
+    |> Enum.min_by(&Cocktail.Time.to_erl(&1.current_time))
     |> Map.get(:current_time)
   end
 

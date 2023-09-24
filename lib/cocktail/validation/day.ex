@@ -15,11 +15,12 @@ defmodule Cocktail.Validation.Day do
 
   @spec next_time(t, Cocktail.time(), Cocktail.time()) :: Cocktail.Validation.Shift.result()
   def next_time(%__MODULE__{days: days}, time, _) do
-    current_day = Timex.weekday(time)
+    {current_day, _, _} = Calendar.ISO.day_of_week(time.year, time.month, time.day, :sunday)
+    current_day = current_day - 1
     day = next_gte(days, current_day) || hd(days)
     diff = (day - current_day) |> mod(7)
 
-    shift_by(diff, :days, time, :beginning_of_day)
+    shift_by(diff, :day, time, :beginning_of_day)
   end
 
   @spec day_number(Cocktail.day()) :: Cocktail.day_number()

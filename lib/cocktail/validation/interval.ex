@@ -3,9 +3,8 @@ defmodule Cocktail.Validation.Interval do
 
   import Integer, only: [mod: 2, floor_div: 2]
   import Cocktail.Validation.Shift
-  import Cocktail.Util
 
-  @typep iso_week :: {Timex.Types.year(), Timex.Types.weeknum()}
+  @typep iso_week :: {year :: integer(), weeknum :: non_neg_integer()}
 
   @type t :: %__MODULE__{type: Cocktail.frequency(), interval: pos_integer}
 
@@ -21,35 +20,35 @@ defmodule Cocktail.Validation.Interval do
 
   def next_time(%__MODULE__{type: :monthly, interval: interval}, time, start_time) do
     start_time
-    |> beginning_of_month()
-    |> Timex.diff(beginning_of_month(time), :months)
+    |> Cocktail.Time.beginning_of_month()
+    |> Cocktail.Time.diff(Cocktail.Time.beginning_of_month(time), :month)
     |> mod(interval)
-    |> shift_by(:months, time)
+    |> shift_by(:month, time)
   end
 
   def next_time(%__MODULE__{type: :weekly, interval: interval}, time, start_time) do
-    week = Timex.iso_week(time)
-    start_week = Timex.iso_week(start_time)
+    week = :calendar.iso_week_number({time.year, time.month, time.day})
+    start_week = :calendar.iso_week_number({start_time.year, start_time.month, start_time.day})
     diff = weeks_diff(start_week, week)
     off_by = mod(diff * -1, interval)
-    shift_by(off_by * 7, :days, time)
+    shift_by(off_by * 7, :day, time)
   end
 
   def next_time(%__MODULE__{type: :daily, interval: interval}, time, start_time) do
-    date = Timex.to_date(time)
-    start_date = Timex.to_date(start_time)
+    date = Cocktail.Time.to_date(time)
+    start_date = Cocktail.Time.to_date(start_time)
 
     start_date
-    |> Timex.diff(date, :days)
+    |> Cocktail.Time.diff(date, :day)
     |> mod(interval)
-    |> shift_by(:days, time)
+    |> shift_by(:day, time)
   end
 
   def next_time(%__MODULE__{type: type, interval: interval}, time, start_time) do
     unit = unit_for_type(type)
 
     start_time
-    |> Timex.diff(time, unit)
+    |> Cocktail.Time.diff(time, unit)
     |> mod(interval)
     |> shift_by(unit, time)
   end
@@ -60,7 +59,7 @@ defmodule Cocktail.Validation.Interval do
   defp weeks_diff({year1, week1}, {year2, week2}) when year2 > year1,
     do: (year1..(year2 - 1) |> Enum.map(&iso_weeks_per_year/1) |> Enum.sum()) - week1 + week2
 
-  @spec iso_weeks_per_year(Timex.Types.year()) :: 52 | 53
+  @spec iso_weeks_per_year(year :: integer()) :: 52 | 53
   defp iso_weeks_per_year(year) do
     if year_cycle(year) == 4 || year_cycle(year - 1) == 3 do
       53
@@ -69,15 +68,15 @@ defmodule Cocktail.Validation.Interval do
     end
   end
 
-  @spec year_cycle(Timex.Types.year()) :: integer
+  @spec year_cycle(year :: integer()) :: integer()
   defp year_cycle(year) do
     cycle = year + floor_div(year, 4) - floor_div(year, 100) + floor_div(year, 400)
 
     mod(cycle, 7)
   end
 
-  @spec unit_for_type(:hourly | :minutely | :secondly) :: :hours | :minutes | :seconds
-  defp unit_for_type(:hourly), do: :hours
-  defp unit_for_type(:minutely), do: :minutes
-  defp unit_for_type(:secondly), do: :seconds
+  @spec unit_for_type(:hourly | :minutely | :secondly) :: :hour | :minute | :second
+  defp unit_for_type(:hourly), do: :hour
+  defp unit_for_type(:minutely), do: :minute
+  defp unit_for_type(:secondly), do: :second
 end

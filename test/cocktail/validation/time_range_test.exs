@@ -29,7 +29,7 @@ defmodule Cocktail.TimeRangeTest do
   test "a daily schedule with a zoned datetime and a time range option" do
     schedule =
       ~N[2017-09-09 09:00:00]
-      |> Timex.to_datetime("America/Chicago")
+      |> Cocktail.Time.to_datetime("America/Chicago")
       |> Schedule.new()
       |> Schedule.add_recurrence_rule(
         :daily,

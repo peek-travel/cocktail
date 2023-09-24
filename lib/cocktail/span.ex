@@ -39,7 +39,7 @@ defmodule Cocktail.Span do
   def new(from, until), do: %__MODULE__{from: from, until: until}
 
   @doc """
-  Uses `Timex.compare/2` to determine which span comes first.
+  Uses `Cocktail.Time.compare/2` to determine which span comes first.
 
   Compares `from` first, then, if equal, compares `until`.
 
@@ -48,21 +48,21 @@ defmodule Cocktail.Span do
       iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       ...> compare(span1, span2)
-      0
+      :eq
 
       iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       ...> span2 = new(~N[2017-01-01 07:00:00], ~N[2017-01-01 12:00:00])
       ...> compare(span1, span2)
-      -1
+      :lt
 
       iex> span1 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 10:00:00])
       ...> span2 = new(~N[2017-01-01 06:00:00], ~N[2017-01-01 07:00:00])
       ...> compare(span1, span2)
-      1
+      :gt
   """
-  @spec compare(span_compat, span_compat) :: Timex.Comparable.compare_result()
-  def compare(%{from: t, until: until1}, %{from: t, until: until2}), do: Timex.compare(until1, until2)
-  def compare(%{from: from1}, %{from: from2}), do: Timex.compare(from1, from2)
+  @spec compare(span_compat, span_compat) :: :lt | :eq | :gt
+  def compare(%{from: t, until: until1}, %{from: t, until: until2}), do: Cocktail.Time.compare(until1, until2)
+  def compare(%{from: from1}, %{from: from2}), do: Cocktail.Time.compare(from1, from2)
 
   @doc """
   Returns an `t:overlap_mode/0` to describe how the first span overlaps the second.
@@ -94,16 +94,16 @@ defmodule Cocktail.Span do
 
   # credo:disable-for-next-line
   def overlap_mode(%{from: from1, until: until1}, %{from: from2, until: until2}) do
-    from_comp = Timex.compare(from1, from2)
-    until_comp = Timex.compare(until1, until2)
+    from_comp = Cocktail.Time.compare(from1, from2)
+    until_comp = Cocktail.Time.compare(until1, until2)
 
     cond do
-      from_comp <= 0 && until_comp >= 0 -> :contains
-      from_comp >= 0 && until_comp <= 0 -> :is_inside
-      Timex.compare(until1, from2) <= 0 -> :is_before
-      Timex.compare(from1, until2) >= 0 -> :is_after
-      from_comp < 0 && until_comp < 0 -> :overlaps_the_start_of
-      from_comp > 0 && until_comp > 0 -> :overlaps_the_end_of
+      from_comp in [:lt, :eq] && until_comp in [:gt, :eq] -> :contains
+      from_comp in [:gt, :eq] && until_comp in [:lt, :eq] -> :is_inside
+      Cocktail.Time.compare(until1, from2) in [:lt, :eq] -> :is_before
+      Cocktail.Time.compare(from1, until2) in [:gt, :eq] -> :is_after
+      from_comp == :lt && until_comp == :lt -> :overlaps_the_start_of
+      from_comp == :gt && until_comp == :gt -> :overlaps_the_end_of
     end
   end
 end

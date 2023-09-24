@@ -19,6 +19,6 @@ defmodule Cocktail.Validation.SecondOfMinute do
     second = next_gte(seconds, current_second) || hd(seconds)
     diff = (second - current_second) |> mod(60)
 
-    shift_by(diff, :seconds, time)
+    shift_by(diff, :second, time)
   end
 end

@@ -81,7 +81,7 @@ defmodule Cocktail.Mixfile do
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
-      {:timex, "~> 3.6"}
+      {:tzdata, "~> 1.1"}
     ]
   end
 end

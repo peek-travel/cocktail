@@ -8,8 +8,8 @@ defmodule Cocktail.Parser.ICalendar do
   alias Cocktail.{Rule, Schedule}
 
   @time_regex ~r/^:?;?(?:TZID=(.+?):)?(.*?)(Z)?$/
-  @datetime_format "{YYYY}{0M}{0D}T{h24}{m}{s}"
-  @time_format "{h24}{m}{s}"
+  @datetime_format "%Y%m%dT%H%M%S"
+  @time_format "%H%M%S"
 
   @doc ~S"""
   Parses a string in iCalendar format into a `t:Cocktail.Schedule.t/0`.
@@ -38,7 +38,7 @@ defmodule Cocktail.Parser.ICalendar do
     |> String.trim()
     |> String.split("\n")
     |> Enum.map(&String.trim/1)
-    |> parse_lines(Schedule.new(Timex.now()), 0)
+    |> parse_lines(Schedule.new(DateTime.utc_now()), 0)
   end
 
   @spec parse_lines([String.t()], Schedule.t(), non_neg_integer) :: {:ok, Schedule.t()} | {:error, term}
@@ -105,15 +105,17 @@ defmodule Cocktail.Parser.ICalendar do
   end
 
   @spec parse_naive_datetime(String.t()) :: {:ok, NaiveDateTime.t()} | {:error, term}
-  defp parse_naive_datetime(time_string), do: Timex.parse(time_string, @datetime_format)
+  defp parse_naive_datetime(time_string) do
+    Cocktail.Time.parse(time_string, @datetime_format)
+  end
 
   @spec parse_utc_datetime(String.t()) :: {:ok, DateTime.t()} | {:error, term}
-  defp parse_utc_datetime(time_string), do: parse_zoned_datetime(time_string, "UTC")
+  defp parse_utc_datetime(time_string), do: parse_zoned_datetime(time_string, "Etc/UTC")
 
   @spec parse_zoned_datetime(String.t(), String.t()) :: {:ok, DateTime.t()} | {:error, term}
   defp parse_zoned_datetime(time_string, zone) do
-    with {:ok, naive_datetime} <- Timex.parse(time_string, @datetime_format),
-         %DateTime{} = datetime <- Timex.to_datetime(naive_datetime, zone) do
+    with {:ok, naive_datetime} <- Cocktail.Time.parse(time_string, @datetime_format),
+         %DateTime{} = datetime <- Cocktail.Time.to_datetime(naive_datetime, zone) do
       {:ok, datetime}
     end
   end
@@ -421,7 +423,8 @@ defmodule Cocktail.Parser.ICalendar do
 
   @spec parse_time(String.t()) :: {:ok, Time.t()} | {:error, :invalid_time_format}
   defp parse_time(time_string) do
-    case Timex.parse(time_string, @time_format) do
+    case Cocktail.Time.parse(time_string, @time_format) do
+      {:ok, %Time{} = time} -> {:ok, time}
       {:ok, datetime} -> {:ok, NaiveDateTime.to_time(datetime)}
       _error -> {:error, :invalid_time_format}
     end

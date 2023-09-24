@@ -8,6 +8,6 @@ defmodule Cocktail.TestSupport.DateTimeSigil do
 
     "#{date} #{time}"
     |> NaiveDateTime.from_iso8601!()
-    |> Timex.to_datetime(zone)
+    |> Cocktail.Time.to_datetime(zone)
   end
 end

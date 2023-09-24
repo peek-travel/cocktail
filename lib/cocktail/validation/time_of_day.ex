@@ -22,7 +22,7 @@ defmodule Cocktail.Validation.TimeOfDay do
     diff = Time.diff(target_time, current_time)
     diff = if diff < 0, do: diff + 86_400, else: diff
 
-    shift_by(diff, :seconds, time)
+    shift_by(diff, :second, time)
   end
 
   @spec to_time(Cocktail.time()) :: Time.t()
