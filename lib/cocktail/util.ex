@@ -19,10 +19,22 @@ defmodule Cocktail.Util do
   def shift_time(datetime, opts) do
     datetime
     |> Timex.shift(opts)
+    |> shift_dst(datetime)
     |> no_ms()
   end
 
   def no_ms(time) do
     Map.put(time, :microsecond, {0, 0})
+  end
+
+  # In case of datetime we may expect the same timezone hour
+  # For example after daylight saving 10h MUST still 10h the next day.
+  # This behaviour could only happen on datetime with timezone (that include `std_offset`)
+  defp shift_dst(time, datetime) do
+    if offset = Map.get(datetime, :std_offset) do
+      Timex.shift(time, seconds: offset - time.std_offset)
+    else
+      time
+    end
   end
 end
