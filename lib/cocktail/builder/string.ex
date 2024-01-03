@@ -31,8 +31,7 @@ defmodule Cocktail.Builder.String do
   @spec build(Schedule.t()) :: String.t()
   def build(%Schedule{recurrence_rules: recurrence_rules}) do
     recurrence_rules
-    |> Enum.map(&build_rule/1)
-    |> Enum.join(" / ")
+    |> Enum.map_join(" / ", &build_rule/1)
   end
 
   @doc false
