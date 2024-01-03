@@ -1,4 +1,4 @@
-# Cocktail ![Cocktail](./logo_with_border.png)
+# Cocktail
 
 [![CI
 Status](https://github.com/peek-travel/cocktail/workflows/CI/badge.svg)](https://github.com/peek-travel/cocktail/actions)

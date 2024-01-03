@@ -1,7 +1,7 @@
 defmodule Cocktail.Mixfile do
   use Mix.Project
 
-  @version "0.10.1"
+  @version "0.10.2"
 
   def project do
     [
@@ -39,7 +39,7 @@ defmodule Cocktail.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
-      maintainers: ["Chris Dosé"],
+      maintainers: ["Jesse Van Volkinburg", "Chris Dosé"],
       licenses: ["MIT"],
       links: %{
         "GitHub" => "https://github.com/peek-travel/cocktail",
@@ -51,11 +51,11 @@ defmodule Cocktail.Mixfile do
 
   defp docs do
     [
-      main: "Cocktail.Schedule",
+      main: "readme",
       logo: "logo.png",
       source_ref: @version,
       source_url: "https://github.com/peek-travel/cocktail",
-      extras: ["README.md", "LICENSE.md"]
+      extras: ["README.md", "LICENSE.md", "CHANGELOG.md"]
     ]
   end
 
