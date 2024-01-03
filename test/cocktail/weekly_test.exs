@@ -154,4 +154,19 @@ defmodule Cocktail.WeeklyTest do
              ~Y[2017-01-09 10:00:00 America/Los_Angeles]
            ]
   end
+
+  test "Weekly with dst transition" do
+    times =
+      ~Y[2022-03-12 06:00:00 America/Los_Angeles]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:weekly)
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(3)
+
+    assert times == [
+             ~Y[2022-03-12 06:00:00 America/Los_Angeles],
+             ~Y[2022-03-19 06:00:00 America/Los_Angeles],
+             ~Y[2022-03-26 06:00:00 America/Los_Angeles]
+           ]
+  end
 end
