@@ -46,7 +46,7 @@ defmodule Cocktail.Validation.Shift do
   defp maybe_dst_change(new_time, _time), do: new_time
 
   defp maybe_shift_time(new_time, time, dst_diff) do
-    shifted_time = shift(new_time, seconds: -dst_diff)
+    shifted_time = shift_time(new_time, seconds: -dst_diff)
 
     case DateTime.compare(shifted_time, time) do
       :eq -> new_time
