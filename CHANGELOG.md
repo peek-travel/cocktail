@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased][]
 
+## [0.10.3][] - 2024-01-03
+
+-   Fixes a DST bug where an occurrence is not generated on the day of a DST switch
+    [#229](https://github.com/peek-travel/cocktail/pull/229) and
+    [#301](https://github.com/peek-travel/cocktail/pull/301) (thanks @davec82 and @Matsa59)
+-   Fixes exception times not being applied when they fall out range of the schedule
+    [#241](https://github.com/peek-travel/cocktail/pull/241) (thanks @maxx-coffee)
+
 ## [0.10.2][] - 2023-01-04
 
 -   Updated GitHub Actions steps to latest versions:
@@ -163,7 +171,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Initial release
 
-[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.10.2...HEAD
+[Unreleased]: https://github.com/peek-travel/cocktail/compare/0.10.3...HEAD
+
+[0.10.3]: https://github.com/peek-travel/cocktail/compare/0.10.2...0.10.3
 
 [0.10.2]: https://github.com/peek-travel/cocktail/compare/0.10.0...0.10.2
 
