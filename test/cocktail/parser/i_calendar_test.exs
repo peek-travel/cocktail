@@ -139,6 +139,30 @@ defmodule Cocktail.Parser.ICalendarTest do
     assert datetime == ~N[2017-01-01 06:00:00]
   end
 
+  test "parses a schedule with an EXDATE list" do
+    schedule_string = """
+    DTSTART:20170101T060000
+    EXDATE:20170101T060000,20170102T060000
+    """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [%NaiveDateTime{} = first_datetime, %NaiveDateTime{} = second_datetime] = schedule.exception_times
+    assert first_datetime == ~N[2017-01-01 06:00:00]
+    assert second_datetime == ~N[2017-01-02 06:00:00]
+  end
+
+  test "parses a schedule with an EXDATE list and a TZID" do
+    schedule_string = """
+    DTSTART;TZID=America/Los_Angeles:20170101T060000
+    EXDATE;TZID=America/Los_Angeles:20170101T060000,20170102T060000
+    """
+
+    assert {:ok, schedule} = parse(schedule_string)
+    assert [%DateTime{} = first_datetime, %DateTime{} = second_datetime] = schedule.exception_times
+    assert first_datetime == ~Y[2017-01-01 06:00:00 America/Los_Angeles]
+    assert second_datetime == ~Y[2017-01-02 06:00:00 America/Los_Angeles]
+  end
+
   ##########
   # Errors #
   ##########
