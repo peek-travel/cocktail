@@ -37,7 +37,8 @@ defmodule Cocktail.ScheduleState do
     %__MODULE__{
       recurrence_rules: schedule.recurrence_rules |> Enum.map(&RuleState.new/1),
       recurrence_times: recurrence_times_after_current_time,
-      exception_times: schedule.exception_times |> Enum.uniq() |> Enum.sort(&(Cocktail.Time.compare(&1, &2) in [:lt, :eq])),
+      exception_times:
+        schedule.exception_times |> Enum.uniq() |> Enum.sort(&(Cocktail.Time.compare(&1, &2) in [:lt, :eq])),
       start_time: schedule.start_time,
       current_time: current_time,
       duration: schedule.duration

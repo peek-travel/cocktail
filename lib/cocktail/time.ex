@@ -77,7 +77,6 @@ defmodule Cocktail.Time do
     end
   end
 
-
   defp new_coerced_datetime(year, month, day, hour, minute, second, microsecond, timezone) do
     days_in_month_b = :calendar.last_day_of_the_month(year, month)
 
@@ -340,6 +339,6 @@ defmodule Cocktail.Time do
   def parse(_, _), do: {:error, :invalid_format}
 
   defp get_time_zone_datebase do
-    Application.get_env(:elixir, :time_zone_database, Tzdata.TimeZoneDatabase)
+    Application.get_env(:elixir, :time_zone_database)
   end
 end

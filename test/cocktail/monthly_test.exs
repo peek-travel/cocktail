@@ -138,13 +138,13 @@ defmodule Cocktail.MonthlyTest do
       |> Schedule.add_recurrence_rule(:monthly, interval: 3)
 
     assert first_n_occurrences(schedule, 7) == [
-             ~U[2017-01-02 06:00:00Z],
-             ~U[2017-03-02 06:00:00Z],
-             ~U[2017-04-02 06:00:00Z],
-             ~U[2017-05-02 06:00:00Z],
-             ~U[2017-07-02 06:00:00Z],
-             ~U[2017-09-02 06:00:00Z],
-             ~U[2017-10-02 06:00:00Z]
+             ~Y[2017-01-02 06:00:00 Etc/UTC],
+             ~Y[2017-03-02 06:00:00 Etc/UTC],
+             ~Y[2017-04-02 06:00:00 Etc/UTC],
+             ~Y[2017-05-02 06:00:00 Etc/UTC],
+             ~Y[2017-07-02 06:00:00 Etc/UTC],
+             ~Y[2017-09-02 06:00:00 Etc/UTC],
+             ~Y[2017-10-02 06:00:00 Etc/UTC]
            ]
 
     assert_icalendar_preserved(schedule)
