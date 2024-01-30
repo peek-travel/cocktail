@@ -26,7 +26,7 @@ defmodule Cocktail.TimeOfDayTest do
   test "a daily schedule with a zoned datetime and a time of day option" do
     schedule =
       ~N[2017-09-09 09:00:00]
-      |> Timex.to_datetime("America/Chicago")
+      |> Cocktail.Time.to_datetime("America/Chicago")
       |> Schedule.new()
       |> Schedule.add_recurrence_rule(:daily, times: [~T[10:00:00], ~T[12:30:00], ~T[17:45:00]])
 

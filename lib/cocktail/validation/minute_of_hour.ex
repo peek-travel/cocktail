@@ -19,6 +19,6 @@ defmodule Cocktail.Validation.MinuteOfHour do
     minute = next_gte(minutes, current_minute) || hd(minutes)
     diff = (minute - current_minute) |> mod(60)
 
-    shift_by(diff, :minutes, time, :beginning_of_minute)
+    shift_by(diff, :minute, time, :beginning_of_minute)
   end
 end

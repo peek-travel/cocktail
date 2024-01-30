@@ -28,21 +28,22 @@ defmodule Cocktail.Validation.DayOfMonth do
       case next_gte(normalized_days, current_day_of_month) do
         # go to next month
         nil ->
-          next_month_time = shift_time(time, months: 1)
+          next_month_time = Cocktail.Time.shift(time, 1, :month)
 
           next_month_normalized_days = Enum.map(days, &normalize_day_of_month(&1, next_month_time))
-          next_month_earliest_day = Timex.set(next_month_time, day: hd(Enum.sort(next_month_normalized_days)))
+          next_month_earliest_day = Map.put(next_month_time, :day, hd(Enum.sort(next_month_normalized_days)))
           dst_accounted_days_diff(next_month_earliest_day, time)
 
         next_earliest_day_of_month ->
           next_earliest_day_of_month - current_day_of_month
       end
 
-    shift_by(diff, :days, time, :beginning_of_day)
+    shift_by(diff, :day, time, :beginning_of_day)
   end
 
   defp normalize_day_of_month(day_of_month, current_time) do
-    do_normalize_day_of_month(day_of_month, Timex.days_in_month(current_time))
+    ldom = :calendar.last_day_of_the_month(current_time.year, current_time.month)
+    do_normalize_day_of_month(day_of_month, ldom)
   end
 
   defp do_normalize_day_of_month(day_of_month, days_in_month) when day_of_month > days_in_month do
@@ -62,10 +63,10 @@ defmodule Cocktail.Validation.DayOfMonth do
   end
 
   defp dst_accounted_days_diff(next_month_earliest_day, time) do
-    case Timex.diff(next_month_earliest_day, time, :days) do
+    case Cocktail.Time.diff(next_month_earliest_day, time, :day) do
       0 ->
         # get the hours diff to ensure we are not falling short because of DST
-        if Timex.diff(next_month_earliest_day, time, :hours) > @min_dst_resultant_hours do
+        if Cocktail.Time.diff(next_month_earliest_day, time, :hour) > @min_dst_resultant_hours do
           1
         else
           0

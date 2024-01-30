@@ -19,6 +19,6 @@ defmodule Cocktail.Validation.HourOfDay do
     hour = next_gte(hours, current_hour) || hd(hours)
     diff = (hour - current_hour) |> mod(24)
 
-    shift_by(diff, :hours, time, :beginning_of_hour)
+    shift_by(diff, :hour, time, :beginning_of_hour)
   end
 end

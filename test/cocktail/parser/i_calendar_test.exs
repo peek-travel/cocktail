@@ -24,7 +24,7 @@ defmodule Cocktail.Parser.ICalendarTest do
     """
 
     assert {:ok, schedule} = parse(schedule_string)
-    assert schedule.start_time == ~Y[2017-08-10 16:00:00 UTC]
+    assert schedule.start_time == ~U[2017-08-10 16:00:00Z]
   end
 
   test "parse a schedule with a zoned time" do
@@ -155,12 +155,12 @@ defmodule Cocktail.Parser.ICalendarTest do
 
   test "parse a schedule with an incomplete DTSTART" do
     schedule_string = "DTSTART"
-    assert {:error, {"Input datetime string cannot be empty!", 0}} = parse(schedule_string)
+    assert {:error, {:invalid_format, 0}} = parse(schedule_string)
   end
 
   test "parse a schedule with an invalid DTSTART" do
     schedule_string = "DTSTART:invalid"
-    assert {:error, {"Expected `1-4 digit year` at line 1, column 1.", 0}} = parse(schedule_string)
+    assert {:error, {:invalid_format, 0}} = parse(schedule_string)
   end
 
   test "parse a schedule with an invalid timezone" do
@@ -168,7 +168,7 @@ defmodule Cocktail.Parser.ICalendarTest do
     DTSTART;TZID=invalid:20170810T160000
     """
 
-    assert {:error, {:time_zone_not_found, 0}} = parse(schedule_string)
+    assert {:error, {{:invalid_timezone, "invalid"}, 0}} = parse(schedule_string)
   end
 
   test "parse a schedule with an invalid DTEND" do
@@ -177,7 +177,7 @@ defmodule Cocktail.Parser.ICalendarTest do
     DTEND:invalid
     """
 
-    assert {:error, {"Expected `1-4 digit year` at line 1, column 1.", 1}} = parse(schedule_string)
+    assert {:error, {:invalid_format, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid frequency" do
@@ -213,7 +213,7 @@ defmodule Cocktail.Parser.ICalendarTest do
     RRULE:FREQ=DAILY;INTERVAL=2;UNTIL=invalid
     """
 
-    assert {:error, {"Expected `1-4 digit year` at line 1, column 1.", 1}} = parse(schedule_string)
+    assert {:error, {:invalid_format, 1}} = parse(schedule_string)
   end
 
   test "parse a schedule with an rrule with an invalid day" do

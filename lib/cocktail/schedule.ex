@@ -84,7 +84,7 @@ defmodule Cocktail.Schedule do
   @doc false
   @spec set_end_time(t, Cocktail.time()) :: t
   def set_end_time(%__MODULE__{start_time: start_time} = schedule, end_time) do
-    duration = Timex.diff(end_time, start_time, :seconds)
+    duration = Cocktail.Time.diff(end_time, start_time, :second)
     %{schedule | duration: duration}
   end
 
@@ -180,9 +180,9 @@ defmodule Cocktail.Schedule do
        ~N[2017-10-04 10:00:00]]
 
       # using a DateTime with a time zone
-      iex> start_time = Timex.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles")
+      iex> start_time = Cocktail.Time.to_datetime(~N[2017-01-02 10:00:00], "America/Los_Angeles")
       ...> schedule = start_time |> new() |> add_recurrence_rule(:daily)
-      ...> schedule |> occurrences() |> Enum.take(3) |> Enum.map(&Timex.format!(&1, "{ISO:Extended}"))
+      ...> schedule |> occurrences() |> Enum.take(3) |> Enum.map(&DateTime.to_iso8601/1)
       ["2017-01-02T10:00:00-08:00",
        "2017-01-03T10:00:00-08:00",
        "2017-01-04T10:00:00-08:00"]
