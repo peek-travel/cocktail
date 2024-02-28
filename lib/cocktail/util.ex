@@ -31,7 +31,9 @@ defmodule Cocktail.Util do
   # For example after daylight saving 10h MUST still 10h the next day.
   # This behaviour could only happen on datetime with timezone (that include `std_offset`)
   defp shift_dst(time, datetime) do
-    if offset = Map.get(datetime, :std_offset) do
+    offset = Map.get(datetime, :std_offset)
+
+    if offset && time.hour == datetime.hour do
       Timex.shift(time, seconds: offset - time.std_offset)
     else
       time
