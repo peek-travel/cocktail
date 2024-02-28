@@ -41,4 +41,19 @@ defmodule Cocktail.TimeOfDayTest do
              ~Y[2017-09-10 17:45:00 America/Chicago]
            ]
   end
+
+  test "daily with dst transition" do
+    times =
+      ~Y[2024-03-09 02:00:00 America/Montreal]
+      |> Cocktail.schedule()
+      |> Schedule.add_recurrence_rule(:daily)
+      |> Cocktail.Schedule.occurrences()
+      |> Enum.take(3)
+
+    assert times == [
+             ~Y[2024-03-09 02:00:00 America/Montreal],
+             DateTime.shift_zone!(~U[2024-03-11 06:00:00Z], "America/Montreal"),
+             ~Y[2024-03-12 02:00:00 America/Montreal]
+           ]
+  end
 end
