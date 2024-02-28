@@ -15,6 +15,16 @@ defmodule Cocktail.Validation.Shift do
   def shift_by(amount, type, time, option \\ nil)
   def shift_by(0, _, time, _), do: {:no_change, time}
 
+  def shift_by(amount, :days, time, option) do
+    new_time =
+      time
+      |> Timex.shift("#{type}": amount)
+      |> no_ms()
+      |> apply_option(option)
+
+    {:change, new_time}
+  end
+
   def shift_by(amount, type, time, option) do
     new_time =
       time
